@@ -4,6 +4,15 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+
+public enum GVRSwipeDirection{
+	left,
+	right,
+	up,
+	down
+
+}
 
 public class GVRInput : MonoBehaviour
 {
@@ -27,6 +36,21 @@ public class GVRInput : MonoBehaviour
 	/// The physics layer we are checking against
 	/// </summary>
 	public LayerMask detectionMask;
+
+	///<summary>
+	/// Textlabel used for debuging
+	/// </summary>
+	public Text debugLabel;
+
+
+	///<summary>>
+	/// If detectSwipe = is true, the system will check touch input for swiping moves. 
+	/// </summary>
+	public bool detectSwipes = false;
+	public float minSwipeDistance = 0.5f;
+	private bool isSwiping = false;
+	private Vector2 startSwipePosition;
+	private Vector2 endSwipePosition;
 
 	#if UNITY_HAS_GOOGLEVR && (UNITY_ANDROID || UNITY_EDITOR)
 
@@ -56,9 +80,16 @@ public class GVRInput : MonoBehaviour
 			OnButtonDown ();
 		}
 		if (GvrController.TouchDown) {
+			if (detectSwipes) {
+				startSwipePosition = touchPosition;
+				isSwiping = true;
+			}
 			OnTouchDown ();
 		}
 		if (GvrController.TouchUp) {
+			if (isSwiping) {
+				CheckIfSwipped ();
+			}
 			OnTouchUp ();
 		}
 	#if !UNITY_EDITOR
@@ -69,6 +100,10 @@ public class GVRInput : MonoBehaviour
 			controllerPivot.transform.rotation = GvrController.Orientation;
 		}
 	#endif
+		if (isSwiping) {
+			endSwipePosition = touchPosition;
+		}
+
 		if (checkForSelection) {
 			RaycastHit hit;
 			Vector3 rayDirection = GvrController.Orientation * Vector3.forward;
@@ -78,6 +113,44 @@ public class GVRInput : MonoBehaviour
 				selectedObject = null;
 			}
 
+		}
+	}
+
+	/// <summary>
+	/// Check if the swipe detected meets minim swipe requriments
+	/// </summary>
+	private void CheckIfSwipped(){
+		float fingerTravelDistance = Vector2.Distance (startSwipePosition, endSwipePosition);
+		if (fingerTravelDistance >= minSwipeDistance) {
+			Vector2 swipeDirection = endSwipePosition - startSwipePosition;
+			if (Mathf.Abs (swipeDirection.x) > Mathf.Abs (swipeDirection.y)) {
+				// Horizontal
+				if (swipeDirection.x > 0) {
+					// right
+					OnSwipe(GVRSwipeDirection.right);
+					if (debugLabel != null)
+						debugLabel.text = "Right : " + fingerTravelDistance.ToString ();
+				} else {
+					// left
+					OnSwipe(GVRSwipeDirection.left);
+					if (debugLabel != null)
+						debugLabel.text = "Left : " + fingerTravelDistance.ToString ();
+				}
+
+			} else {
+				// Vertical
+				if (swipeDirection.y > 0) {
+					// up
+					OnSwipe(GVRSwipeDirection.up);
+					if (debugLabel != null)
+						debugLabel.text = "Up : " + fingerTravelDistance.ToString ();
+				} else {
+					// down
+					OnSwipe(GVRSwipeDirection.down);
+					if (debugLabel != null)
+						debugLabel.text = "Down : " + fingerTravelDistance.ToString ();
+				}
+			}
 		}
 	}
 
@@ -126,6 +199,9 @@ public class GVRInput : MonoBehaviour
 
 	public  virtual void FixedUpdate ()
 	{
+
+	}
+	public virtual void OnSwipe(GVRSwipeDirection dir){
 
 	}
 
