@@ -4,6 +4,7 @@
 
 using UnityEngine;
 using System.Collections;
+using Photon;
 
 public class DrawInSpace : GVRInput {
 
@@ -43,7 +44,6 @@ public class DrawInSpace : GVRInput {
 			OnButtonDown ();
 		if (Input.GetMouseButtonUp (0))
 			OnButtonUp ();
-			
 	}
 
 	/// <summary>
@@ -68,5 +68,7 @@ public class DrawInSpace : GVRInput {
 			activeStroke = null;
 		}
 	}
+
+
 
 }
