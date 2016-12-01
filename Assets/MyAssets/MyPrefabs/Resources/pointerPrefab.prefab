@@ -11,6 +11,23 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1000013295505430}
   m_IsPrefabParent: 1
+--- !u!1 &1000010682284132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000011021056528}
+  - 33: {fileID: 33000012448030190}
+  - 23: {fileID: 23000011163600842}
+  m_Layer: 0
+  m_Name: Cursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000011543825356
 GameObject:
   m_ObjectHideFlags: 0
@@ -22,7 +39,7 @@ GameObject:
   - 33: {fileID: 33000013515209100}
   - 23: {fileID: 23000012438166774}
   m_Layer: 0
-  m_Name: Cursor
+  m_Name: RayHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,6 +71,19 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011543825356}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 4000011103935132}
+  m_RootOrder: 1
+--- !u!4 &4000011021056528
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010682284132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -72,15 +102,16 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 4000011021056528}
   - {fileID: 4000010427563940}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!23 &23000012438166774
+--- !u!23 &23000011163600842
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011543825356}
+  m_GameObject: {fileID: 1000010682284132}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -104,6 +135,42 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!23 &23000012438166774
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011543825356}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 0ee3024fd31e741cea5b81b82db67328, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33000012448030190
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010682284132}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &33000013515209100
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -151,11 +218,16 @@ MonoBehaviour:
   controllerPivot: {fileID: 1000013295505430}
   detectionMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
+  debugLabel: {fileID: 0}
+  detectSwipes: 1
+  minSwipeDistance: 0.1
   strokePrefab: {fileID: 1000012283631962, guid: d6efe02b5fc0342e6b7ffdae2108820f,
     type: 2}
-  pointerRef: {fileID: 4000010427563940}
+  nodePrefab: {fileID: 1000013409896986, guid: 850f3c7ba5951492c8351e141d85dbdb, type: 2}
+  pointerRef: {fileID: 4000011021056528}
   pview: {fileID: 114000010084853696}
+  rayHitRef: {fileID: 4000010427563940}
 --- !u!114 &114000012130582436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -168,7 +240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pivot: {fileID: 4000011103935132}
-  target: {fileID: 4000010427563940}
+  target: {fileID: 4000011021056528}
   lineRend: {fileID: 120000012702874350}
 --- !u!114 &114000013593148930
 MonoBehaviour:

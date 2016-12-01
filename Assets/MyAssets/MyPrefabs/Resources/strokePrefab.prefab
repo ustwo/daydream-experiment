@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000011854060088}
-  - 96: {fileID: 96000011279063480}
   - 114: {fileID: 114000010463588106}
   - 114: {fileID: 114000011847252252}
+  - 114: {fileID: 114000012592386230}
   m_Layer: 0
   m_Name: strokePrefab
   m_TagString: Untagged
@@ -36,62 +36,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012283631962}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.57, y: 7.6, z: 4.8403373}
+  m_LocalPosition: {x: 3.06, y: 11.95, z: 4.8403373}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!96 &96000011279063480
-TrailRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000012283631962}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a6dc4bf0d0d7d4fbf8b828c2ebe27dfb, type: 2}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_Time: 10000
-  m_StartWidth: 1
-  m_EndWidth: 1
-  m_Colors:
-    m_Color[0]:
-      serializedVersion: 2
-      rgba: 4294967295
-    m_Color[1]:
-      serializedVersion: 2
-      rgba: 4294967295
-    m_Color[2]:
-      serializedVersion: 2
-      rgba: 4294967295
-    m_Color[3]:
-      serializedVersion: 2
-      rgba: 4294967295
-    m_Color[4]:
-      serializedVersion: 2
-      rgba: 16777215
-  m_MinVertexDistance: 0.1
-  m_Autodestruct: 0
 --- !u!114 &114000010463588106
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -129,3 +79,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 147c54ab842d049149ac6d959dfd42bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114000012592386230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012283631962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53113383898c8420f84227ef3691d86f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: a6dc4bf0d0d7d4fbf8b828c2ebe27dfb, type: 2}
+  emit: 1
+  lifeTime: 10000
+  colors: []
+  widths: []
+  maxAngle: 2
+  minVertexDistance: 0.1
+  maxVertexDistance: 1
+  optimizeAngleInterval: 0.1
+  optimizeDistanceInterval: 0.05
+  optimizeCount: 30

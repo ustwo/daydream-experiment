@@ -57,11 +57,16 @@ public class GVRInput : MonoBehaviour
 	public virtual void Awake ()
 	{
 		checkForSelection = true;
+		if(GameObject.FindWithTag("debug") != null){
+			debugLabel = GameObject.FindWithTag("debug").GetComponent<Text>();
+			debugLabel.text = "Good to go";
+		}
 	}
 
 	public  virtual void Update ()
 	{
 		UpdatePointer ();
+
 	}
 
 	/// <summary>
@@ -73,13 +78,24 @@ public class GVRInput : MonoBehaviour
 		///<summary>>
 		/// Checking for controller States
 		/// </summary>
+		if (GvrController.AppButtonDown) {
+			DebugMessage ("App Button Down");
+			AppButtonDown ();
+		}
+		if (GvrController.AppButtonUp) {
+			DebugMessage ("App Button Up");
+			AppButtonUp ();
+		}
 		if (GvrController.ClickButtonUp) {
+			DebugMessage ("Button Up");
 			OnButtonUp ();
 		}
 		if (GvrController.ClickButtonDown) {
+			DebugMessage ("Button Down");
 			OnButtonDown ();
 		}
 		if (GvrController.TouchDown) {
+			DebugMessage ("TouchDown");
 			if (detectSwipes) {
 				startSwipePosition = touchPosition;
 				isSwiping = true;
@@ -87,6 +103,7 @@ public class GVRInput : MonoBehaviour
 			OnTouchDown ();
 		}
 		if (GvrController.TouchUp) {
+			DebugMessage ("Touch Up");
 			if (isSwiping) {
 				CheckIfSwipped ();
 			}
@@ -104,16 +121,14 @@ public class GVRInput : MonoBehaviour
 			endSwipePosition = touchPosition;
 		}
 
-		if (checkForSelection) {
-			RaycastHit hit;
-			Vector3 rayDirection = GvrController.Orientation * Vector3.forward;
-			if (Physics.Raycast (Vector3.zero, rayDirection, out hit, detectionMask)) {
-				selectedObject = hit.collider.gameObject;
-			} else {
-				selectedObject = null;
-			}
 
-		}
+	}
+
+	/// Debug Messages
+	protected void DebugMessage(string msg){
+		if (debugLabel == null)
+			return;
+		debugLabel.text = msg;
 	}
 
 	/// <summary>
@@ -128,27 +143,24 @@ public class GVRInput : MonoBehaviour
 				if (swipeDirection.x > 0) {
 					// right
 					OnSwipe(GVRSwipeDirection.right);
-					if (debugLabel != null)
-						debugLabel.text = "Right : " + fingerTravelDistance.ToString ();
+					DebugMessage ("Right : " + fingerTravelDistance.ToString ("0.00"));
+						
 				} else {
 					// left
 					OnSwipe(GVRSwipeDirection.left);
-					if (debugLabel != null)
-						debugLabel.text = "Left : " + fingerTravelDistance.ToString ();
+					DebugMessage ("Left : " + fingerTravelDistance.ToString ("0.00"));
 				}
 
 			} else {
 				// Vertical
-				if (swipeDirection.y > 0) {
+				if (swipeDirection.y < 0) {
 					// up
 					OnSwipe(GVRSwipeDirection.up);
-					if (debugLabel != null)
-						debugLabel.text = "Up : " + fingerTravelDistance.ToString ();
+					DebugMessage ("Up : " + fingerTravelDistance.ToString ("0.00"));
 				} else {
 					// down
 					OnSwipe(GVRSwipeDirection.down);
-					if (debugLabel != null)
-						debugLabel.text = "Down : " + fingerTravelDistance.ToString ();
+					DebugMessage ("Down : " + fingerTravelDistance.ToString ("0.00"));
 				}
 			}
 		}
@@ -178,7 +190,7 @@ public class GVRInput : MonoBehaviour
 	/// </summary>
 	public  virtual void OnTouchDown ()
 	{
-
+		
 	}
 
 	public  virtual void OnTouchUp ()
@@ -202,6 +214,12 @@ public class GVRInput : MonoBehaviour
 
 	}
 	public virtual void OnSwipe(GVRSwipeDirection dir){
+
+	}
+	public virtual void AppButtonDown(){
+
+	}
+	public virtual void AppButtonUp(){
 
 	}
 
