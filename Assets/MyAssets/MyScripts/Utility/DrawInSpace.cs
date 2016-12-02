@@ -16,7 +16,7 @@ public class DrawInSpace : GVRInput
 
 	/// NodePrefab to be created and hold contecnt
 	public GameObject nodePrefab;
-	private GameObject activeNode;
+	private Node activeNode;
 	private bool nodeReleased = false;
 
 	/// <summary>
@@ -37,7 +37,7 @@ public class DrawInSpace : GVRInput
 	private bool shouldDraw = true;
 	private bool isDrawing = false;
 
-	private GameObject activeMove;
+	private Node activeMove;
 
 	public Transform rayHitRef;
 
@@ -85,7 +85,7 @@ public class DrawInSpace : GVRInput
 			if (isDrawing && activeNode != null)
 				EndDrawStroke ();
 			selectedObject = null;
-			rayHitRef.position = pointerRef.position;
+			rayHitRef.position = pointerRef.position+controllerPivot.transform.forward;
 		}
 
 
@@ -130,10 +130,7 @@ public class DrawInSpace : GVRInput
 				
 				// Bake Stroke
 				GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
-				GameObject cloneStroke = Instantiate (thisStroke) as GameObject;
-				cloneStroke.transform.position = thisStroke.transform.position;
-				cloneStroke.transform.rotation = thisStroke.transform.rotation;
-				cloneStroke.transform.parent = activeNode.transform;
+				GameObject cloneStroke = Instantiate (thisStroke,activeNode.nodeTransform) as GameObject;
 				Destroy (activeStroke);
 			}
 			activeStroke = null;
@@ -145,14 +142,15 @@ public class DrawInSpace : GVRInput
 	{
 		if (selectedObject == null)
 			return;
-		activeMove = selectedObject;
-		activeMove.transform.parent = controllerPivot.transform;
+		activeMove = selectedObject.GetComponent<Node>();
+		activeMove.SetTarget(pointerRef);
 
 	}
 
 	void StopMove ()
 	{
-		activeMove.transform.parent = null;
+		activeMove.SetDesiredPosition (pointerRef.position);
+		activeMove.SetTarget (null);
 		activeMove = null;
 	}
 
@@ -195,10 +193,10 @@ public class DrawInSpace : GVRInput
 
 	void ActivateNode (GameObject incNode)
 	{
-		activeNode = incNode;
+		activeNode = incNode.GetComponent<Node>();
 		Vector3 halfPoint = Vector3.Lerp (pointerRef.position, controllerPivot.transform.position, 0.5f);
-		activeNode.transform.position = halfPoint;
-		activeNode.transform.forward = controllerPivot.transform.position - activeNode.transform.position;
+		activeNode.SetDesiredPosition(halfPoint);
+	
 	}
 
 	void CreateNode ()
@@ -213,9 +211,10 @@ public class DrawInSpace : GVRInput
 		if (isDrawing)
 			EndDrawStroke ();
 		DebugMessage ("commiting Node");
-		activeNode.transform.parent = pointerRef;
-		activeNode.transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, 0);
-		activeNode.transform.parent = null;
+//		activeNode.nodeTransform.parent = pointerRef;
+//		activeNode.transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, 0);
+//		activeNode.transform.parent = null;
+		activeNode.SetDesiredPosition(pointerRef.position);
 		activeNode = null;
 
 	}
