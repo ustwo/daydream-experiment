@@ -63,7 +63,7 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 114000011847252252}
+  - {fileID: 114000012592386230}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -95,9 +95,9 @@ MonoBehaviour:
   lifeTime: 10000
   colors: []
   widths: []
-  maxAngle: 2
+  maxAngle: 0.05
   minVertexDistance: 0.1
   maxVertexDistance: 1
-  optimizeAngleInterval: 0.1
+  optimizeAngleInterval: 0.01
   optimizeDistanceInterval: 0.05
   optimizeCount: 30

@@ -9,7 +9,7 @@ public class Node : MonoBehaviour {
 	private Vector3 _desiredPosition = Vector3.zero;
 	private Transform _myTransform;
 	private Transform _targetTransform;
-	public Text myText;
+
 
 	void Start(){
 		_myTransform = transform;
@@ -38,7 +38,7 @@ public class Node : MonoBehaviour {
 		myRigid.AddForce (force);
 		
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
-		myText.transform.position = transform.position;
+
 	}
 
 }

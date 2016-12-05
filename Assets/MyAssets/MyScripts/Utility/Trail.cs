@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Trail : MonoBehaviour 
+public class Trail : Photon.MonoBehaviour 
 {
 	// Material - Must be a particle material that has the "Tint Color" property
 	public Material material;
@@ -32,6 +32,8 @@ public class Trail : MonoBehaviour
 	public float optimizeDistanceInterval = 0.05f;
 	public int optimizeCount = 30;
 
+	private Vector3 lastPos;
+
 	// Object
 	GameObject trailObj = null;
 	Mesh mesh = null;
@@ -42,6 +44,7 @@ public class Trail : MonoBehaviour
 
 	void Start ()
 	{
+		lastPos = Vector3.zero;
 		trailObj = new GameObject("Trail");
 		trailObj.transform.parent = null;
 		trailObj.transform.position = Vector3.zero;
@@ -51,7 +54,7 @@ public class Trail : MonoBehaviour
 		mesh = meshFilter.mesh;
 		trailObj.AddComponent(typeof(MeshRenderer));
 		instanceMaterial = new Material(material);
-		fadeOutRatio = 1f / instanceMaterial.GetColor("_TintColor").a;
+		//fadeOutRatio = 1f / instanceMaterial.GetColor("_TintColor").a;
 		trailObj.GetComponent<Renderer>().material = instanceMaterial;
 	}
 	public GameObject GetCurrentStroke{
@@ -68,6 +71,12 @@ public class Trail : MonoBehaviour
 
 	void Update ()
 	{
+		if (!photonView.isMine && PhotonNetwork.connected) {
+			return;
+		}
+		transform.forward = Vector3.MoveTowards(transform.forward, lastPos - transform.position,0.01f*Time.deltaTime);
+		lastPos = transform.position;
+		
 		// Emitting - Designed for one-time use
 		if( ! emit )
 			emittingDone = true;
@@ -141,16 +150,16 @@ public class Trail : MonoBehaviour
 		{
 			if(pointCnt == 0)
 				return;
-			Color color = instanceMaterial.GetColor("_TintColor");
-			color.a -= fadeOutRatio * lifeTimeRatio * Time.deltaTime;
-			if(color.a > 0)
-				instanceMaterial.SetColor("_TintColor", color);
-			else
-			{
-				Destroy(trailObj);
-				Destroy(this);
-			}
-			return;
+		//	Color color = instanceMaterial.GetColor("_TintColor");
+		//	color.a -= fadeOutRatio * lifeTimeRatio * Time.deltaTime;
+		//	if(color.a > 0)
+		//		instanceMaterial.SetColor("_TintColor", color);
+		//	else
+		//	{
+		//		Destroy(trailObj);
+		//		Destroy(this);
+		//	}
+		//	return;
 		}
 
 		// Rebuild it
@@ -224,11 +233,37 @@ public class Trail : MonoBehaviour
 		}
 		trailObj.transform.position = Vector3.zero;
 		trailObj.transform.rotation = Quaternion.identity;
+		//for (int i = 0; i < 10; i++) {
+	//		SmoothVertexes ();
+	//	}
+	
 		mesh.Clear();
 		mesh.vertices = vertices;
 		mesh.colors = meshColors;
 		mesh.uv = uvs;
 		mesh.triangles = triangles;
+	}
+	void SmoothVertexes(){
+		for (int i = 0; i < mesh.vertexCount; i++) {
+			if (i - 2 < 0 || i + 2 >= mesh.vertexCount)
+				continue;
+			mesh.vertices[i] = GetMeanVector(new Vector3[]{mesh.vertices[i-2],mesh.vertices[i],mesh.vertices[i+2]});
+		}
+	}
+	private Vector3 GetMeanVector(Vector3[] positions)
+	{
+		if (positions.Length == 0)
+			return Vector3.zero;
+		float x = 0f;
+		float y = 0f;
+		float z = 0f;
+		foreach (Vector3 pos in positions)
+		{
+			x += pos.x;
+			y += pos.y;
+			z += pos.z;
+		}
+		return new Vector3(x / positions.Length, y / positions.Length, z / positions.Length);
 	}
 
 	void insertPoint()
@@ -237,6 +272,26 @@ public class Trail : MonoBehaviour
 			points[i] = points[i-1];
 		points[0] = new Point(transform);
 		pointCnt++;
+	}
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		mesh.Clear();
+		if (stream.isWriting)
+		{
+			stream.SendNext (mesh.vertices);
+			stream.SendNext (mesh.uv);
+			stream.SendNext (mesh.triangles);
+
+		}
+		else
+		{
+			mesh.vertices = stream.ReceiveNext () as Vector3[];
+			mesh.uv = stream.ReceiveNext () as Vector2[];
+			mesh.triangles = stream.ReceiveNext () as int[];
+			
+		}
+
+
 	}
 
 	class Point

@@ -41,18 +41,26 @@ public class DrawInSpace : GVRInput
 
 	public Transform rayHitRef;
 
+	private bool offline = true;
+
 	// Use this for initialization
 	public override void Awake ()
 	{
 		DontDestroyOnLoad (gameObject);
 		base.Awake ();
 	}
+
+	public void Start(){
+		offline = !PhotonNetwork.connected;
+	}
 	
 	// Update is called once per frame
 	public override void Update ()
 	{
-		if (!pview.isMine)
+		if (!pview.isMine && !offline) {
+	
 			return;
+		}
 		base.Update ();
 
 		// For Debuging, manually trigger the buttons.
@@ -85,7 +93,7 @@ public class DrawInSpace : GVRInput
 			if (isDrawing && activeNode != null)
 				EndDrawStroke ();
 			selectedObject = null;
-			rayHitRef.position = pointerRef.position+controllerPivot.transform.forward;
+			rayHitRef.position = pointerRef.position+controllerPivot.transform.forward*5;
 		}
 
 
@@ -110,7 +118,10 @@ public class DrawInSpace : GVRInput
 	{
 		DebugMessage ("Button Down from DrawInSpace");
 		isDrawing = true;
-		activeStroke = PhotonNetwork.Instantiate ("strokePrefab", rayHitRef.position, Quaternion.identity, 0);
+		if (!offline)
+			activeStroke = PhotonNetwork.Instantiate (strokePrefab.name, rayHitRef.position, Quaternion.identity, 0);
+		else
+			activeStroke = Instantiate (strokePrefab,rayHitRef.position,Quaternion.identity) as GameObject;
 		activeStroke.name = "activeStroke";
 		activeStroke.transform.parent = rayHitRef;
 		//activeStroke = Instantiate (strokePrefab, pointerRef.position, Quaternion.identity, pointerRef) as GameObject;
@@ -120,7 +131,7 @@ public class DrawInSpace : GVRInput
 	{
 		
 		DebugMessage ("Button Up from DrawinSpace");
-		if (!pview.isMine)
+		if (!pview.isMine&& !offline)
 			return;
 		isDrawing = false;
 		if (activeStroke != null) {
@@ -131,10 +142,36 @@ public class DrawInSpace : GVRInput
 				// Bake Stroke
 				GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
 				GameObject cloneStroke = Instantiate (thisStroke,activeNode.nodeTransform) as GameObject;
+				for (int i = 0; i < 10; i++) {
+					SmoothVertexes(cloneStroke.GetComponent<MeshFilter>().sharedMesh);
+				}
+
 				Destroy (activeStroke);
 			}
 			activeStroke = null;
 		}
+	}
+	void SmoothVertexes(Mesh mesh){
+		for (int i = 0; i < mesh.vertexCount; i++) {
+			if (i - 2 < 0 || i + 2 >= mesh.vertexCount)
+				continue;
+			mesh.vertices[i] = GetMeanVector(new Vector3[]{mesh.vertices[i-2],mesh.vertices[i],mesh.vertices[i+2]});
+		}
+	}
+	private Vector3 GetMeanVector(Vector3[] positions)
+	{
+		if (positions.Length == 0)
+			return Vector3.zero;
+		float x = 0f;
+		float y = 0f;
+		float z = 0f;
+		foreach (Vector3 pos in positions)
+		{
+			x += pos.x;
+			y += pos.y;
+			z += pos.z;
+		}
+		return new Vector3(x / positions.Length, y / positions.Length, z / positions.Length);
 	}
 
 
@@ -201,7 +238,10 @@ public class DrawInSpace : GVRInput
 
 	void CreateNode ()
 	{
-		ActivateNode (PhotonNetwork.Instantiate ("nodePrefab", pointerRef.position, Quaternion.identity, 0));
+		if (!offline)
+			ActivateNode (PhotonNetwork.Instantiate (nodePrefab.name, pointerRef.position, Quaternion.identity, 0));
+		else
+			ActivateNode (Instantiate (nodePrefab, pointerRef.position, Quaternion.identity) as GameObject);
 	}
 
 	void CommitNode ()

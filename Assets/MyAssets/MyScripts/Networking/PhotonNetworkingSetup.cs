@@ -3,10 +3,19 @@ using System.Collections;
 
 public class PhotonNetworkingSetup : Photon.MonoBehaviour {
 
+	public bool offline = true;
+
+	[Tooltip("This game object must be in the \"Resources\" folder")]
+	public GameObject playerControlledPrefab;
+
 	// Use this for initialization
 	void Start(){
-		Debug.Log ("trying to connect to photon cloud");
-		PhotonNetwork.ConnectUsingSettings ("v0.1");
+		if (!offline) {
+			Debug.Log ("trying to connect to photon cloud");
+			PhotonNetwork.ConnectUsingSettings ("v0.1");
+		} else {
+			Instantiate (playerControlledPrefab);
+		}
 	}
 
 	void OnJoinedLobby  () {
@@ -18,7 +27,7 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour {
 	}
 	
 	public void OnJoinedRoom(){
-		PhotonNetwork.Instantiate ("pointerPrefab", Vector3.zero, Quaternion.identity, 0);
+		PhotonNetwork.Instantiate (playerControlledPrefab.name, Vector3.zero, Quaternion.identity, 0);
 		Debug.Log ("Joined Room");
 	}
 }
