@@ -41,6 +41,8 @@ public class DrawInSpace : GVRInput
 
 	public Transform rayHitRef;
 
+	private MicButton micButton;
+
 	// Use this for initialization
 	public override void Awake ()
 	{
@@ -79,6 +81,7 @@ public class DrawInSpace : GVRInput
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask)) {
 			rayHitRef.position = hit.point;
 			selectedObject = hit.collider.gameObject;
+//			Debug.Log (selectedObject.tag);
 		} else {
 			
 
@@ -165,6 +168,11 @@ public class DrawInSpace : GVRInput
 			StopMove ();
 		} else {
 			EndDrawStroke ();
+		}
+
+		if(selectedObject != null && selectedObject.tag == "MicButton") {
+			micButton = selectedObject.GetComponent<MicButton> ();
+			micButton.ToggleActive ();
 		}
 	}
 
