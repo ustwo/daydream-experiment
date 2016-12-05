@@ -30,3 +30,4 @@ sysinfo.txt
 *.unitypackage
 
 .DS_Store
+Assets/MyAssets/MyMaterials/MicButton/ButtonActive.mat.meta
