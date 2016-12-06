@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using Photon;
+using UnityEngine.UI;
 
 public class DrawInSpace : GVRInput
 {
@@ -42,6 +43,8 @@ public class DrawInSpace : GVRInput
 	public Transform rayHitRef;
 
 	private bool offline = true;
+
+	public Text sttTranscript;
 
 	// Use this for initialization
 	public override void Awake ()
@@ -113,6 +116,10 @@ public class DrawInSpace : GVRInput
 		} else {
 			StartMove ();
 		}
+
+		if(selectedObject != null && selectedObject.tag == "ConfirmSTTButton") {
+			selectedObject.GetComponent<OKButton> ().OnButtonDown ();
+		}
 	}
 
 	void StartDrawStroke ()
@@ -178,7 +185,7 @@ public class DrawInSpace : GVRInput
 
 	void StartMove ()
 	{
-		if (selectedObject == null || selectedObject.tag == "MicButton")
+		if (selectedObject == null || selectedObject.tag == "MicButton" || selectedObject.tag == "ConfirmSTTButton")
 			return;
 		
 		activeMove = selectedObject.GetComponent<Node>();
@@ -206,6 +213,11 @@ public class DrawInSpace : GVRInput
 
 		if (selectedObject != null && selectedObject.tag == "MicButton") {
 			selectedObject.GetComponent<MicButton> ().ToggleActive ();
+		}
+
+		if(selectedObject != null && selectedObject.tag == "ConfirmSTTButton") {
+			selectedObject.GetComponent<OKButton> ().ConfirmInput ();
+			CreateNodeFromSTT ();
 		}
 	}
 
@@ -270,6 +282,10 @@ public class DrawInSpace : GVRInput
 		UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 	}
 
+	void CreateNodeFromSTT()
+	{
+		
+	}
 
 
 }

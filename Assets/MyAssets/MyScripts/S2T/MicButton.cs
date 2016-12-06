@@ -16,15 +16,21 @@ public class MicButton : MonoBehaviour {
 
 	public MicrophoneWidget micWidget;
 
+	public GameObject confirmationButton;
+
+	public GameObject confirmationText;
+
 	void Start () 
 	{
 		renderer = GetComponent<Renderer> ();
 //		sttCanvas.enabled = false;
+		confirmationButton.GetComponent<Renderer> ().enabled = false;
+		confirmationText.GetComponent<Renderer> ().enabled = false;
 	}
 
 	void Update () 
 	{
-	
+		
 	}
 
 	public void ToggleActive()
@@ -36,9 +42,13 @@ public class MicButton : MonoBehaviour {
 		if(isActive) {
 			renderer.material = activeMaterial;
 			micWidget.ActivateMicrophone ();
+			confirmationButton.GetComponent<Renderer> ().enabled = true;
+			confirmationText.GetComponent<Renderer> ().enabled = true;
 		} else {
 			renderer.material = inactiveMaterial;
 			micWidget.DeactivateMicrophone ();
+			confirmationButton.GetComponent<Renderer> ().enabled = false;
+			confirmationText.GetComponent<Renderer> ().enabled = false;
 		}
 
 		sttCanvas.enabled = isActive;
