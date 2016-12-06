@@ -222,14 +222,12 @@ MonoBehaviour:
   debugLabel: {fileID: 0}
   detectSwipes: 1
   minSwipeDistance: 0.1
-  strokePrefab: {fileID: 1000012283631962, guid: d6efe02b5fc0342e6b7ffdae2108820f,
+  strokePrefab: {fileID: 1000010213107120, guid: cfe559902d206415f92e25e9d44b27f2,
     type: 2}
   nodePrefab: {fileID: 1000013409896986, guid: 850f3c7ba5951492c8351e141d85dbdb, type: 2}
   pointerRef: {fileID: 4000011021056528}
   pview: {fileID: 114000010084853696}
   rayHitRef: {fileID: 4000010427563940}
-  micButton: {fileID: 114000013217194434, guid: 80e3a5314d2c440f78aa76aa0cfb82c8,
-    type: 2}
 --- !u!114 &114000012130582436
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -22,7 +22,7 @@ public class DrawInSpace : GVRInput
 	/// <summary>
 	/// Ref to the currently working stroke
 	/// </summary>
-	private GameObject activeStroke;
+	private BrushGen activeStroke;
 
 	/// <summary>
 	/// Ref to the sphear at the end of the pointer
@@ -46,6 +46,8 @@ public class DrawInSpace : GVRInput
 
 	private MicButton micButton;
 
+	private bool drawingOnBackground = false;
+
 
 	// Use this for initialization
 	public override void Awake ()
@@ -54,7 +56,8 @@ public class DrawInSpace : GVRInput
 		base.Awake ();
 	}
 
-	public void Start(){
+	public void Start ()
+	{
 		offline = !PhotonNetwork.connected;
 	}
 	
@@ -65,6 +68,8 @@ public class DrawInSpace : GVRInput
 	
 			return;
 		}
+		if (activeStroke != null)
+			activeStroke.UpdateBrushPos (rayHitRef.position);
 		base.Update ();
 
 		// For Debuging, manually trigger the buttons.
@@ -86,10 +91,11 @@ public class DrawInSpace : GVRInput
 			OnButtonUp ();
 
 
+
 		RaycastHit hit;
-			
-		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask)) {
-			rayHitRef.position = hit.point;
+
+		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
+			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.1f;
 			selectedObject = hit.collider.gameObject;
 //			Debug.Log (selectedObject.tag);
 		} else {
@@ -98,7 +104,7 @@ public class DrawInSpace : GVRInput
 			if (isDrawing && activeNode != null)
 				EndDrawStroke ();
 			selectedObject = null;
-			rayHitRef.position = pointerRef.position+controllerPivot.transform.forward*5;
+			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
 		}
 
 
@@ -121,62 +127,41 @@ public class DrawInSpace : GVRInput
 
 	void StartDrawStroke ()
 	{
+		
 		DebugMessage ("Button Down from DrawInSpace");
 		isDrawing = true;
-		if (!offline)
-			activeStroke = PhotonNetwork.Instantiate (strokePrefab.name, rayHitRef.position, Quaternion.identity, 0);
+		activeStroke = (Instantiate (strokePrefab, Vector3.zero,Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
+		activeStroke.gameObject.name = "activeStroke";
+		if (activeNode != null)
+			activeStroke.transform.parent = activeNode.transform;
 		else
-			activeStroke = Instantiate (strokePrefab,rayHitRef.position,Quaternion.identity) as GameObject;
-		activeStroke.name = "activeStroke";
-		activeStroke.transform.parent = rayHitRef;
+			drawingOnBackground = true;
+		
 		//activeStroke = Instantiate (strokePrefab, pointerRef.position, Quaternion.identity, pointerRef) as GameObject;
 	}
 
 	void EndDrawStroke ()
 	{
-		
+		drawingOnBackground = false;
 		DebugMessage ("Button Up from DrawinSpace");
-		if (!pview.isMine&& !offline)
+		if (!pview.isMine && !offline)
 			return;
 		isDrawing = false;
 		if (activeStroke != null) {
+			activeStroke.EndStroke ();
 			if (activeNode == null) {
 				activeStroke.transform.parent = null;
 			} else {
 				
 				// Bake Stroke
-				GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
-				GameObject cloneStroke = Instantiate (thisStroke,activeNode.nodeTransform) as GameObject;
-				for (int i = 0; i < 10; i++) {
-					SmoothVertexes(cloneStroke.GetComponent<MeshFilter>().sharedMesh);
-				}
+				//GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
+				//GameObject cloneStroke = Instantiate (thisStroke, activeNode.nodeTransform) as GameObject;
+		
 
-				Destroy (activeStroke);
+			//	Destroy (activeStroke);
 			}
 			activeStroke = null;
 		}
-	}
-	void SmoothVertexes(Mesh mesh){
-		for (int i = 0; i < mesh.vertexCount; i++) {
-			if (i - 2 < 0 || i + 2 >= mesh.vertexCount)
-				continue;
-			mesh.vertices[i] = GetMeanVector(new Vector3[]{mesh.vertices[i-2],mesh.vertices[i],mesh.vertices[i+2]});
-		}
-	}
-	private Vector3 GetMeanVector(Vector3[] positions)
-	{
-		if (positions.Length == 0)
-			return Vector3.zero;
-		float x = 0f;
-		float y = 0f;
-		float z = 0f;
-		foreach (Vector3 pos in positions)
-		{
-			x += pos.x;
-			y += pos.y;
-			z += pos.z;
-		}
-		return new Vector3(x / positions.Length, y / positions.Length, z / positions.Length);
 	}
 
 
@@ -184,8 +169,8 @@ public class DrawInSpace : GVRInput
 	{
 		if (selectedObject == null)
 			return;
-		activeMove = selectedObject.GetComponent<Node>();
-		activeMove.SetTarget(pointerRef);
+		activeMove = selectedObject.GetComponent<Node> ();
+		activeMove.SetTarget (pointerRef);
 
 	}
 
@@ -207,7 +192,7 @@ public class DrawInSpace : GVRInput
 			EndDrawStroke ();
 		}
 
-		if(selectedObject != null && selectedObject.tag == "MicButton") {
+		if (selectedObject != null && selectedObject.tag == "MicButton") {
 			micButton = selectedObject.GetComponent<MicButton> ();
 			micButton.ToggleActive ();
 		}
@@ -240,9 +225,9 @@ public class DrawInSpace : GVRInput
 
 	void ActivateNode (GameObject incNode)
 	{
-		activeNode = incNode.GetComponent<Node>();
+		activeNode = incNode.GetComponent<Node> ();
 		Vector3 halfPoint = Vector3.Lerp (pointerRef.position, controllerPivot.transform.position, 0.5f);
-		activeNode.SetDesiredPosition(halfPoint);
+		activeNode.SetDesiredPosition (halfPoint);
 	
 	}
 
@@ -264,7 +249,7 @@ public class DrawInSpace : GVRInput
 //		activeNode.nodeTransform.parent = pointerRef;
 //		activeNode.transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, 0);
 //		activeNode.transform.parent = null;
-		activeNode.SetDesiredPosition(pointerRef.position);
+		activeNode.SetDesiredPosition (pointerRef.position);
 		activeNode = null;
 
 	}
