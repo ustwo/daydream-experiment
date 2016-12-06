@@ -41,11 +41,7 @@ public class DrawInSpace : GVRInput
 
 	public Transform rayHitRef;
 
-
 	private bool offline = true;
-
-	private MicButton micButton;
-
 
 	// Use this for initialization
 	public override void Awake ()
@@ -182,8 +178,9 @@ public class DrawInSpace : GVRInput
 
 	void StartMove ()
 	{
-		if (selectedObject == null)
+		if (selectedObject == null || selectedObject.tag == "MicButton")
 			return;
+		
 		activeMove = selectedObject.GetComponent<Node>();
 		activeMove.SetTarget(pointerRef);
 
@@ -207,9 +204,8 @@ public class DrawInSpace : GVRInput
 			EndDrawStroke ();
 		}
 
-		if(selectedObject != null && selectedObject.tag == "MicButton") {
-			micButton = selectedObject.GetComponent<MicButton> ();
-			micButton.ToggleActive ();
+		if (selectedObject != null && selectedObject.tag == "MicButton") {
+			
 		}
 	}
 
