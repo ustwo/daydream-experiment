@@ -147,7 +147,7 @@ public class DrawInSpace : GVRInput
 				// Bake Stroke
 				GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
 				GameObject cloneStroke = Instantiate (thisStroke,activeNode.nodeTransform) as GameObject;
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < 100; i++) {
 					SmoothVertexes(cloneStroke.GetComponent<MeshFilter>().sharedMesh);
 				}
 
@@ -162,6 +162,7 @@ public class DrawInSpace : GVRInput
 				continue;
 			mesh.vertices[i] = GetMeanVector(new Vector3[]{mesh.vertices[i-2],mesh.vertices[i],mesh.vertices[i+2]});
 		}
+
 	}
 	private Vector3 GetMeanVector(Vector3[] positions)
 	{
