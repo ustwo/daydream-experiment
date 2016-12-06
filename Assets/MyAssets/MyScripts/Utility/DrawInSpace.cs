@@ -5,6 +5,8 @@
 using UnityEngine;
 using System.Collections;
 using Photon;
+using System.Collections.Generic;
+using IBM.Watson.DeveloperCloud.Widgets;
 
 public class DrawInSpace : GVRInput
 {
@@ -41,12 +43,25 @@ public class DrawInSpace : GVRInput
 
 	public Transform rayHitRef;
 
-
 	private bool offline = true;
 
-	private MicButton micButton;
-
 	private bool drawingOnBackground = false;
+
+	/// <summary>
+	/// Input mode.
+	/// </summary>
+	enum InputMode {
+		DRAW,
+		MICROPHONE
+	}
+
+	private InputMode currentInputMode;
+	private int modeNum = 0;
+	private Dictionary<int, InputMode> modeDict;
+
+	public MicrophoneWidget micWidget;
+
+	public SpeechToTextWidget sttWidget;
 
 
 	// Use this for initialization
@@ -58,6 +73,13 @@ public class DrawInSpace : GVRInput
 
 	public void Start ()
 	{
+		modeDict = new Dictionary<int, InputMode> ();
+		modeDict.Add (0, InputMode.DRAW);
+		modeDict.Add (1, InputMode.MICROPHONE);
+
+		currentInputMode = InputMode.DRAW;
+		modeNum = 0;
+
 		offline = !PhotonNetwork.connected;
 	}
 	
@@ -70,6 +92,7 @@ public class DrawInSpace : GVRInput
 		}
 		if (activeStroke != null)
 			activeStroke.UpdateBrushPos (rayHitRef.position);
+		
 		base.Update ();
 
 		// For Debuging, manually trigger the buttons.
@@ -90,6 +113,15 @@ public class DrawInSpace : GVRInput
 		if (Input.GetMouseButtonUp (0))
 			OnButtonUp ();
 
+		if (Input.GetKeyUp (KeyCode.Alpha9)) {
+			modeNum--;
+			UpdateMode ();
+		}
+			
+		if (Input.GetKeyUp (KeyCode.Alpha0)) {
+			modeNum++;
+			UpdateMode ();
+		}
 
 
 		RaycastHit hit;
@@ -119,7 +151,18 @@ public class DrawInSpace : GVRInput
 	public override void OnButtonDown ()
 	{
 		if (activeNode != null || selectedObject == null && activeNode == null) {
-			StartDrawStroke ();
+
+			switch(currentInputMode) {
+			case InputMode.DRAW:
+				StartDrawStroke ();
+				break;
+			case InputMode.MICROPHONE:
+				StartMicrophone ();
+				break;
+			default:
+				break;
+			}
+
 		} else {
 			StartMove ();
 		}
@@ -189,12 +232,16 @@ public class DrawInSpace : GVRInput
 		if (activeMove != null) {
 			StopMove ();
 		} else {
-			EndDrawStroke ();
-		}
-
-		if (selectedObject != null && selectedObject.tag == "MicButton") {
-			micButton = selectedObject.GetComponent<MicButton> ();
-			micButton.ToggleActive ();
+			switch(currentInputMode) {
+			case InputMode.DRAW:
+				EndDrawStroke ();
+				break;
+			case InputMode.MICROPHONE:
+				StopMicrophone ();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -208,19 +255,45 @@ public class DrawInSpace : GVRInput
 			else {
 				CreateNode ();
 			}
-				
-	
-		} else if (dir == GVRSwipeDirection.up)
+		} 
+		else if (dir == GVRSwipeDirection.up) {
 			CommitNode ();
+		}
+			
 		else if (dir == GVRSwipeDirection.right) {
-			if (activeMove != null)
+			
+			if (activeMove != null) {
 				return;
+			}
+
+			modeNum++;
+			UpdateMode ();
+
 			shouldDraw = !shouldDraw;
 			DebugMessage ("should draw = " + shouldDraw);
+		} 
+		else if(dir == GVRSwipeDirection.left) {
+			modeNum--;
+			UpdateMode ();
 		}
 		
 		base.OnSwipe (dir);
 
+	}
+
+	void UpdateMode() 
+	{
+		if(modeNum < 0) {
+			modeNum = modeDict.Count - 1;
+		}
+
+		if(modeNum > modeDict.Count - 1) {
+			modeNum = 0;
+		}
+
+		currentInputMode = modeDict [modeNum];
+
+		Debug.Log (currentInputMode);
 	}
 
 	void ActivateNode (GameObject incNode)
@@ -259,6 +332,21 @@ public class DrawInSpace : GVRInput
 		UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 	}
 
+	/// <summary>
+	/// Starts the microphone.
+	/// </summary>
+	void StartMicrophone() 
+	{
+		Debug.Log ("Starting microphone");
+	}
+
+	/// <summary>
+	/// Stops the microphone.
+	/// </summary>
+	void StopMicrophone()
+	{
+		Debug.Log ("Stopping microphone");
+	}
 
 
 }
