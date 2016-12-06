@@ -205,7 +205,7 @@ public class DrawInSpace : GVRInput
 		}
 
 		if (selectedObject != null && selectedObject.tag == "MicButton") {
-			
+			selectedObject.GetComponent<MicButton> ().ToggleActive ();
 		}
 	}
 
