@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using IBM.Watson.DeveloperCloud.Widgets;
 
 public class MicButton : MonoBehaviour {
 
@@ -13,10 +14,12 @@ public class MicButton : MonoBehaviour {
 
 	public Canvas sttCanvas;
 
+	public MicrophoneWidget micWidget;
+
 	void Start () 
 	{
 		renderer = GetComponent<Renderer> ();
-		sttCanvas.enabled = false;
+//		sttCanvas.enabled = false;
 	}
 
 	void Update () 
@@ -32,8 +35,10 @@ public class MicButton : MonoBehaviour {
 
 		if(isActive) {
 			renderer.material = activeMaterial;
+			micWidget.ActivateMicrophone ();
 		} else {
 			renderer.material = inactiveMaterial;
+			micWidget.DeactivateMicrophone ();
 		}
 
 		sttCanvas.enabled = isActive;
