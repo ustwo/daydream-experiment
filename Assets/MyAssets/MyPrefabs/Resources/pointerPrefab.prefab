@@ -218,7 +218,7 @@ MonoBehaviour:
   controllerPivot: {fileID: 1000013295505430}
   detectionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967263
   debugLabel: {fileID: 0}
   detectSwipes: 1
   minSwipeDistance: 0.1
