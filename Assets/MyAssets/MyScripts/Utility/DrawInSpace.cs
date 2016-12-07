@@ -47,17 +47,26 @@ public class DrawInSpace : GVRInput
 
 	private bool drawingOnBackground = false;
 
+	public Transform ToolGuideGizmo;
+	public Transform ToolGuideAnchor;
+
+	public Tool[] toolCollection;
+
 	/// <summary>
 	/// Input mode.
 	/// </summary>
-	enum InputMode {
-		DRAW,
-		MICROPHONE
+	public enum InputMode {
+		 DRAW = 0,
+		 MICROPHONE = 1,
+			MOVE = 2
 	}
 
+
 	private InputMode currentInputMode;
+	private InputMode lastInputMode;
+
 	private int modeNum = 0;
-	private Dictionary<int, InputMode> modeDict;
+	private Dictionary<int, InputMode> selectableModeDict;
 
 	public GameObject micPrefab;
 	private MicrophoneWidget micWidget;
@@ -77,12 +86,11 @@ public class DrawInSpace : GVRInput
 
 	public void Start ()
 	{
-		modeDict = new Dictionary<int, InputMode> ();
-		modeDict.Add (0, InputMode.DRAW);
-		modeDict.Add (1, InputMode.MICROPHONE);
+		selectableModeDict = new Dictionary<int, InputMode> ();
+		selectableModeDict.Add (0, InputMode.DRAW);
+		selectableModeDict.Add (1, InputMode.MICROPHONE);
 
-		currentInputMode = InputMode.DRAW;
-		modeNum = 0;
+		SetMode (InputMode.DRAW);
 
 		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
 		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
@@ -94,6 +102,7 @@ public class DrawInSpace : GVRInput
 	// Update is called once per frame
 	public override void Update ()
 	{
+		//DebugMessage (transform.position.ToString());
 		if (!pview.isMine && !offline) {
 	
 			return;
@@ -135,11 +144,18 @@ public class DrawInSpace : GVRInput
 		RaycastHit hit;
 
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
-			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.1f;
+			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.5f;
 			selectedObject = hit.collider.gameObject;
+			if (activeNode == null && selectedObject.GetComponent<Node>() != null) {
+				if (currentInputMode != InputMode.MOVE)
+					lastInputMode = currentInputMode;
+				SetMode (InputMode.MOVE);
+				toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
+			}
 //			Debug.Log (selectedObject.tag);
 		} else {
-			
+			if (currentInputMode == InputMode.MOVE)
+				SetMode (lastInputMode);
 
 			if (isDrawing && activeNode != null)
 				EndDrawStroke ();
@@ -159,6 +175,9 @@ public class DrawInSpace : GVRInput
 	public override void OnButtonDown ()
 	{
 		Debug.Log ("OnButtonDown");
+
+		toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
+		toolCollection [modeNum].SetIsActive (true);
 
 		if (activeNode != null || selectedObject == null && activeNode == null) {
 
@@ -183,12 +202,16 @@ public class DrawInSpace : GVRInput
 		
 		DebugMessage ("Button Down from DrawInSpace");
 		isDrawing = true;
-		activeStroke = (Instantiate (strokePrefab, Vector3.zero,Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
+		activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
 		activeStroke.gameObject.name = "activeStroke";
-		if (activeNode != null)
+		if (activeNode != null) {
 			activeStroke.transform.parent = activeNode.transform;
-		else
+			activeStroke.SetMaterial (0);
+
+		} else {
 			drawingOnBackground = true;
+			activeStroke.SetMaterial (1);
+		}
 		
 		//activeStroke = Instantiate (strokePrefab, pointerRef.position, Quaternion.identity, pointerRef) as GameObject;
 	}
@@ -211,7 +234,7 @@ public class DrawInSpace : GVRInput
 				//GameObject cloneStroke = Instantiate (thisStroke, activeNode.nodeTransform) as GameObject;
 		
 
-			//	Destroy (activeStroke);
+				//	Destroy (activeStroke);
 			}
 			activeStroke = null;
 		}
@@ -223,6 +246,8 @@ public class DrawInSpace : GVRInput
 		if (selectedObject == null)
 			return;
 		activeMove = selectedObject.GetComponent<Node> ();
+		if (!activeMove)
+			return;
 		activeMove.SetTarget (pointerRef);
 
 	}
@@ -230,6 +255,7 @@ public class DrawInSpace : GVRInput
 	void StopMove ()
 	{
 		activeMove.SetDesiredPosition (pointerRef.position);
+		activeMove.resetPosition = pointerRef.position;
 		activeMove.SetTarget (null);
 		activeMove = null;
 	}
@@ -239,6 +265,9 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonUp ()
 	{
+		toolCollection [modeNum].UpdateDesiredPostion (ToolGuideAnchor);
+		toolCollection [modeNum].SetIsActive (false);
+
 		if (activeMove != null) {
 			StopMove ();
 		} else {
@@ -294,16 +323,43 @@ public class DrawInSpace : GVRInput
 	void UpdateMode() 
 	{
 		if(modeNum < 0) {
-			modeNum = modeDict.Count - 1;
+			modeNum = selectableModeDict.Count - 1;
 		}
 
-		if(modeNum > modeDict.Count - 1) {
+		if(modeNum > selectableModeDict.Count - 1) {
 			modeNum = 0;
 		}
 
-		currentInputMode = modeDict [modeNum];
+		SetMode (selectableModeDict [modeNum]);
 
 		Debug.Log (currentInputMode);
+	}
+
+
+	// Universal set mode.
+	public void SetMode(InputMode incMode){
+		modeNum = (int)incMode;
+		currentInputMode = (InputMode)modeNum;
+		TurnOnTool (modeNum);
+
+	}
+
+	// Turn on current tool and turn all others off. 
+	public void TurnOnTool(int incIndex){
+		for (int i = 0; i < toolCollection.Length; i++) {
+			if (i == incIndex) {
+				toolCollection [i].gameObject.SetActive (true);
+			} else {
+				toolCollection [i].gameObject.SetActive (false);
+			}
+		}
+	}
+
+	// If a tool is on and not out of index, tell it that it's being used and no longer idle.
+	public void ActivateCurrentTool(bool incBool){
+		if (modeNum >= toolCollection.Length)
+			return;
+		toolCollection [modeNum].SetIsActive (incBool);
 	}
 
 	void ActivateNode (GameObject incNode)
@@ -316,6 +372,23 @@ public class DrawInSpace : GVRInput
 
 	void CreateNode ()
 	{
+		if (activeNode != null) {
+			if (selectedObject != null) {
+				Node selectedNode = selectedObject.GetComponent<Node> ();
+				if (selectedNode != null && selectedNode == activeNode) {
+					Destroy (activeNode.gameObject);
+					activeNode = null;
+					return;
+				} else if (selectedNode != null && selectedNode != activeNode) {
+
+					CommitNode ();
+					ActivateNode (selectedObject);
+					return;
+
+				}
+			}
+			CommitNode ();
+		}
 		if (!offline)
 			ActivateNode (PhotonNetwork.Instantiate (nodePrefab.name, pointerRef.position, Quaternion.identity, 0));
 		else
@@ -332,14 +405,16 @@ public class DrawInSpace : GVRInput
 //		activeNode.nodeTransform.parent = pointerRef;
 //		activeNode.transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, 0);
 //		activeNode.transform.parent = null;
-		activeNode.SetDesiredPosition (pointerRef.position);
+		activeNode.SetDesiredPosition (activeNode.resetPosition);
 		activeNode = null;
 
 	}
 
 	public override void AppButtonDown ()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene (0);
+		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
+		if (activeNode != null)
+			activeNode.ClearContent ();
 	}
 
 	/// <summary>
