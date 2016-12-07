@@ -317,11 +317,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-<<<<<<< HEAD
   m_Text: 
-=======
-  m_Text: This is a whole bunch of text that's just going to show up in here.
->>>>>>> master
 --- !u!114 &114000013962395514
 MonoBehaviour:
   m_ObjectHideFlags: 1

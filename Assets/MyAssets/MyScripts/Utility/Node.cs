@@ -12,10 +12,12 @@ public class Node : MonoBehaviour {
 
 	public Text transcriptText;
 	public Text speechPrompt;
+	[HideInInspector]
+	public Vector3 resetPosition;
 
 	void Start(){
 		_myTransform = transform;
-
+		resetPosition = transform.position;
 		speechPrompt.enabled = false;
 		transcriptText.enabled = false;
 	}
@@ -51,6 +53,7 @@ public class Node : MonoBehaviour {
 		for (int i = transform.childCount -1 ; i > 1; i--) {
 			Destroy (transform.GetChild (i).gameObject);
 		}
+		transcriptText.text = "";
 	}
 
 	public void beginSpeech()
