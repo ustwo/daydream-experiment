@@ -55,10 +55,11 @@ public class DrawInSpace : GVRInput
 	/// <summary>
 	/// Input mode.
 	/// </summary>
-	public enum InputMode {
-		 DRAW = 0,
-		 MICROPHONE = 1,
-			MOVE = 2
+	public enum InputMode
+	{
+		DRAW = 0,
+		MICROPHONE = 1,
+		MOVE = 2
 	}
 
 
@@ -138,7 +139,7 @@ public class DrawInSpace : GVRInput
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
 			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.5f;
 			selectedObject = hit.collider.gameObject;
-			if (activeNode == null && selectedObject.GetComponent<Node>() != null) {
+			if (activeNode == null && selectedObject.GetComponent<Node> () != null) {
 				if (currentInputMode != InputMode.MOVE)
 					lastInputMode = currentInputMode;
 				SetMode (InputMode.MOVE);
@@ -166,12 +167,13 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
-		toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
 		toolCollection [modeNum].SetIsActive (true);
 
 		if (activeNode != null || selectedObject == null && activeNode == null) {
+			toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
+		
 
-			switch(currentInputMode) {
+			switch (currentInputMode) {
 			case InputMode.DRAW:
 				StartDrawStroke ();
 				break;
@@ -261,7 +263,7 @@ public class DrawInSpace : GVRInput
 		if (activeMove != null) {
 			StopMove ();
 		} else {
-			switch(currentInputMode) {
+			switch (currentInputMode) {
 			case InputMode.DRAW:
 				EndDrawStroke ();
 				break;
@@ -279,17 +281,16 @@ public class DrawInSpace : GVRInput
 	{
 		
 		if (dir == GVRSwipeDirection.down) {
-			if (selectedObject != null)
+			if (selectedObject != null) {
+				if (activeNode != null)
+					CommitNode ();
 				ActivateNode (selectedObject);
-			else {
+			} else {
 				CreateNode ();
 			}
-		} 
-		else if (dir == GVRSwipeDirection.up) {
+		} else if (dir == GVRSwipeDirection.up) {
 			CommitNode ();
-		}
-			
-		else if (dir == GVRSwipeDirection.right) {
+		} else if (dir == GVRSwipeDirection.right) {
 			
 			if (activeMove != null) {
 				return;
@@ -300,8 +301,7 @@ public class DrawInSpace : GVRInput
 
 			shouldDraw = !shouldDraw;
 			DebugMessage ("should draw = " + shouldDraw);
-		} 
-		else if(dir == GVRSwipeDirection.left) {
+		} else if (dir == GVRSwipeDirection.left) {
 			modeNum--;
 			UpdateMode ();
 		}
@@ -310,13 +310,13 @@ public class DrawInSpace : GVRInput
 
 	}
 
-	void UpdateMode() 
+	void UpdateMode ()
 	{
-		if(modeNum < 0) {
+		if (modeNum < 0) {
 			modeNum = selectableModeDict.Count - 1;
 		}
 
-		if(modeNum > selectableModeDict.Count - 1) {
+		if (modeNum > selectableModeDict.Count - 1) {
 			modeNum = 0;
 		}
 
@@ -327,15 +327,17 @@ public class DrawInSpace : GVRInput
 
 
 	// Universal set mode.
-	public void SetMode(InputMode incMode){
+	public void SetMode (InputMode incMode)
+	{
 		modeNum = (int)incMode;
 		currentInputMode = (InputMode)modeNum;
 		TurnOnTool (modeNum);
 
 	}
 
-	// Turn on current tool and turn all others off. 
-	public void TurnOnTool(int incIndex){
+	// Turn on current tool and turn all others off.
+	public void TurnOnTool (int incIndex)
+	{
 		for (int i = 0; i < toolCollection.Length; i++) {
 			if (i == incIndex) {
 				toolCollection [i].gameObject.SetActive (true);
@@ -346,7 +348,8 @@ public class DrawInSpace : GVRInput
 	}
 
 	// If a tool is on and not out of index, tell it that it's being used and no longer idle.
-	public void ActivateCurrentTool(bool incBool){
+	public void ActivateCurrentTool (bool incBool)
+	{
 		if (modeNum >= toolCollection.Length)
 			return;
 		toolCollection [modeNum].SetIsActive (incBool);
@@ -354,9 +357,11 @@ public class DrawInSpace : GVRInput
 
 	void ActivateNode (GameObject incNode)
 	{
+		
 		activeNode = incNode.GetComponent<Node> ();
 		Vector3 halfPoint = Vector3.Lerp (pointerRef.position, controllerPivot.transform.position, 0.5f);
 		activeNode.SetDesiredPosition (halfPoint);
+		SetMode (InputMode.DRAW);
 	
 	}
 
@@ -405,12 +410,14 @@ public class DrawInSpace : GVRInput
 		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 		if (activeNode != null)
 			activeNode.ClearContent ();
+		else if (selectedObject != null)
+			Destroy (selectedObject);
 	}
 
 	/// <summary>
 	/// Starts the microphone.
 	/// </summary>
-	void StartMicrophone() 
+	void StartMicrophone ()
 	{
 		Debug.Log ("Starting microphone");
 
@@ -419,7 +426,7 @@ public class DrawInSpace : GVRInput
 		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
 	}
 
-	void OnTranscriptUpdated(string text)
+	void OnTranscriptUpdated (string text)
 	{
 		Debug.Log ("OnTranscriptUpdated: " + text);
 		activeNode.updateTranscript (text);
@@ -428,7 +435,7 @@ public class DrawInSpace : GVRInput
 	/// <summary>
 	/// Stops the microphone.
 	/// </summary>
-	void StopMicrophone()
+	void StopMicrophone ()
 	{
 		Debug.Log ("Stopping microphone");
 

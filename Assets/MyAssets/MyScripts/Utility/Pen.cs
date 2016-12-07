@@ -26,7 +26,7 @@ public class Pen : Tool {
 
 		// if transition time left over, move object to deisred destination. 
 		if (popInPlaceTime > 0) {
-			transform.position = Vector3.MoveTowards (transform.position, target.position, 10f * Time.deltaTime);
+			transform.position = Vector3.MoveTowards (transform.position, target.position,moveSpeed * Time.deltaTime);
 			popInPlaceTime -= Time.deltaTime;
 		} else {
 			transform.position = target.position;
