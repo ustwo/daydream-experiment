@@ -69,9 +69,13 @@ public class DrawInSpace : GVRInput
 	private int modeNum = 0;
 	private Dictionary<int, InputMode> selectableModeDict;
 
-	public MicrophoneWidget micWidget;
+	public GameObject micPrefab;
+	private MicrophoneWidget micWidget;
 
-	public STTController sttWidget;
+	public GameObject sttPrefab;
+	private STTController sttWidget;
+
+//	public GameObject sttCanvas;
 
 
 	// Use this for initialization
@@ -88,6 +92,10 @@ public class DrawInSpace : GVRInput
 		selectableModeDict.Add (1, InputMode.MICROPHONE);
 
 		SetMode (InputMode.DRAW);
+
+		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
+		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
+//		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
 
 		offline = !PhotonNetwork.connected;
 	}
@@ -167,6 +175,7 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
+		Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetIsActive (true);
 
 		if (activeNode != null || selectedObject == null && activeNode == null) {
