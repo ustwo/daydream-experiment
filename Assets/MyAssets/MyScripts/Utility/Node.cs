@@ -10,9 +10,16 @@ public class Node : MonoBehaviour {
 	private Transform _myTransform;
 	private Transform _targetTransform;
 
+	public Text transcriptText;
+	public Text speechPrompt;
+	[HideInInspector]
+	public Vector3 resetPosition;
 
 	void Start(){
 		_myTransform = transform;
+		resetPosition = transform.position;
+		speechPrompt.enabled = false;
+		transcriptText.enabled = false;
 	}
 
 	public Transform nodeTransform{
@@ -38,6 +45,35 @@ public class Node : MonoBehaviour {
 		myRigid.AddForce (force);
 		
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
+
+	}
+
+
+	public void ClearContent(){
+		for (int i = transform.childCount -1 ; i > 1; i--) {
+			Destroy (transform.GetChild (i).gameObject);
+		}
+		transcriptText.text = "";
+	}
+
+	public void beginSpeech()
+	{
+		transcriptText.enabled = true;
+		transcriptText.text = "";
+		speechPrompt.enabled = true;
+	}
+
+	public void updateTranscript(string text)
+	{
+		if (speechPrompt.enabled)
+			speechPrompt.enabled = false;
+		
+		transcriptText.text += text;
+	}
+
+	public void endSpeech()
+	{
+		
 
 	}
 
