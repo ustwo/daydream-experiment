@@ -41,4 +41,10 @@ public class Node : MonoBehaviour {
 
 	}
 
+	public void ClearContent(){
+		for (int i = transform.childCount -1 ; i > 1; i--) {
+			Destroy (transform.GetChild (i).gameObject);
+		}
+	}
+
 }

@@ -64,6 +64,7 @@ public class DrawInSpace : GVRInput
 	// Update is called once per frame
 	public override void Update ()
 	{
+		//DebugMessage (transform.position.ToString());
 		if (!pview.isMine && !offline) {
 	
 			return;
@@ -95,7 +96,7 @@ public class DrawInSpace : GVRInput
 		RaycastHit hit;
 
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
-			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.1f;
+			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.5f;
 			selectedObject = hit.collider.gameObject;
 //			Debug.Log (selectedObject.tag);
 		} else {
@@ -130,12 +131,16 @@ public class DrawInSpace : GVRInput
 		
 		DebugMessage ("Button Down from DrawInSpace");
 		isDrawing = true;
-		activeStroke = (Instantiate (strokePrefab, Vector3.zero,Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
+		activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
 		activeStroke.gameObject.name = "activeStroke";
-		if (activeNode != null)
+		if (activeNode != null) {
 			activeStroke.transform.parent = activeNode.transform;
-		else
+			activeStroke.SetMaterial (0);
+
+		} else {
 			drawingOnBackground = true;
+			activeStroke.SetMaterial (1);
+		}
 		
 		//activeStroke = Instantiate (strokePrefab, pointerRef.position, Quaternion.identity, pointerRef) as GameObject;
 	}
@@ -158,7 +163,7 @@ public class DrawInSpace : GVRInput
 				//GameObject cloneStroke = Instantiate (thisStroke, activeNode.nodeTransform) as GameObject;
 		
 
-			//	Destroy (activeStroke);
+				//	Destroy (activeStroke);
 			}
 			activeStroke = null;
 		}
@@ -256,7 +261,9 @@ public class DrawInSpace : GVRInput
 
 	public override void AppButtonDown ()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene (0);
+		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
+		if (activeNode != null)
+			activeNode.ClearContent ();
 	}
 
 

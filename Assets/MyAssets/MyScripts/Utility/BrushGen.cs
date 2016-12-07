@@ -20,16 +20,17 @@ public class BrushGen : MonoBehaviour
 	List<Vector3> verts;
 	private bool offset = false;
 	private TravelDirectionE travelDirectionE;
-	public Material brushMaterial;
-	private Vector2 firstUV = new Vector2(1,0);
-	private Vector2 secondUV = new Vector2(1,1);
-	private Vector2 thirdUV = new Vector2(0,0);
-	private Vector2 fourthUV = new Vector2(0,1);
+	public Material[] brushMaterial;
+	private Vector2 firstUV = new Vector2 (1, 0);
+	private Vector2 secondUV = new Vector2 (1, 1);
+	private Vector2 thirdUV = new Vector2 (0, 0);
+	private Vector2 fourthUV = new Vector2 (0, 1);
 	public TravelDirectionE lastTravelDirection;
 	public Transform brushEndTransform;
 	private Vector3 desiredPosition;
 	private float brushSpeed = 50f;
-	private bool strokeEnded  = false;
+	private bool strokeEnded = false;
+
 
 
 
@@ -37,23 +38,32 @@ public class BrushGen : MonoBehaviour
 	void Start ()
 	{
 		MeshFilter meshFilter = gameObject.AddComponent<MeshFilter> ();
-		MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
+
 		mesh = new Mesh ();
 		meshFilter.mesh = mesh;
 		verts = new List<Vector3> ();
-		meshRenderer.material = brushMaterial;
 		lastPointAddPosition = brushEndTransform.position;
 
 	}
 
-	public void UpdateBrushPos(Vector3 incPos){
-		//if(desiredPosition== null)
-			brushEndTransform.position = incPos;
+	public void SetMaterial (int index)
+	{
+		MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
+		if (index < brushMaterial.Length)
+			meshRenderer.material = brushMaterial [index];
+	}
 
-	//desiredPosition = incPos;
+	public void UpdateBrushPos (Vector3 incPos)
+	{
+		//if(desiredPosition== null)
+		brushEndTransform.position = incPos;
+
+		//desiredPosition = incPos;
 	
 	}
-	public void EndStroke(){
+
+	public void EndStroke ()
+	{
 		strokeEnded = true;
 	}
 	
@@ -63,7 +73,7 @@ public class BrushGen : MonoBehaviour
 		if (strokeEnded)
 			return;
 		//if(desiredPosition!=null)
-			//brushEndTransform.position = Vector3.MoveTowards (brushEndTransform.position, desiredPosition, brushSpeed * Time.deltaTime);
+		//brushEndTransform.position = Vector3.MoveTowards (brushEndTransform.position, desiredPosition, brushSpeed * Time.deltaTime);
 		
 
 		if (Vector3.Distance (brushEndTransform.position, lastPointAddPosition) > 0.1f) {
@@ -71,7 +81,9 @@ public class BrushGen : MonoBehaviour
 			AddPoint ();
 		}
 	}
-	void DeterminTravelDirection(){
+
+	void DeterminTravelDirection ()
+	{
 		Vector3 travelDirection = lastPointAddPosition - brushEndTransform.position;
 
 		if (Mathf.Abs (travelDirection.x) > Mathf.Abs (travelDirection.y)) {
@@ -107,15 +119,16 @@ public class BrushGen : MonoBehaviour
 		verts.Add (nextPosition);
 		//GameObject showMe = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		//showMe.transform.position = nextPosition;
-		GenMesh (verts,tris);
+		GenMesh (verts, tris);
 
 	}
 
-	void GenMesh(List<Vector3> incVerts, List<int> tris){
+	void GenMesh (List<Vector3> incVerts, List<int> tris)
+	{
 		
 		mesh.SetVertices (verts);
-	//	if(mesh.vertexCount>30)
-	//		Debug.LogError ("wtf?");
+		//	if(mesh.vertexCount>30)
+		//		Debug.LogError ("wtf?");
 		if (mesh.vertexCount > 4) {
 			tris.Add (verts.Count - (offset ? 3 : 2));
 			tris.Add (verts.Count - 1);
@@ -145,7 +158,7 @@ public class BrushGen : MonoBehaviour
 			case(TravelDirectionE.right):
 				return Vector3.up * 0.5f;
 			case(TravelDirectionE.left):
-				return Vector3.down  *0.5f;
+				return Vector3.down * 0.5f;
 			case(TravelDirectionE.up):
 				return Vector3.left * 0.5f;
 			case(TravelDirectionE.down):

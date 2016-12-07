@@ -9,3 +9,5 @@ EditorBuildSettings:
     path: Assets/MyAssets/MyScene/WriteInSpace.unity
   - enabled: 0
     path: Assets/MyAssets/MyScene/SpeechToText.unity
+  - enabled: 0
+    path: Assets/MyAssets/MyScene/CombinedScne.unity
