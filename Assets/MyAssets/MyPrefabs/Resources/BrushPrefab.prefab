@@ -81,6 +81,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  brushMaterial: {fileID: 2100000, guid: a6dc4bf0d0d7d4fbf8b828c2ebe27dfb, type: 2}
+  brushMaterial:
+  - {fileID: 2100000, guid: a6dc4bf0d0d7d4fbf8b828c2ebe27dfb, type: 2}
+  - {fileID: 2100000, guid: d3b1c561cbe8a42ef80cae1f8f893dfb, type: 2}
   lastTravelDirection: 0
   brushEndTransform: {fileID: 4000011966430452}
