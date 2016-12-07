@@ -50,6 +50,8 @@ public class Node : MonoBehaviour {
 
 
 	public void ClearContent(){
+		if (transform.childCount < 3)
+			Destroy (gameObject);
 		for (int i = transform.childCount -1 ; i > 1; i--) {
 			Destroy (transform.GetChild (i).gameObject);
 		}
