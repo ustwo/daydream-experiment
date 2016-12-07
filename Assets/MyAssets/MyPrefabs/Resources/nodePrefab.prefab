@@ -283,6 +283,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myRigid: {fileID: 54000011636659894}
   travelForce: 500
+  transcriptText: {fileID: 114000013800920940}
+  speechPrompt: {fileID: 114000010407504570}
 --- !u!114 &114000013800920940
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -204,9 +204,8 @@ namespace IBM.Watson.DeveloperCloud.Widgets
             string text = alt.transcript;
 
             if (m_Transcript != null)
-//              m_Transcript.text += string.Format("{0} ({1}, {2:0.00})\n",
-//                  text, res.final ? "Final" : "Interim", alt.confidence);
-				m_Transcript.text += string.Format("{0}\n", text);
+              m_Transcript.text += string.Format("{0} ({1}, {2:0.00})\n",
+                  text, res.final ? "Final" : "Interim", alt.confidence);
           }
         }
       }

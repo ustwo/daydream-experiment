@@ -61,7 +61,7 @@ public class DrawInSpace : GVRInput
 
 	public MicrophoneWidget micWidget;
 
-	public SpeechToTextWidget sttWidget;
+	public STTController sttWidget;
 
 
 	// Use this for initialization
@@ -338,6 +338,16 @@ public class DrawInSpace : GVRInput
 	void StartMicrophone() 
 	{
 		Debug.Log ("Starting microphone");
+
+		micWidget.ActivateMicrophone ();
+		activeNode.beginSpeech ();
+		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
+	}
+
+	void OnTranscriptUpdated(string text)
+	{
+		Debug.Log ("OnTranscriptUpdated: " + text);
+		activeNode.updateTranscript (text);
 	}
 
 	/// <summary>
@@ -346,7 +356,10 @@ public class DrawInSpace : GVRInput
 	void StopMicrophone()
 	{
 		Debug.Log ("Stopping microphone");
-	}
 
+		micWidget.DeactivateMicrophone ();
+		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
+		activeNode.endSpeech ();
+	}
 
 }
