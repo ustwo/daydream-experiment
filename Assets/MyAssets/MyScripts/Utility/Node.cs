@@ -10,9 +10,14 @@ public class Node : MonoBehaviour {
 	private Transform _myTransform;
 	private Transform _targetTransform;
 
+	public Text transcriptText;
+	public Text speechPrompt;
 
 	void Start(){
 		_myTransform = transform;
+
+		speechPrompt.enabled = false;
+		transcriptText.enabled = false;
 	}
 
 	public Transform nodeTransform{
@@ -41,10 +46,32 @@ public class Node : MonoBehaviour {
 
 	}
 
+
 	public void ClearContent(){
 		for (int i = transform.childCount -1 ; i > 1; i--) {
 			Destroy (transform.GetChild (i).gameObject);
 		}
+	}
+
+	public void beginSpeech()
+	{
+		transcriptText.enabled = true;
+		transcriptText.text = "";
+		speechPrompt.enabled = true;
+	}
+
+	public void updateTranscript(string text)
+	{
+		if (speechPrompt.enabled)
+			speechPrompt.enabled = false;
+		
+		transcriptText.text += text;
+	}
+
+	public void endSpeech()
+	{
+		
+
 	}
 
 }
