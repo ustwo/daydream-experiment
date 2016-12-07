@@ -193,6 +193,8 @@ public class STTController : Widget
 
 	private void OnRecognize(SpeechRecognitionEvent result)
 	{
+//		Debug.Log ("OnRecognize");
+
 		m_ResultOutput.SendData(new SpeechToTextData(result));
 
 		if (result != null && result.results.Length > 0)
@@ -208,7 +210,8 @@ public class STTController : Widget
 
 					if (m_Transcript != null) {
 						m_Transcript.text += string.Format("{0}\n", text);
-						OnTranscriptUpdated (text);
+						Debug.Log (text);
+						if(OnTranscriptUpdated != null) OnTranscriptUpdated (text);
 					}
 				}
 			}

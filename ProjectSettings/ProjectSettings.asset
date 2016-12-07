@@ -108,7 +108,7 @@ PlayerSettings:
   protectGraphicsMemory: 0
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 24
-  AndroidPreferredInstallLocation: 1
+  AndroidPreferredInstallLocation: 0
   aotOptions: 
   apiCompatibilityLevel: 1
   stripEngineCode: 1

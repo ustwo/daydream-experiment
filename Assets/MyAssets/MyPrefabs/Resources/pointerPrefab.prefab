@@ -228,10 +228,9 @@ MonoBehaviour:
   pointerRef: {fileID: 4000011021056528}
   pview: {fileID: 114000010084853696}
   rayHitRef: {fileID: 4000010427563940}
-  micWidget: {fileID: 114000011719801384, guid: adbb86c1a080f47d2a90540fb32d6c46,
-    type: 2}
-  sttWidget: {fileID: 114000013862916426, guid: adbb86c1a080f47d2a90540fb32d6c46,
-    type: 2}
+  micPrefab: {fileID: 1000010654628158, guid: 9779bf83d3cc747a1a289f3aa367e460, type: 2}
+  sttPrefab: {fileID: 1000012049493408, guid: 4ab7e5cc3030944eeae2f415fddb27c1, type: 2}
+  sttCanvas: {fileID: 1000013512894618, guid: 088cba468fd8940eca490d6bc7af0574, type: 2}
 --- !u!114 &114000012130582436
 MonoBehaviour:
   m_ObjectHideFlags: 1
