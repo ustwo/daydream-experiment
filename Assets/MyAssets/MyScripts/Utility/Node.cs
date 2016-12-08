@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class Node : MonoBehaviour {
+public class Node : Photon.MonoBehaviour {
 
 	public Rigidbody myRigid;
 	public float travelForce = 5f;
@@ -15,11 +15,18 @@ public class Node : MonoBehaviour {
 	[HideInInspector]
 	public Vector3 resetPosition;
 
+	void OnEnable(){
+		if (photonView.isMine) {
+			string generatedName = "Node_" + randomID;
+			photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
+		}
+	}
+
 	void Start(){
 		_myTransform = transform;
 		resetPosition = transform.position;
 		speechPrompt.enabled = false;
-		transcriptText.enabled = false;
+		//transcriptText.enabled = false;
 	}
 
 	public Transform nodeTransform{
@@ -34,8 +41,14 @@ public class Node : MonoBehaviour {
 	public void SetDesiredPosition(Vector3 incPos){
 		_desiredPosition = incPos;
 	}
+	[PunRPC]
+	public void SetNetworkName(string name){
+		gameObject.name = name;
+	}
 
 	void FixedUpdate(){
+		if (!photonView.isMine)
+			return;
 		Vector3 force = Vector3.zero;
 		if(_targetTransform == null)
 			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelForce);
@@ -48,7 +61,7 @@ public class Node : MonoBehaviour {
 
 	}
 
-
+	[PunRPC]
 	public void ClearContent(){
 		if (transform.childCount < 3)
 			Destroy (gameObject);
@@ -64,7 +77,7 @@ public class Node : MonoBehaviour {
 		transcriptText.text = "";
 		speechPrompt.enabled = true;
 	}
-
+	[PunRPC]
 	public void updateTranscript(string text)
 	{
 		if (speechPrompt.enabled)
@@ -73,10 +86,33 @@ public class Node : MonoBehaviour {
 		transcriptText.text += text;
 	}
 
+	string randomID {
+		get{
+			int idInt = Random.Range (0, 1000000);
+			return idInt.ToString ("0000000");
+		}
+	}
+
 	public void endSpeech()
 	{
 		
 
+	}
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting)
+		{
+			
+			stream.SendNext (transform.position);
+			stream.SendNext (transform.rotation);
+		}
+		else
+		{
+			transform.position = (Vector3)stream.ReceiveNext ();
+			transform.rotation = (Quaternion)stream.ReceiveNext ();
+
+		}
 	}
 
 }

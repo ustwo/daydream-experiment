@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 4000011387585680}
   - 114: {fileID: 114000012235221236}
+  - 114: {fileID: 114000011822844514}
   m_Layer: 0
   m_Name: BrushPrefab
   m_TagString: Untagged
@@ -69,6 +70,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4000011387585680}
   m_RootOrder: 0
+--- !u!114 &114000011822844514
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000010213107120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  observed: {fileID: 0}
+  synchronization: 3
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114000012235221236}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  isRuntimeInstantiated: 0
 --- !u!114 &114000012235221236
 MonoBehaviour:
   m_ObjectHideFlags: 1

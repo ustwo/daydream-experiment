@@ -1,14 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Tool : MonoBehaviour {
+public class Tool : MonoBehaviour
+{
 
-	protected Transform target;
+	[HideInInspector]
+	public Transform target;
+	protected Vector3 targetPosition;
 	protected bool isActive = false;
-	public virtual void UpdateDesiredPostion(Transform incTarget){
+
+	public virtual void OnEnable ()
+	{
+		target = null;
+		targetPosition = transform.parent.position;
+	}
+
+	public virtual void SetMoveTarget (Transform incTarget)
+	{
 		target = incTarget;
 	}
-	public virtual void SetIsActive(bool incBool){
+
+	public void SetMovePosition (Vector3 incPos)
+	{
+		targetPosition = incPos;
+	}
+
+	public Vector3 GetDesiredPosition {
+		get {
+			if (target != null)
+				return target.position;
+			return targetPosition;
+		}
+	}
+
+	public virtual void SetToolAbility (bool incBool)
+	{
 		isActive = incBool;
 	}
 }
