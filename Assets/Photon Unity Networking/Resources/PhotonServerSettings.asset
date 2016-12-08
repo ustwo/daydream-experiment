@@ -38,4 +38,9 @@ MonoBehaviour:
   - RequestForPickupItems
   - RequestForPickupTimes
   - TaggedPlayer
+  - SetNetworkName
+  - SetNetworkParent
+  - SetMaterial
+  - ClearContent
+  - updateTranscript
   DisableAutoOpenWizard: 1

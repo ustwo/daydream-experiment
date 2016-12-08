@@ -5,9 +5,9 @@ public class Move : Tool{
 
 
 	
-	public override void UpdateDesiredPostion (Transform incTarget)
+	public override void SetMoveTarget (Transform incTarget)
 	{
 		transform.position = incTarget.position;
-		base.UpdateDesiredPostion (incTarget);
+		base.SetMoveTarget (incTarget);
 	}
 }

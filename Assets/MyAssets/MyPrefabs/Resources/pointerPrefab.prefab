@@ -175,7 +175,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011543825356}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalPosition: {x: 0, y: 0, z: 35.74}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -188,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010682284132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalPosition: {x: 0, y: 0, z: 35.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -530,7 +530,7 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 4000011103935132}
+  - {fileID: 114000010684484412}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -559,19 +559,14 @@ MonoBehaviour:
   pointerRef: {fileID: 4000011021056528}
   pview: {fileID: 114000010084853696}
   rayHitRef: {fileID: 4000010427563940}
-  micPrefab: {fileID: 1000010654628158, guid: 9779bf83d3cc747a1a289f3aa367e460, type: 2}
-  sttPrefab: {fileID: 1000012049493408, guid: 4ab7e5cc3030944eeae2f415fddb27c1, type: 2}
-  sttCanvas: {fileID: 1000013512894618, guid: 088cba468fd8940eca490d6bc7af0574, type: 2}
   ToolGuideGizmo: {fileID: 4000013179309904}
   ToolGuideAnchor: {fileID: 4000011935633320}
   toolCollection:
   - {fileID: 114000012708481994}
   - {fileID: 114000013329100018}
   - {fileID: 114000014035622812}
-  micWidget: {fileID: 114000011719801384, guid: adbb86c1a080f47d2a90540fb32d6c46,
-    type: 2}
-  sttWidget: {fileID: 114000013862916426, guid: adbb86c1a080f47d2a90540fb32d6c46,
-    type: 2}
+  micPrefab: {fileID: 1000010654628158, guid: 9779bf83d3cc747a1a289f3aa367e460, type: 2}
+  sttPrefab: {fileID: 1000012049493408, guid: 4ab7e5cc3030944eeae2f415fddb27c1, type: 2}
 --- !u!114 &114000011860829302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -625,6 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 735b81674bd4f43d3b92160150e4b833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   moveSpeed: 100
 --- !u!114 &114000013329100018
 MonoBehaviour:
@@ -637,6 +633,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a54ca33f8c01433d8fe639fa4d407a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  activeMaterial: {fileID: 2100000, guid: 14ed06ac0127c154589d77e354a9dbd1, type: 2}
+  idleMat: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  micRend: {fileID: 23000010334154054}
 --- !u!114 &114000013593148930
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -660,6 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1cf377ca9a94cd9b04b2b53e91ba77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!120 &120000012702874350
 LineRenderer:
   m_ObjectHideFlags: 1

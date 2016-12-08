@@ -75,7 +75,7 @@ public class DrawInSpace : GVRInput
 	public GameObject sttPrefab;
 	private STTController sttWidget;
 
-//	public GameObject sttCanvas;
+	//	public GameObject sttCanvas;
 
 
 	// Use this for initialization
@@ -151,7 +151,7 @@ public class DrawInSpace : GVRInput
 				if (currentInputMode != InputMode.MOVE)
 					lastInputMode = currentInputMode;
 				SetMode (InputMode.MOVE);
-				toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
+				toolCollection [modeNum].SetMoveTarget (rayHitRef);
 			}
 //			Debug.Log (selectedObject.tag);
 		} else {
@@ -175,11 +175,11 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
-		Debug.Log ("OnButtonDown");
-		toolCollection [modeNum].SetIsActive (true);
+		//Debug.Log ("OnButtonDown");
+		toolCollection [modeNum].SetToolAbility (true);
 
-		if (activeNode != null || selectedObject == null && activeNode == null) {
-			toolCollection [modeNum].UpdateDesiredPostion (rayHitRef);
+		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode || selectedObject == null && activeNode == null) {
+			toolCollection [modeNum].SetMoveTarget (rayHitRef);
 		
 
 			switch (currentInputMode) {
@@ -203,18 +203,19 @@ public class DrawInSpace : GVRInput
 		
 		DebugMessage ("Button Down from DrawInSpace");
 		isDrawing = true;
-		activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
+		if (offline)
+			activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
+		else
+			activeStroke = PhotonNetwork.Instantiate (strokePrefab.name, Vector3.zero, Quaternion.identity, 0).GetComponent<BrushGen> ();
 		activeStroke.gameObject.name = "activeStroke";
 		if (activeNode != null) {
-			activeStroke.transform.parent = activeNode.transform;
-			activeStroke.SetMaterial (0);
+			activeStroke.photonView.RPC ("SetNetworkParent", PhotonTargets.AllBuffered, activeNode.transform.name);
+			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 0);
 
 		} else {
 			drawingOnBackground = true;
-			activeStroke.SetMaterial (1);
+			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 1);
 		}
-		
-		//activeStroke = Instantiate (strokePrefab, pointerRef.position, Quaternion.identity, pointerRef) as GameObject;
 	}
 
 	void EndDrawStroke ()
@@ -226,17 +227,6 @@ public class DrawInSpace : GVRInput
 		isDrawing = false;
 		if (activeStroke != null) {
 			activeStroke.EndStroke ();
-			if (activeNode == null) {
-				activeStroke.transform.parent = null;
-			} else {
-				
-				// Bake Stroke
-				//GameObject thisStroke = activeStroke.GetComponent<Trail> ().GetCurrentStroke;
-				//GameObject cloneStroke = Instantiate (thisStroke, activeNode.nodeTransform) as GameObject;
-		
-
-				//	Destroy (activeStroke);
-			}
 			activeStroke = null;
 		}
 	}
@@ -249,6 +239,8 @@ public class DrawInSpace : GVRInput
 		activeMove = selectedObject.GetComponent<Node> ();
 		if (!activeMove)
 			return;
+		if (!activeMove.photonView.isMine)
+			activeMove.photonView.RequestOwnership ();
 		activeMove.SetTarget (pointerRef);
 
 	}
@@ -266,8 +258,8 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonUp ()
 	{
-		toolCollection [modeNum].UpdateDesiredPostion (ToolGuideAnchor);
-		toolCollection [modeNum].SetIsActive (false);
+		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
+		toolCollection [modeNum].SetToolAbility (false);
 
 		if (activeMove != null) {
 			StopMove ();
@@ -357,20 +349,23 @@ public class DrawInSpace : GVRInput
 	}
 
 	// If a tool is on and not out of index, tell it that it's being used and no longer idle.
-	public void ActivateCurrentTool (bool incBool)
+	public void TriggerToolAbility (bool incBool)
 	{
 		if (modeNum >= toolCollection.Length)
 			return;
-		toolCollection [modeNum].SetIsActive (incBool);
+		toolCollection [modeNum].SetToolAbility (incBool);
 	}
 
 	void ActivateNode (GameObject incNode)
 	{
 		
 		activeNode = incNode.GetComponent<Node> ();
-		Vector3 halfPoint = Vector3.Lerp (pointerRef.position, controllerPivot.transform.position, 0.5f);
+		if (!activeNode.photonView.isMine)
+			activeNode.photonView.RequestOwnership ();
+		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 8);
 		activeNode.SetDesiredPosition (halfPoint);
-		SetMode (InputMode.DRAW);
+		if (currentInputMode == InputMode.MOVE)
+			SetMode (InputMode.DRAW);
 	
 	}
 
@@ -405,10 +400,9 @@ public class DrawInSpace : GVRInput
 			return;
 		if (isDrawing)
 			EndDrawStroke ();
+		if (!activeNode.photonView.isMine)
+			activeNode.photonView.RequestOwnership ();
 		DebugMessage ("commiting Node");
-//		activeNode.nodeTransform.parent = pointerRef;
-//		activeNode.transform.localPosition = new Vector3 (transform.localPosition.x, transform.localPosition.y, 0);
-//		activeNode.transform.parent = null;
 		activeNode.SetDesiredPosition (activeNode.resetPosition);
 		activeNode = null;
 
@@ -418,7 +412,7 @@ public class DrawInSpace : GVRInput
 	{
 		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 		if (activeNode != null)
-			activeNode.ClearContent ();
+			activeNode.photonView.RPC ("ClearContent", PhotonTargets.AllBuffered);
 		else if (selectedObject != null)
 			Destroy (selectedObject);
 	}
@@ -428,8 +422,10 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	void StartMicrophone ()
 	{
+		TriggerToolAbility (true);
 		Debug.Log ("Starting microphone");
-
+		if (activeNode == null)
+			CreateNode ();
 		micWidget.ActivateMicrophone ();
 		activeNode.beginSpeech ();
 		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
@@ -438,7 +434,7 @@ public class DrawInSpace : GVRInput
 	void OnTranscriptUpdated (string text)
 	{
 		Debug.Log ("OnTranscriptUpdated: " + text);
-		activeNode.updateTranscript (text);
+		activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
 	}
 
 	/// <summary>
@@ -447,10 +443,26 @@ public class DrawInSpace : GVRInput
 	void StopMicrophone ()
 	{
 		Debug.Log ("Stopping microphone");
-
+		TriggerToolAbility (false);
 		micWidget.DeactivateMicrophone ();
 		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 		activeNode.endSpeech ();
+	}
+
+	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting) {
+			stream.SendNext (transform.rotation);
+			stream.SendNext ((int)currentInputMode);
+			stream.SendNext (toolCollection [modeNum].GetDesiredPosition);
+		} else {
+			transform.rotation = (Quaternion)stream.ReceiveNext ();
+			int curTool = (int)stream.ReceiveNext ();
+			if (curTool != modeNum) {
+				SetMode ((InputMode)curTool);
+			}
+			toolCollection [modeNum].SetMovePosition ((Vector3)stream.ReceiveNext ());
+		}
 	}
 
 }

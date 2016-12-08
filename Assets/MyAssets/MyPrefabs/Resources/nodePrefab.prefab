@@ -209,9 +209,9 @@ MonoBehaviour:
   synchronization: 3
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
-  ownershipTransfer: 0
+  ownershipTransfer: 1
   ObservedComponents:
-  - {fileID: 4000013478943072}
+  - {fileID: 114000012661520720}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -285,6 +285,7 @@ MonoBehaviour:
   travelForce: 500
   transcriptText: {fileID: 114000013800920940}
   speechPrompt: {fileID: 114000010407504570}
+  resetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &114000013800920940
 MonoBehaviour:
   m_ObjectHideFlags: 1
