@@ -58,4 +58,12 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 		else
 			debugLabel.text += msg;
 	}
+	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting) {
+			
+		} else {
+			
+		}
+	}
 }
