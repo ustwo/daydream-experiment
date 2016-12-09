@@ -75,6 +75,9 @@ public class DrawInSpace : GVRInput
 	public GameObject sttPrefab;
 	private STTController sttWidget;
 
+	private Quaternion wantedRotation;
+
+	public float rotationSpeed = 10f;
 	//	public GameObject sttCanvas;
 
 
@@ -87,6 +90,7 @@ public class DrawInSpace : GVRInput
 
 	public void Start ()
 	{
+		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
 		selectableModeDict.Add (0, InputMode.DRAW);
 		selectableModeDict.Add (1, InputMode.MICROPHONE);
@@ -105,7 +109,7 @@ public class DrawInSpace : GVRInput
 	{
 		//DebugMessage (transform.position.ToString());
 		if (!pview.isMine && !offline) {
-	
+			transform.rotation = Quaternion.RotateTowards (transform.rotation, wantedRotation, rotationSpeed * Time.deltaTime);
 			return;
 		}
 		if (activeStroke != null)
@@ -175,6 +179,8 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
+		if (!pview.isMine)
+			return;
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
@@ -258,6 +264,8 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonUp ()
 	{
+		if (!pview.isMine)
+			return;
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
 		toolCollection [modeNum].SetToolAbility (false);
 
@@ -280,7 +288,8 @@ public class DrawInSpace : GVRInput
 
 	public override void OnSwipe (GVRSwipeDirection dir)
 	{
-		
+		if (!pview.isMine)
+			return;
 		if (dir == GVRSwipeDirection.down) {
 			if (selectedObject != null) {
 				if (activeNode != null)
@@ -375,7 +384,7 @@ public class DrawInSpace : GVRInput
 			if (selectedObject != null) {
 				Node selectedNode = selectedObject.GetComponent<Node> ();
 				if (selectedNode != null && selectedNode == activeNode) {
-					Destroy (activeNode.gameObject);
+					activeNode.photonView.RPC ("ClearContent", PhotonTargets.AllBuffered);
 					activeNode = null;
 					return;
 				} else if (selectedNode != null && selectedNode != activeNode) {
@@ -410,6 +419,8 @@ public class DrawInSpace : GVRInput
 
 	public override void AppButtonDown ()
 	{
+		if (!pview.isMine)
+			return;
 		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
 		if (activeNode != null)
 			activeNode.photonView.RPC ("ClearContent", PhotonTargets.AllBuffered);
@@ -456,12 +467,13 @@ public class DrawInSpace : GVRInput
 			stream.SendNext ((int)currentInputMode);
 			stream.SendNext (toolCollection [modeNum].GetDesiredPosition);
 		} else {
-			transform.rotation = (Quaternion)stream.ReceiveNext ();
+			wantedRotation = (Quaternion)stream.ReceiveNext ();
 			int curTool = (int)stream.ReceiveNext ();
+			toolCollection [curTool].SetMovePosition ((Vector3)stream.ReceiveNext ());
 			if (curTool != modeNum) {
 				SetMode ((InputMode)curTool);
 			}
-			toolCollection [modeNum].SetMovePosition ((Vector3)stream.ReceiveNext ());
+
 		}
 	}
 

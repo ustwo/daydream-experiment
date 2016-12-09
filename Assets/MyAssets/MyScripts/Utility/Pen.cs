@@ -48,4 +48,14 @@ public class Pen : Tool {
 		// set on base
 		base.SetToolAbility (incBool);
 	}
+
+	public override void SetMovePosition (Vector3 incPos)
+	{
+		Vector3 adjustedPosition = transform.InverseTransformPoint(GetDesiredPosition);
+		adjustedPosition.x = 0;
+		adjustedPosition.y = 0;
+		transform.localPosition = adjustedPosition;
+		base.SetMovePosition (incPos);
+	}
+
 }
