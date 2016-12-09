@@ -268,6 +268,7 @@ public class DrawInSpace : GVRInput
 		if (!pview.isMine)
 			return;
 		
+		 
 
 		if (activeMove != null) {
 			StopMove ();
@@ -467,7 +468,7 @@ public class DrawInSpace : GVRInput
 		if (stream.isWriting) {
 			stream.SendNext (transform.rotation);
 			stream.SendNext ((int)currentInputMode);
-			stream.SendNext (toolCollection [modeNum].GetDesiredPosition);
+			stream.SendNext (toolCollection [modeNum].transform.InverseTransformPoint (toolCollection [modeNum].GetDesiredPosition));
 		} else {
 			wantedRotation = (Quaternion)stream.ReceiveNext ();
 			int curTool = (int)stream.ReceiveNext ();
