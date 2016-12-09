@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CoursorMover : MonoBehaviour {
+public class CoursorMover : Photon.MonoBehaviour {
 
 	public float speed = 10;
 	// Use this for initialization
 
 	// Update is called once per frame
 	void FixedUpdate () {
+		if (!photonView.isMine)
+			return;
 		//Debug.Log (Input.GetAxis ("Horizontal"));
 		//transform.Translate (new Vector3 (Input.GetAxis ("Horizontal") * speed , Input.GetAxis ("Vertical") * speed , 0));
 		#if UNITY_EDITOR

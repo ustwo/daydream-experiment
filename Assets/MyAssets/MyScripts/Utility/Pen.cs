@@ -10,11 +10,11 @@ public class Pen : Tool {
 	private float popInPlaceTime = 0;
 
 	// did it pop in place?
-	private bool poppedInPlace = false;
+	private bool poppedInPlace = true;
 
-	void OnEnable(){
+	public override void OnEnable(){
+		base.OnEnable();
 		transform.localPosition = Vector3.zero;
-		target = transform.parent;
 	}
 
 
@@ -26,14 +26,14 @@ public class Pen : Tool {
 
 		// if transition time left over, move object to deisred destination. 
 		if (popInPlaceTime > 0) {
-			transform.position = Vector3.MoveTowards (transform.position, target.position,moveSpeed * Time.deltaTime);
+			transform.position = Vector3.MoveTowards (transform.position, GetDesiredPosition ,moveSpeed * Time.deltaTime);
 			popInPlaceTime -= Time.deltaTime;
 		} else {
-			transform.position = target.position;
+			transform.position = GetDesiredPosition;
 			poppedInPlace = true;
 		}
 	}
-	public override void SetIsActive (bool incBool)
+	public override void SetToolAbility (bool incBool)
 	{
 		// check to make sure this object is turned on
 		if (!gameObject.activeSelf)
@@ -46,6 +46,6 @@ public class Pen : Tool {
 		poppedInPlace = false;
 
 		// set on base
-		base.SetIsActive (incBool);
+		base.SetToolAbility (incBool);
 	}
 }

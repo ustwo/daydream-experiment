@@ -11,13 +11,14 @@ public enum TravelDirectionE
 	down
 }
 
-public class BrushGen : MonoBehaviour
+public class BrushGen : Photon.MonoBehaviour
 {
 
 	public float speed = 10;
 	private Mesh mesh;
 	Vector3 lastPointAddPosition = Vector3.zero;
 	List<Vector3> verts;
+	List<int> tris;
 	private bool offset = false;
 	private TravelDirectionE travelDirectionE;
 	public Material[] brushMaterial;
@@ -30,6 +31,7 @@ public class BrushGen : MonoBehaviour
 	private Vector3 desiredPosition;
 	private float brushSpeed = 50f;
 	private bool strokeEnded = false;
+	private bool meshChanged = false;
 
 
 
@@ -40,12 +42,15 @@ public class BrushGen : MonoBehaviour
 		MeshFilter meshFilter = gameObject.AddComponent<MeshFilter> ();
 
 		mesh = new Mesh ();
+		mesh.name = "brushStrokeMesh";
 		meshFilter.mesh = mesh;
 		verts = new List<Vector3> ();
+		tris = new List<int> ();
 		lastPointAddPosition = brushEndTransform.position;
 
 	}
 
+	[PunRPC]
 	public void SetMaterial (int index)
 	{
 		MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
@@ -70,7 +75,7 @@ public class BrushGen : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{ 
-		if (strokeEnded)
+		if (strokeEnded || !photonView.isMine)
 			return;
 		//if(desiredPosition!=null)
 		//brushEndTransform.position = Vector3.MoveTowards (brushEndTransform.position, desiredPosition, brushSpeed * Time.deltaTime);
@@ -113,27 +118,29 @@ public class BrushGen : MonoBehaviour
 
 		lastTravelDirection = travelDirectionE;
 		verts = mesh.vertices.ToList ();
-		List<int> tris = mesh.triangles.ToList ();
+		tris = mesh.triangles.ToList ();
 		mesh.Clear ();
 		Vector3 nextPosition = brushEndTransform.position + brushEndTransform.TransformDirection (offsetPosition);
 		verts.Add (nextPosition);
 		//GameObject showMe = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		//showMe.transform.position = nextPosition;
 		GenMesh (verts, tris);
+		meshChanged = true;
 
 	}
 
-	void GenMesh (List<Vector3> incVerts, List<int> tris)
+	void GenMesh (List<Vector3> incVerts, List<int> incTris)
 	{
-		
+		if (mesh == null || verts == null || tris == null)
+			return;
 		mesh.SetVertices (verts);
 		//	if(mesh.vertexCount>30)
 		//		Debug.LogError ("wtf?");
 		if (mesh.vertexCount > 4) {
-			tris.Add (verts.Count - (offset ? 3 : 2));
-			tris.Add (verts.Count - 1);
-			tris.Add (verts.Count - (offset ? 2 : 3));
-			mesh.SetTriangles (tris, 0);
+			incTris.Add (verts.Count - (offset ? 3 : 2));
+			incTris.Add (verts.Count - 1);
+			incTris.Add (verts.Count - (offset ? 2 : 3));
+			mesh.SetTriangles (incTris, 0);
 			List<Vector2> uvs = new List<Vector2> ();
 			for (int i = 0; i < mesh.vertexCount; i += 4) {
 				uvs.Add (firstUV);
@@ -147,6 +154,12 @@ public class BrushGen : MonoBehaviour
 			mesh.SetUVs (0, uvs);
 		}
 
+	}
+
+	[PunRPC]
+	public void SetNetworkParent (string parentName)
+	{
+		transform.parent = GameObject.Find (parentName).transform;
 	}
 
 	Vector3 offsetPosition {
@@ -169,6 +182,30 @@ public class BrushGen : MonoBehaviour
 			}
 
 
+
+		}
+	}
+
+	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	{
+		if (stream.isWriting) {
+			Vector3[] vertArray = verts.ToArray ();
+			stream.SendNext (vertArray);
+			int[] triArray = tris.ToArray ();
+			stream.SendNext (triArray);
+			stream.SendNext (meshChanged);
+			meshChanged = false;
+		} else {
+			Vector3[] vertArray = stream.ReceiveNext () as Vector3[];
+			verts = vertArray.ToList ();
+			int[] triArray = stream.ReceiveNext () as int[];
+			tris = triArray.ToList ();
+			meshChanged = (bool)stream.ReceiveNext ();
+			if (meshChanged) {
+				//Debug.Log ("Verts Count " + verts.Count + " Tris Count " + tris.Count);
+				GenMesh (verts, tris);
+			}
+		
 
 		}
 	}
