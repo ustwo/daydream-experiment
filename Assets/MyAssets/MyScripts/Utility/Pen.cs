@@ -25,7 +25,7 @@ public class Pen : Tool {
 			return;
 
 		// if transition time left over, move object to deisred destination. 
-		Vector3 adjustedPosition = transform.InverseTransformPoint(GetDesiredPosition);
+		Vector3 adjustedPosition =	GetDesiredPosition;
 		adjustedPosition.x = 0;
 		adjustedPosition.y = 0;
 		if (popInPlaceTime > 0) {
@@ -54,7 +54,7 @@ public class Pen : Tool {
 
 	public override void SetMovePosition (Vector3 incPos)
 	{
-		Vector3 adjustedPosition = transform.InverseTransformPoint(GetDesiredPosition);
+		Vector3 adjustedPosition = GetDesiredPosition;
 		adjustedPosition.x = 0;
 		adjustedPosition.y = 0;
 		transform.localPosition = adjustedPosition;
