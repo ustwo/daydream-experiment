@@ -169,7 +169,6 @@ public class DrawInSpace : GVRInput
 			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
 		}
 
-
 	}
 
 
