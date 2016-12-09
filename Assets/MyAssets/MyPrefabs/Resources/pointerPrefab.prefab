@@ -662,6 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  myRenderer: {fileID: 23000012806522374}
 --- !u!120 &120000012702874350
 LineRenderer:
   m_ObjectHideFlags: 1

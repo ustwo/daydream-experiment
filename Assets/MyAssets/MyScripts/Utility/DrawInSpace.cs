@@ -154,8 +154,9 @@ public class DrawInSpace : GVRInput
 			if (activeNode == null && selectedObject.GetComponent<Node> () != null) {
 				if (currentInputMode != InputMode.MOVE)
 					lastInputMode = currentInputMode;
+				toolCollection [(int)InputMode.MOVE].SetMoveTarget (rayHitRef);
 				SetMode (InputMode.MOVE);
-				toolCollection [modeNum].SetMoveTarget (rayHitRef);
+
 			}
 //			Debug.Log (selectedObject.tag);
 		} else {
@@ -266,8 +267,7 @@ public class DrawInSpace : GVRInput
 	{
 		if (!pview.isMine)
 			return;
-		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
-		toolCollection [modeNum].SetToolAbility (false);
+		
 
 		if (activeMove != null) {
 			StopMove ();
@@ -283,6 +283,8 @@ public class DrawInSpace : GVRInput
 				break;
 			}
 		}
+		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
+		toolCollection [modeNum].SetToolAbility (false);
 	}
 
 
