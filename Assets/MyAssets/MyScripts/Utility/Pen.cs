@@ -25,11 +25,14 @@ public class Pen : Tool {
 			return;
 
 		// if transition time left over, move object to deisred destination. 
+		Vector3 adjustedPosition = transform.InverseTransformPoint(GetDesiredPosition);
+		adjustedPosition.x = 0;
+		adjustedPosition.y = 0;
 		if (popInPlaceTime > 0) {
-			transform.position = Vector3.MoveTowards (transform.position, GetDesiredPosition ,moveSpeed * Time.deltaTime);
+			transform.localPosition = Vector3.MoveTowards (transform.localPosition, adjustedPosition ,moveSpeed * Time.deltaTime);
 			popInPlaceTime -= Time.deltaTime;
 		} else {
-			transform.position = GetDesiredPosition;
+			transform.localPosition = adjustedPosition;
 			poppedInPlace = true;
 		}
 	}
@@ -48,4 +51,14 @@ public class Pen : Tool {
 		// set on base
 		base.SetToolAbility (incBool);
 	}
+
+	public override void SetMovePosition (Vector3 incPos)
+	{
+		Vector3 adjustedPosition = transform.InverseTransformPoint(GetDesiredPosition);
+		adjustedPosition.x = 0;
+		adjustedPosition.y = 0;
+		transform.localPosition = adjustedPosition;
+		base.SetMovePosition (incPos);
+	}
+
 }

@@ -364,7 +364,7 @@ MonoBehaviour:
   group: 0
   OwnerShipWasTransfered: 0
   prefixBackup: -1
-  observed: {fileID: 0}
+  observed: {fileID: 234170401}
   synchronization: 3
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
