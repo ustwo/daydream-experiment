@@ -20,8 +20,9 @@ public class Tool : MonoBehaviour
 		target = incTarget;
 	}
 
-	public void SetMovePosition (Vector3 incPos)
+	public virtual void SetMovePosition (Vector3 incPos)
 	{
+		target = null;
 		targetPosition = incPos;
 	}
 
