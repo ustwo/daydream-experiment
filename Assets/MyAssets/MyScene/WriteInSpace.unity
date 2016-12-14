@@ -348,6 +348,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offline: 0
+  roomName: debugBrush
   playerControlledPrefab: {fileID: 1000013295505430, guid: 60bc18d8b325740dba0d6dde5905d145,
     type: 2}
   isObserver: 0

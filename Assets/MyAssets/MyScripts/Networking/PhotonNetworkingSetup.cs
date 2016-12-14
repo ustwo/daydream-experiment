@@ -7,6 +7,7 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 
 	public bool offline = true;
 	private Text debugLabel;
+	public string roomName; 
 
 	[Tooltip ("This game object must be in the \"Resources\" folder")]
 	public GameObject playerControlledPrefab;
@@ -38,7 +39,7 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 		DebugMessage ("\nJoined Lobby", false);
 		Debug.Log ("Joined Lobby, joining room");
 		RoomOptions roomOp = new RoomOptions () { isVisible = false, maxPlayers = 20 };
-		PhotonNetwork.JoinOrCreateRoom ("draw", roomOp, TypedLobby.Default);
+		PhotonNetwork.JoinOrCreateRoom (roomName, roomOp, TypedLobby.Default);
 
 	}
 
