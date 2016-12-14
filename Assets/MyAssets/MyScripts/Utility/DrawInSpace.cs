@@ -102,6 +102,8 @@ public class DrawInSpace : GVRInput
 //		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
 
 		offline = !PhotonNetwork.connected;
+		rayHitRef.parent = null;
+		rayHitRef.gameObject.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -112,8 +114,7 @@ public class DrawInSpace : GVRInput
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, wantedRotation, rotationSpeed * Time.deltaTime);
 			return;
 		}
-		if (activeStroke != null)
-			activeStroke.UpdateBrushPos (rayHitRef.position);
+
 		
 		base.Update ();
 
@@ -149,7 +150,8 @@ public class DrawInSpace : GVRInput
 		RaycastHit hit;
 
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
-			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.5f;
+			rayHitRef.position = hit.point + (hit.normal).normalized * 0.5f;
+			rayHitRef.forward = hit.normal;
 			selectedObject = hit.collider.gameObject;
 			if (activeNode == null && selectedObject.GetComponent<Node> () != null) {
 				if (currentInputMode != InputMode.MOVE)
@@ -158,8 +160,10 @@ public class DrawInSpace : GVRInput
 				SetMode (InputMode.MOVE);
 
 			}
+			rayHitRef.gameObject.SetActive (true);
 //			Debug.Log (selectedObject.tag);
 		} else {
+			rayHitRef.gameObject.SetActive (false);
 			if (currentInputMode == InputMode.MOVE)
 				SetMode (lastInputMode);
 
@@ -168,6 +172,8 @@ public class DrawInSpace : GVRInput
 			selectedObject = null;
 			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
 		}
+		if (activeStroke != null)
+			activeStroke.UpdateBrushPos (rayHitRef);
 
 	}
 
@@ -373,7 +379,7 @@ public class DrawInSpace : GVRInput
 		activeNode = incNode.GetComponent<Node> ();
 		if (!activeNode.photonView.isMine)
 			activeNode.photonView.RequestOwnership ();
-		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 8);
+		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 11);
 		activeNode.SetDesiredPosition (halfPoint);
 		if (currentInputMode == InputMode.MOVE)
 			SetMode (InputMode.DRAW);

@@ -11,6 +11,8 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 	[Tooltip ("This game object must be in the \"Resources\" folder")]
 	public GameObject playerControlledPrefab;
 
+	public bool isObserver = false;
+
 	public void Awake ()
 	{
 		
@@ -42,6 +44,8 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 
 	public void OnJoinedRoom ()
 	{
+		if (isObserver)
+			return;
 		PhotonNetwork.Instantiate (playerControlledPrefab.name, Vector3.zero, Quaternion.identity, 0);
 		DebugMessage ("\nJoined Room, Playercount = " + PhotonNetwork.playerList.Length.ToString (), false);
 		Debug.Log ("Joined Room");
@@ -58,6 +62,7 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 		else
 			debugLabel.text += msg;
 	}
+
 	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		if (stream.isWriting) {

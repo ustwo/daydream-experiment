@@ -228,7 +228,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011543825356}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 35.74}
+  m_LocalPosition: {x: 0, y: 0, z: 54.29}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -254,7 +254,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010682284132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 35.75}
+  m_LocalPosition: {x: 0, y: 0, z: 54.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
@@ -280,7 +280,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013295505430}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.37, z: 0}
+  m_LocalPosition: {x: 0, y: 14.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -459,7 +459,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: aa1c237ff4e3f4a3eb8f3803b67adc68, type: 2}
+  - {fileID: 2100000, guid: 2ea70b6289f7144848430aa42a4714fd, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -633,7 +633,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: aa1c237ff4e3f4a3eb8f3803b67adc68, type: 2}
+  - {fileID: 2100000, guid: f81d1d52b397f40d9a5ea372dcd758bc, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -789,7 +789,7 @@ MonoBehaviour:
     m_Bits: 4294967263
   debugLabel: {fileID: 0}
   detectSwipes: 1
-  minSwipeDistance: 0.4
+  minSwipeDistance: 0.35
   strokePrefab: {fileID: 1000010213107120, guid: cfe559902d206415f92e25e9d44b27f2,
     type: 2}
   nodePrefab: {fileID: 1000013409896986, guid: 850f3c7ba5951492c8351e141d85dbdb, type: 2}
@@ -805,8 +805,6 @@ MonoBehaviour:
   micPrefab: {fileID: 1000010654628158, guid: 9779bf83d3cc747a1a289f3aa367e460, type: 2}
   sttPrefab: {fileID: 1000012049493408, guid: 4ab7e5cc3030944eeae2f415fddb27c1, type: 2}
   rotationSpeed: 50
-  deskTrayLarge: {fileID: 0}
-  deskTraySmall: {fileID: 0}
 --- !u!114 &114000011860829302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -939,8 +937,8 @@ LineRenderer:
     endWidth: 0.2
     m_StartColor:
       serializedVersion: 2
-      rgba: 4278382592
+      rgba: 4294656000
     m_EndColor:
       serializedVersion: 2
-      rgba: 4278190335
+      rgba: 4294902272
   m_UseWorldSpace: 1
