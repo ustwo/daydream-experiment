@@ -62,24 +62,15 @@ public class DrawInSpace : GVRInput
 		MOVE = 2
 	}
 
-
 	private InputMode currentInputMode;
 	private InputMode lastInputMode;
 
 	private int modeNum = 0;
 	private Dictionary<int, InputMode> selectableModeDict;
 
-//	public GameObject micPrefab;
-//	private MicrophoneWidget micWidget;
-
-//	public GameObject sttPrefab;
-//	private STTController sttWidget;
-
 	private Quaternion wantedRotation;
 
 	public float rotationSpeed = 10f;
-	//	public GameObject sttCanvas;
-
 
 	// Use this for initialization
 	public override void Awake ()
@@ -97,19 +88,9 @@ public class DrawInSpace : GVRInput
 
 		SetMode (InputMode.DRAW);
 
-//		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
-//		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
-//		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
-//		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
-
 		offline = !PhotonNetwork.connected;
 		rayHitRef.parent = null;
 		rayHitRef.gameObject.SetActive (false);
-	}
-
-	void Destroy()
-	{
-//		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 	}
 	
 	// Update is called once per frame
@@ -452,17 +433,8 @@ public class DrawInSpace : GVRInput
 		Debug.Log ("Starting microphone");
 		if (activeNode == null)
 			CreateNode ();
-//		micWidget.ActivateMicrophone ();
 		activeNode.beginSpeech ();
-//		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
 	}
-
-//	void OnTranscriptUpdated (string text)
-//	{
-//		Debug.Log ("OnTranscriptUpdated: " + text);
-//		if(activeNode != null)
-//			activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
-//	}
 
 	/// <summary>
 	/// Stops the microphone.
@@ -471,8 +443,6 @@ public class DrawInSpace : GVRInput
 	{
 		Debug.Log ("Stopping microphone");
 		TriggerToolAbility (false);
-//		micWidget.DeactivateMicrophone ();
-//		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 		activeNode.endSpeech ();
 	}
 

@@ -119,9 +119,6 @@ public class STTController : Widget
 		Active = !Active;
 	}
 
-//	public delegate void TranscriptUpdatedCallback(string text);
-//	public TranscriptUpdatedCallback OnTranscriptUpdated;
-
 	/// <exclude />
 	protected override void Start()
 	{
@@ -211,7 +208,6 @@ public class STTController : Widget
 					if (m_Transcript != null) {
 						m_Transcript.text = string.Format("{0}\n", text);
 						Debug.Log ("Transcript: " + text);
-//						if(OnTranscriptUpdated != null) OnTranscriptUpdated (text);
 					}
 				}
 			}
