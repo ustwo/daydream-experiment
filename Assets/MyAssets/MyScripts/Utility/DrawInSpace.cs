@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using Photon;
 using System.Collections.Generic;
-using IBM.Watson.DeveloperCloud.Widgets;
+//using IBM.Watson.DeveloperCloud.Widgets;
 
 public class DrawInSpace : GVRInput
 {
@@ -62,24 +62,15 @@ public class DrawInSpace : GVRInput
 		MOVE = 2
 	}
 
-
 	private InputMode currentInputMode;
 	private InputMode lastInputMode;
 
 	private int modeNum = 0;
 	private Dictionary<int, InputMode> selectableModeDict;
 
-	public GameObject micPrefab;
-	private MicrophoneWidget micWidget;
-
-	public GameObject sttPrefab;
-	private STTController sttWidget;
-
 	private Quaternion wantedRotation;
 
 	public float rotationSpeed = 10f;
-	//	public GameObject sttCanvas;
-
 
 	// Use this for initialization
 	public override void Awake ()
@@ -96,10 +87,6 @@ public class DrawInSpace : GVRInput
 		selectableModeDict.Add (1, InputMode.MICROPHONE);
 
 		SetMode (InputMode.DRAW);
-
-		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
-		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
-//		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
 
 		offline = !PhotonNetwork.connected;
 		rayHitRef.parent = null;
@@ -190,7 +177,8 @@ public class DrawInSpace : GVRInput
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
-		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode || selectedObject == null && activeNode == null) {
+		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode 
+			|| selectedObject == null && activeNode == null) {
 			toolCollection [modeNum].SetMoveTarget (rayHitRef);
 		
 
@@ -445,15 +433,7 @@ public class DrawInSpace : GVRInput
 		Debug.Log ("Starting microphone");
 		if (activeNode == null)
 			CreateNode ();
-		micWidget.ActivateMicrophone ();
 		activeNode.beginSpeech ();
-		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
-	}
-
-	void OnTranscriptUpdated (string text)
-	{
-		Debug.Log ("OnTranscriptUpdated: " + text);
-		activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
 	}
 
 	/// <summary>
@@ -463,8 +443,6 @@ public class DrawInSpace : GVRInput
 	{
 		Debug.Log ("Stopping microphone");
 		TriggerToolAbility (false);
-		micWidget.DeactivateMicrophone ();
-		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 		activeNode.endSpeech ();
 	}
 
