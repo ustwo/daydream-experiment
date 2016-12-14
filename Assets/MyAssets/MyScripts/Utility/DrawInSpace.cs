@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using Photon;
 using System.Collections.Generic;
-using IBM.Watson.DeveloperCloud.Widgets;
+//using IBM.Watson.DeveloperCloud.Widgets;
 
 public class DrawInSpace : GVRInput
 {
@@ -69,11 +69,11 @@ public class DrawInSpace : GVRInput
 	private int modeNum = 0;
 	private Dictionary<int, InputMode> selectableModeDict;
 
-	public GameObject micPrefab;
-	private MicrophoneWidget micWidget;
+//	public GameObject micPrefab;
+//	private MicrophoneWidget micWidget;
 
-	public GameObject sttPrefab;
-	private STTController sttWidget;
+//	public GameObject sttPrefab;
+//	private STTController sttWidget;
 
 	private Quaternion wantedRotation;
 
@@ -97,13 +97,19 @@ public class DrawInSpace : GVRInput
 
 		SetMode (InputMode.DRAW);
 
-		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
-		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
+//		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
+//		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
 //		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
+//		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
 
 		offline = !PhotonNetwork.connected;
 		rayHitRef.parent = null;
 		rayHitRef.gameObject.SetActive (false);
+	}
+
+	void Destroy()
+	{
+//		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 	}
 	
 	// Update is called once per frame
@@ -190,7 +196,8 @@ public class DrawInSpace : GVRInput
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
-		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode || selectedObject == null && activeNode == null) {
+		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode 
+			|| selectedObject == null && activeNode == null) {
 			toolCollection [modeNum].SetMoveTarget (rayHitRef);
 		
 
@@ -445,16 +452,17 @@ public class DrawInSpace : GVRInput
 		Debug.Log ("Starting microphone");
 		if (activeNode == null)
 			CreateNode ();
-		micWidget.ActivateMicrophone ();
+//		micWidget.ActivateMicrophone ();
 		activeNode.beginSpeech ();
-		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
+//		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
 	}
 
-	void OnTranscriptUpdated (string text)
-	{
-		Debug.Log ("OnTranscriptUpdated: " + text);
-		activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
-	}
+//	void OnTranscriptUpdated (string text)
+//	{
+//		Debug.Log ("OnTranscriptUpdated: " + text);
+//		if(activeNode != null)
+//			activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
+//	}
 
 	/// <summary>
 	/// Stops the microphone.
@@ -463,8 +471,8 @@ public class DrawInSpace : GVRInput
 	{
 		Debug.Log ("Stopping microphone");
 		TriggerToolAbility (false);
-		micWidget.DeactivateMicrophone ();
-		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
+//		micWidget.DeactivateMicrophone ();
+//		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
 		activeNode.endSpeech ();
 	}
 

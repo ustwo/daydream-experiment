@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;
 
+using IBM.Watson.DeveloperCloud.Widgets;
+
 public class Node : Photon.MonoBehaviour {
 
 	public Rigidbody myRigid;
@@ -10,10 +12,12 @@ public class Node : Photon.MonoBehaviour {
 	private Transform _myTransform;
 	private Transform _targetTransform;
 
-	public Text transcriptText;
-	public Text speechPrompt;
+//	public Text transcriptText;
+//	public Text speechPrompt;
 	[HideInInspector]
 	public Vector3 resetPosition;
+
+	public MicrophoneWidget micWidget;
 
 	void OnEnable(){
 		if (photonView.isMine) {
@@ -25,7 +29,7 @@ public class Node : Photon.MonoBehaviour {
 	void Start(){
 		_myTransform = transform;
 		resetPosition = transform.position;
-		speechPrompt.enabled = false;
+//		speechPrompt.enabled = false;
 		//transcriptText.enabled = false;
 	}
 
@@ -68,22 +72,24 @@ public class Node : Photon.MonoBehaviour {
 		for (int i = transform.childCount -1 ; i > 1; i--) {
 			Destroy (transform.GetChild (i).gameObject);
 		}
-		transcriptText.text = "";
+//		transcriptText.text = "";
 	}
 
 	public void beginSpeech()
 	{
-		transcriptText.enabled = true;
-		transcriptText.text = "";
-		speechPrompt.enabled = true;
+		micWidget.ActivateMicrophone ();
+//		transcriptText.enabled = true;
+//		transcriptText.text = "";
+//		speechPrompt.enabled = true;
+//		speechPrompt.text = "Listening...";
 	}
 	[PunRPC]
 	public void updateTranscript(string text)
 	{
-		if (speechPrompt.enabled)
-			speechPrompt.enabled = false;
+//		if (speechPrompt.enabled)
+//			speechPrompt.enabled = false;
 		
-		transcriptText.text += text;
+//		transcriptText.text = text;
 	}
 
 	string randomID {
@@ -95,8 +101,8 @@ public class Node : Photon.MonoBehaviour {
 
 	public void endSpeech()
 	{
-		
-
+//		speechPrompt.text = "";
+		micWidget.DeactivateMicrophone ();
 	}
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -792,7 +792,7 @@ MonoBehaviour:
   minSwipeDistance: 0.35
   strokePrefab: {fileID: 1000010213107120, guid: cfe559902d206415f92e25e9d44b27f2,
     type: 2}
-  nodePrefab: {fileID: 1000013409896986, guid: 850f3c7ba5951492c8351e141d85dbdb, type: 2}
+  nodePrefab: {fileID: 1000012049974552, guid: 3c5e486b81f4d45eda515f6681873594, type: 2}
   pointerRef: {fileID: 4000011021056528}
   pview: {fileID: 114000010084853696}
   rayHitRef: {fileID: 4000010427563940}
@@ -802,8 +802,6 @@ MonoBehaviour:
   - {fileID: 114000012708481994}
   - {fileID: 114000013329100018}
   - {fileID: 114000014035622812}
-  micPrefab: {fileID: 1000010654628158, guid: 9779bf83d3cc747a1a289f3aa367e460, type: 2}
-  sttPrefab: {fileID: 1000012049493408, guid: 4ab7e5cc3030944eeae2f415fddb27c1, type: 2}
   rotationSpeed: 50
 --- !u!114 &114000011860829302
 MonoBehaviour:

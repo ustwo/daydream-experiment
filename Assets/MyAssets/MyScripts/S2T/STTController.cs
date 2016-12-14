@@ -62,7 +62,7 @@ public class STTController : Widget
 	[SerializeField]
 	private bool m_EnableContinous = false;
 	[SerializeField]
-	private bool m_EnableInterimResults = false;
+	private bool m_EnableInterimResults = true;
 	[SerializeField]
 	private Text m_Transcript = null;
 	[SerializeField, Tooltip("Language ID to use in the speech recognition model.")]
@@ -119,8 +119,8 @@ public class STTController : Widget
 		Active = !Active;
 	}
 
-	public delegate void TranscriptUpdatedCallback(string text);
-	public TranscriptUpdatedCallback OnTranscriptUpdated;
+//	public delegate void TranscriptUpdatedCallback(string text);
+//	public TranscriptUpdatedCallback OnTranscriptUpdated;
 
 	/// <exclude />
 	protected override void Start()
@@ -209,9 +209,9 @@ public class STTController : Widget
 					string text = alt.transcript;
 
 					if (m_Transcript != null) {
-						m_Transcript.text += string.Format("{0}\n", text);
-						Debug.Log (text);
-						if(OnTranscriptUpdated != null) OnTranscriptUpdated (text);
+						m_Transcript.text = string.Format("{0}\n", text);
+						Debug.Log ("Transcript: " + text);
+//						if(OnTranscriptUpdated != null) OnTranscriptUpdated (text);
 					}
 				}
 			}
