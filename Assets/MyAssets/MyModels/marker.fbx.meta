@@ -7,12 +7,18 @@ ModelImporter:
   fileIDToRecycleName:
     100000: cap
     100002: //RootNode
+    100004: marker
+    100006: marker_unwrapped_Obj
     400000: cap
     400002: //RootNode
+    400004: marker
+    400006: marker_unwrapped_Obj
     2300000: cap
     2300002: //RootNode
+    2300004: marker
     3300000: cap
     3300002: //RootNode
+    3300004: marker
     4300000: marker
     4300002: cap
     9500000: //RootNode
