@@ -14,47 +14,70 @@ public class PainBrush : MonoBehaviour
 	public float intencity = 3;
 	Vector2 lastUVCords;
 	public Color color;
-	public Texture2D newActiveBrush;
+	private Texture2D scaledBrush;
 	public int brushSize;
+	public LayerMask paintLayers;
+	private bool brushActivated = false;
+	public Transform pointer;
+	public LineRenderer debugline;
+	private bool resetBrushCords;
 
 	void Start ()
 	{
 		Init ();
+		debugline = gameObject.AddComponent<LineRenderer> ();
 	}
 
 	void Init(){
 		lastDrawPoint = Vector3.zero;
 		spacing = maxSpacing;
-		newActiveBrush = activeBrush;
-		newActiveBrush.Resize (brushSize, brushSize);
-		newActiveBrush.Apply ();
+		scaledBrush = Instantiate (activeBrush) as Texture2D;
+		TextureScale.Bilinear (scaledBrush, brushSize, brushSize);
+
 	}
 	void Update(){
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			Init ();
 		}
 	}
+
+	public void SetBrush (bool toggle){
+		//Debug.Log ("Brush set to " + toggle);
+		brushActivated = toggle;
+		resetBrushCords = toggle;
+	}
 	
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
 
-		transform.Translate (new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical")) * (10 *Time.deltaTime), Space.World);
-
+		//transform.Translate (new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical")) * (10 *Time.deltaTime), Space.World);
+		if (!brushActivated)
+			return;
 		RaycastHit hit;
-		if (Physics.Raycast (transform.position, transform.forward, out hit, rayReach)) {
+		debugline.SetPosition (0, pointer.position);
+		debugline.SetPosition (1, pointer.position + pointer.forward * 10);
+		//Debug.Log ("It got here");
+		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach,paintLayers)) {
+		//	Debug.Log ("Hit the paintable Objects");
 			float distance = (hit.point - lastDrawPoint).sqrMagnitude;
-			if (distance < maxSpacing)
-				return;
 			int brushCount = Mathf.FloorToInt (distance / maxSpacing);
 			activeSurface = hit.transform.GetComponent<PaintableObject> ();
 			if (activeSurface != null) {
 				Vector2 currentCords = hit.textureCoord;
-				activeSurface.RegisterRay (currentCords, newActiveBrush, intencity,color);
+				if (resetBrushCords) {
+					lastUVCords = currentCords;
+					resetBrushCords = false;
+				}
+				Debug.Log ("distance = " + distance);
+				Vector2 lerpCords = Vector2.Lerp (lastUVCords, currentCords, 0.1f);
+				if (distance < maxSpacing && (lerpCords-currentCords).sqrMagnitude < maxSpacing )
+					return;
+				activeSurface.RegisterRay (lerpCords, scaledBrush, intencity,color);
 				lastDrawPoint = hit.point;
-
-
+				lastUVCords = lerpCords;
 			}
+
 		}
 	}
 }

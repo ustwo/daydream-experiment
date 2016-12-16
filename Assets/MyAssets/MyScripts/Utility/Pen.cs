@@ -12,6 +12,8 @@ public class Pen : Tool {
 	// did it pop in place?
 	private bool poppedInPlace = true;
 
+	public PainBrush paintBrush;
+
 	public override void OnEnable(){
 		base.OnEnable();
 		transform.localPosition = Vector3.zero;
@@ -43,10 +45,13 @@ public class Pen : Tool {
 			return;
 
 		// set a transition time 
-		popInPlaceTime = 1f;
+		//popInPlaceTime = 1f;
 
 		// enable commands in update
-		poppedInPlace = false;
+		//poppedInPlace = false;
+
+		// activate the paint brush class
+		paintBrush.SetBrush (incBool);
 
 		// set on base
 		base.SetToolAbility (incBool);

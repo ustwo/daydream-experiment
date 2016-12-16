@@ -11,11 +11,6 @@ using IBM.Watson.DeveloperCloud.Widgets;
 public class DrawInSpace : GVRInput
 {
 
-	/// <summary>
-	/// The object that gets copied when we begin a new stroke.
-	/// </summary>
-	public GameObject strokePrefab;
-
 	/// NodePrefab to be created and hold contecnt
 	public GameObject nodePrefab;
 	private Node activeNode;
@@ -161,7 +156,6 @@ public class DrawInSpace : GVRInput
 
 			}
 			rayHitRef.gameObject.SetActive (true);
-//			Debug.Log (selectedObject.tag);
 		} else {
 			rayHitRef.gameObject.SetActive (false);
 			if (currentInputMode == InputMode.MOVE)
@@ -214,33 +208,13 @@ public class DrawInSpace : GVRInput
 	{
 		
 		DebugMessage ("Button Down from DrawInSpace");
-		isDrawing = true;
-		if (offline)
-			activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
-		else
-			activeStroke = PhotonNetwork.Instantiate (strokePrefab.name, Vector3.zero, Quaternion.identity, 0).GetComponent<BrushGen> ();
-		activeStroke.gameObject.name = "activeStroke";
-		if (activeNode != null) {
-			activeStroke.photonView.RPC ("SetNetworkParent", PhotonTargets.AllBuffered, activeNode.transform.name);
-			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 0);
 
-		} else {
-			drawingOnBackground = true;
-			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 1);
-		}
 	}
 
 	void EndDrawStroke ()
 	{
-		drawingOnBackground = false;
 		DebugMessage ("Button Up from DrawinSpace");
-		if (!pview.isMine && !offline)
-			return;
-		isDrawing = false;
-		if (activeStroke != null) {
-			activeStroke.EndStroke ();
-			activeStroke = null;
-		}
+
 	}
 
 

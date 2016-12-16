@@ -6,16 +6,18 @@ public class PaintableObject : MonoBehaviour {
 	public Renderer myRenderer;
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 	public Shader shader;
+	private bool isInit = false;
 	// Use this for initialization
 	void Start () {
 		
-		Init ();
+		//Init ();
 	}
 
 	void Init(){
-		Texture2D myTexture = new Texture2D (500, 500);
+		isInit = true;
+		Texture2D myTexture = new Texture2D (200, 200);
 		myTexture.wrapMode = TextureWrapMode.Clamp;
-		Color[] textureColors = new Color[500 * 500];
+		Color[] textureColors = new Color[200 * 200];
 		Color blankColor = Color.black;
 		blankColor.a = 0;
 		for (int i = 0; i < textureColors.Length; i++) {
@@ -37,4 +39,9 @@ public class PaintableObject : MonoBehaviour {
 		myRenderer.material.mainTexture = computeBitmap.ComputeBitMap (myRenderer.material.mainTexture as Texture2D, brush , uvCords, intencity,addColor);
 	}
 
+	void LateUpdate(){
+		if (!isInit) {
+			Init ();
+		}
+	}
 }

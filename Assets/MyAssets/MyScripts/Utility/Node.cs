@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Node : Photon.MonoBehaviour
 {
 
-	public Rigidbody myRigid;
+
 	public float travelForce = 5f;
 	private Vector3 _desiredPosition = Vector3.zero;
 	private Transform _myTransform;
@@ -18,7 +18,6 @@ public class Node : Photon.MonoBehaviour
 	public Shader nodeShader;
 	private Material myMaterial;
 	private Texture2D myTexture;
-	public Texture2D brush;
 
 	[HideInInspector]
 	public Vector3 resetPosition;
@@ -94,7 +93,7 @@ public class Node : Photon.MonoBehaviour
 		else
 			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
 
-		myRigid.AddForce (force);
+		//myRigid.AddForce (force);
 		
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
 
