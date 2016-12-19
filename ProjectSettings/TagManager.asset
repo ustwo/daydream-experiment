@@ -5,8 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - debug
-  - MicButton
-  - ConfirmSTTButton
+  - Microphone
+  - MicCameraAnchor
   layers:
   - Default
   - TransparentFX

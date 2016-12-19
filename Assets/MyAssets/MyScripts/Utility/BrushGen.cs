@@ -32,6 +32,7 @@ public class BrushGen : Photon.MonoBehaviour
 	private float brushSpeed = 50f;
 	private bool strokeEnded = false;
 	private bool meshChanged = false;
+	public float brushSize = 0.5f;
 
 
 
@@ -48,6 +49,7 @@ public class BrushGen : Photon.MonoBehaviour
 		tris = new List<int> ();
 		lastPointAddPosition = brushEndTransform.position;
 
+
 	}
 
 	[PunRPC]
@@ -58,13 +60,10 @@ public class BrushGen : Photon.MonoBehaviour
 			meshRenderer.material = brushMaterial [index];
 	}
 
-	public void UpdateBrushPos (Vector3 incPos)
+	public void UpdateBrushPos (Transform pointRef)
 	{
-		//if(desiredPosition== null)
-		brushEndTransform.position = incPos;
-
-		//desiredPosition = incPos;
-	
+		brushEndTransform.position = pointRef.position;
+		brushEndTransform.forward = pointRef.forward;
 	}
 
 	public void EndStroke ()
@@ -75,11 +74,14 @@ public class BrushGen : Photon.MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{ 
+		
 		if (strokeEnded || !photonView.isMine)
 			return;
-		//if(desiredPosition!=null)
-		//brushEndTransform.position = Vector3.MoveTowards (brushEndTransform.position, desiredPosition, brushSpeed * Time.deltaTime);
-		
+
+		if (verts.Count == 0) {
+			AddPoint ();
+			return;
+		}
 
 		if (Vector3.Distance (brushEndTransform.position, lastPointAddPosition) > 0.1f) {
 			DeterminTravelDirection ();
@@ -89,8 +91,9 @@ public class BrushGen : Photon.MonoBehaviour
 
 	void DeterminTravelDirection ()
 	{
+		
 		Vector3 travelDirection = lastPointAddPosition - brushEndTransform.position;
-
+		//brushEndTransform.forward = travelDirection;
 		if (Mathf.Abs (travelDirection.x) > Mathf.Abs (travelDirection.y)) {
 			//Horizontal
 			if (travelDirection.x > 0) {
@@ -115,18 +118,28 @@ public class BrushGen : Photon.MonoBehaviour
 
 	void AddPoint ()
 	{
-
 		lastTravelDirection = travelDirectionE;
 		verts = mesh.vertices.ToList ();
 		tris = mesh.triangles.ToList ();
 		mesh.Clear ();
-		Vector3 nextPosition = brushEndTransform.position + brushEndTransform.TransformDirection (offsetPosition);
-		verts.Add (nextPosition);
-		//GameObject showMe = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-		//showMe.transform.position = nextPosition;
+		if (verts.Count == 0) {
+			Debug.Log ("adding Init point");
+			verts.Add (brushEndTransform.position + brushEndTransform.TransformDirection ((Vector3.right + Vector3.up))*brushSize);
+			verts.Add (brushEndTransform.position + brushEndTransform.TransformDirection ((Vector3.right + Vector3.down))*brushSize);
+			verts.Add (brushEndTransform.position + brushEndTransform.TransformDirection ((Vector3.left + Vector3.up))*brushSize);
+			verts.Add (brushEndTransform.position + brushEndTransform.TransformDirection ((Vector3.left + Vector3.down))*brushSize);
+			tris.Add (0);
+			tris.Add (1);
+			tris.Add (2);
+			tris.Add (2);
+			tris.Add (1);
+			tris.Add (3);
+		} else {
+			Vector3 nextPosition = brushEndTransform.position + brushEndTransform.TransformDirection (altOffset);
+			verts.Add (nextPosition);
+		}
 		GenMesh (verts, tris);
 		meshChanged = true;
-
 	}
 
 	void GenMesh (List<Vector3> incVerts, List<int> incTris)
@@ -134,9 +147,7 @@ public class BrushGen : Photon.MonoBehaviour
 		if (mesh == null || verts == null || tris == null)
 			return;
 		mesh.SetVertices (verts);
-		//	if(mesh.vertexCount>30)
-		//		Debug.LogError ("wtf?");
-		if (mesh.vertexCount > 4) {
+		if (mesh.vertexCount >= 4) {
 			incTris.Add (verts.Count - (offset ? 3 : 2));
 			incTris.Add (verts.Count - 1);
 			incTris.Add (verts.Count - (offset ? 2 : 3));
@@ -159,23 +170,44 @@ public class BrushGen : Photon.MonoBehaviour
 	[PunRPC]
 	public void SetNetworkParent (string parentName)
 	{
-		transform.parent = GameObject.Find (parentName).transform;
+		GameObject newParent = GameObject.Find (parentName);
+		if(newParent != null)
+			transform.parent = newParent.transform;
+	}
+	Vector3 altOffset{
+		get{
+			offset = !offset;
+			if (offset)
+				return Vector3.right * brushSize;
+			else
+				return Vector3.left * brushSize;
+		}
 	}
 
 	Vector3 offsetPosition {
 		get {
 			offset = !offset;
-			if (!offset)
-				return Vector3.zero;
 			switch (travelDirectionE) {
 			case(TravelDirectionE.right):
-				return Vector3.up * 0.5f;
+				if (offset)
+					return Vector3.up * brushSize;
+				else
+					return Vector3.down * brushSize;
 			case(TravelDirectionE.left):
-				return Vector3.down * 0.5f;
+				if (offset)
+					return Vector3.down * brushSize;
+				else
+					return Vector3.up * brushSize;
 			case(TravelDirectionE.up):
-				return Vector3.left * 0.5f;
+				if (offset)
+					return Vector3.left * brushSize;
+				else
+					return Vector3.right * brushSize;
 			case(TravelDirectionE.down):
-				return Vector3.right * 0.5f;
+				if (offset)
+					return Vector3.right * brushSize;
+				else
+					return Vector3.left * brushSize;
 			default:
 				return Vector3.zero;
 
