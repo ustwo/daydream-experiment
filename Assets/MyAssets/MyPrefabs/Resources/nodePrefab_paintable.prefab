@@ -453,6 +453,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myRenderer: {fileID: 23000012211784328}
   shader: {fileID: 34, guid: 0000000000000000f000000000000000, type: 0}
+  node: {fileID: 114000011854137602}
 --- !u!114 &114000011164461662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -493,11 +494,11 @@ MonoBehaviour:
   travelForce: 5
   transcriptText: {fileID: 114000012509485192}
   speechPrompt: {fileID: 114000013481194540}
-  TextureRenderer: {fileID: 23000012211784328}
-  nodeShader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   resetPosition: {x: 0, y: 0, z: 0}
   micWidget: {fileID: 114000011164461662}
   micAnchor: {fileID: 4000011982991732}
+  paintableObject: {fileID: 114000010989767922}
+  textureHasChanged: 0
 --- !u!114 &114000012323300286
 MonoBehaviour:
   m_ObjectHideFlags: 1
