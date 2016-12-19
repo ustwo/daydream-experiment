@@ -6,15 +6,10 @@ using UnityEngine;
 using System.Collections;
 using Photon;
 using System.Collections.Generic;
-using IBM.Watson.DeveloperCloud.Widgets;
+//using IBM.Watson.DeveloperCloud.Widgets;
 
 public class DrawInSpace : GVRInput
 {
-
-	/// <summary>
-	/// The object that gets copied when we begin a new stroke.
-	/// </summary>
-	public GameObject strokePrefab;
 
 	/// NodePrefab to be created and hold contecnt
 	public GameObject nodePrefab;
@@ -62,24 +57,20 @@ public class DrawInSpace : GVRInput
 		MOVE = 2
 	}
 
-
 	private InputMode currentInputMode;
 	private InputMode lastInputMode;
 
 	private int modeNum = 0;
 	private Dictionary<int, InputMode> selectableModeDict;
 
-	public GameObject micPrefab;
-	private MicrophoneWidget micWidget;
-
-	public GameObject sttPrefab;
-	private STTController sttWidget;
-
 	private Quaternion wantedRotation;
 
 	public float rotationSpeed = 10f;
-	//	public GameObject sttCanvas;
 
+	//	Anchor for the mic
+	private GameObject micAnchor;
+
+	private LineRenderer lineRenderer;
 
 	// Use this for initialization
 	public override void Awake ()
@@ -90,6 +81,10 @@ public class DrawInSpace : GVRInput
 
 	public void Start ()
 	{
+		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
+
+		lineRenderer = GetComponent<LineRenderer> ();
+
 		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
 		selectableModeDict.Add (0, InputMode.DRAW);
@@ -97,11 +92,9 @@ public class DrawInSpace : GVRInput
 
 		SetMode (InputMode.DRAW);
 
-		micWidget = (Instantiate (micPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<MicrophoneWidget> ();
-		sttWidget = (Instantiate (sttPrefab, pointerRef.position, Quaternion.identity) as GameObject).GetComponent<STTController> ();
-//		sttCanvas = Instantiate (sttCanvas, pointerRef.position, Quaternion.identity) as GameObject;
-
 		offline = !PhotonNetwork.connected;
+		rayHitRef.parent = null;
+		rayHitRef.gameObject.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -112,8 +105,7 @@ public class DrawInSpace : GVRInput
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, wantedRotation, rotationSpeed * Time.deltaTime);
 			return;
 		}
-		if (activeStroke != null)
-			activeStroke.UpdateBrushPos (rayHitRef.position);
+
 		
 		base.Update ();
 
@@ -149,7 +141,8 @@ public class DrawInSpace : GVRInput
 		RaycastHit hit;
 
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
-			rayHitRef.position = hit.point + (controllerPivot.transform.position - rayHitRef.position).normalized * 0.5f;
+			rayHitRef.position = hit.point + (hit.normal).normalized * 0.5f;
+			rayHitRef.forward = hit.normal;
 			selectedObject = hit.collider.gameObject;
 			if (activeNode == null && selectedObject.GetComponent<Node> () != null) {
 				if (currentInputMode != InputMode.MOVE)
@@ -158,8 +151,9 @@ public class DrawInSpace : GVRInput
 				SetMode (InputMode.MOVE);
 
 			}
-//			Debug.Log (selectedObject.tag);
+			rayHitRef.gameObject.SetActive (true);
 		} else {
+			rayHitRef.gameObject.SetActive (false);
 			if (currentInputMode == InputMode.MOVE)
 				SetMode (lastInputMode);
 
@@ -168,6 +162,8 @@ public class DrawInSpace : GVRInput
 			selectedObject = null;
 			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
 		}
+		if (activeStroke != null)
+			activeStroke.UpdateBrushPos (rayHitRef);
 
 	}
 
@@ -184,7 +180,8 @@ public class DrawInSpace : GVRInput
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
-		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode || selectedObject == null && activeNode == null) {
+		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode 
+			|| selectedObject == null && activeNode == null) {
 			toolCollection [modeNum].SetMoveTarget (rayHitRef);
 		
 
@@ -208,33 +205,13 @@ public class DrawInSpace : GVRInput
 	{
 		
 		DebugMessage ("Button Down from DrawInSpace");
-		isDrawing = true;
-		if (offline)
-			activeStroke = (Instantiate (strokePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<BrushGen> ();
-		else
-			activeStroke = PhotonNetwork.Instantiate (strokePrefab.name, Vector3.zero, Quaternion.identity, 0).GetComponent<BrushGen> ();
-		activeStroke.gameObject.name = "activeStroke";
-		if (activeNode != null) {
-			activeStroke.photonView.RPC ("SetNetworkParent", PhotonTargets.AllBuffered, activeNode.transform.name);
-			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 0);
 
-		} else {
-			drawingOnBackground = true;
-			activeStroke.photonView.RPC ("SetMaterial", PhotonTargets.AllBuffered, 1);
-		}
 	}
 
 	void EndDrawStroke ()
 	{
-		drawingOnBackground = false;
 		DebugMessage ("Button Up from DrawinSpace");
-		if (!pview.isMine && !offline)
-			return;
-		isDrawing = false;
-		if (activeStroke != null) {
-			activeStroke.EndStroke ();
-			activeStroke = null;
-		}
+
 	}
 
 
@@ -345,6 +322,11 @@ public class DrawInSpace : GVRInput
 		currentInputMode = (InputMode)modeNum;
 		TurnOnTool (modeNum);
 
+		if(currentInputMode == InputMode.MICROPHONE) {
+			lineRenderer.enabled = false;
+		} else {
+			lineRenderer.enabled = true;
+		}
 	}
 
 	// Turn on current tool and turn all others off.
@@ -373,7 +355,7 @@ public class DrawInSpace : GVRInput
 		activeNode = incNode.GetComponent<Node> ();
 		if (!activeNode.photonView.isMine)
 			activeNode.photonView.RequestOwnership ();
-		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 8);
+		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 11);
 		activeNode.SetDesiredPosition (halfPoint);
 		if (currentInputMode == InputMode.MOVE)
 			SetMode (InputMode.DRAW);
@@ -436,18 +418,15 @@ public class DrawInSpace : GVRInput
 	void StartMicrophone ()
 	{
 		TriggerToolAbility (true);
+
 		Debug.Log ("Starting microphone");
+
 		if (activeNode == null)
 			CreateNode ();
-		micWidget.ActivateMicrophone ();
-		activeNode.beginSpeech ();
-		sttWidget.OnTranscriptUpdated += OnTranscriptUpdated;
-	}
 
-	void OnTranscriptUpdated (string text)
-	{
-		Debug.Log ("OnTranscriptUpdated: " + text);
-		activeNode.photonView.RPC ("updateTranscript", PhotonTargets.AllBuffered, text);
+//		toolCollection [modeNum].SetMoveTarget (activeNode.micAnchor);
+		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
+		activeNode.beginSpeech ();
 	}
 
 	/// <summary>
@@ -456,9 +435,9 @@ public class DrawInSpace : GVRInput
 	void StopMicrophone ()
 	{
 		Debug.Log ("Stopping microphone");
+
 		TriggerToolAbility (false);
-		micWidget.DeactivateMicrophone ();
-		sttWidget.OnTranscriptUpdated -= OnTranscriptUpdated;
+		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
 		activeNode.endSpeech ();
 	}
 
@@ -475,7 +454,6 @@ public class DrawInSpace : GVRInput
 			if (curTool != modeNum) {
 				SetMode ((InputMode)curTool);
 			}
-
 		}
 	}
 
