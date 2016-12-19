@@ -1,46 +1,15 @@
 fileFormatVersion: 2
-guid: a66d5392822494ec7936e6ff86b8090a
-timeCreated: 1481307514
+guid: 11edb01f1c19047b58e3b65b74c123e1
+timeCreated: 1482168493
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: cap
-    100002: //RootNode
-    100004: marker
-    100006: marker_unwrapped_Obj
-    100008: marker_label_color
-    100010: marker_label_text
-    100012: marker_tip
-    100014: marker_white
-    400000: cap
-    400002: //RootNode
-    400004: marker
-    400006: marker_unwrapped_Obj
-    400008: marker_label_color
-    400010: marker_label_text
-    400012: marker_tip
-    400014: marker_white
-    2300000: cap
-    2300002: //RootNode
-    2300004: marker
-    2300006: marker_label_color
-    2300008: marker_label_text
-    2300010: marker_tip
-    2300012: marker_white
-    3300000: cap
-    3300002: //RootNode
-    3300004: marker
-    3300006: marker_label_color
-    3300008: marker_label_text
-    3300010: marker_tip
-    3300012: marker_white
-    4300000: marker
-    4300002: cap
-    4300004: marker_label_text
-    4300006: marker_label_color
-    4300008: marker_white
-    4300010: marker_tip
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Capsule
     9500000: //RootNode
   materials:
     importMaterials: 1
