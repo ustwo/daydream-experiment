@@ -19,13 +19,12 @@ public class PainBrush : MonoBehaviour
 	public LayerMask paintLayers;
 	private bool brushActivated = false;
 	public Transform pointer;
-	public LineRenderer debugline;
 	private bool resetBrushCords;
 
 	void Start ()
 	{
 		Init ();
-		debugline = gameObject.AddComponent<LineRenderer> ();
+
 	}
 
 	void Init(){
@@ -55,8 +54,7 @@ public class PainBrush : MonoBehaviour
 		if (!brushActivated)
 			return;
 		RaycastHit hit;
-		debugline.SetPosition (0, pointer.position);
-		debugline.SetPosition (1, pointer.position + pointer.forward * 10);
+
 		//Debug.Log ("It got here");
 		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach,paintLayers)) {
 		//	Debug.Log ("Hit the paintable Objects");
@@ -69,7 +67,7 @@ public class PainBrush : MonoBehaviour
 					lastUVCords = currentCords;
 					resetBrushCords = false;
 				}
-				Debug.Log ("distance = " + distance);
+			//	Debug.Log ("distance = " + distance);
 				Vector2 lerpCords = Vector2.Lerp (lastUVCords, currentCords, 0.1f);
 				if (distance < maxSpacing && (lerpCords-currentCords).sqrMagnitude < maxSpacing )
 					return;

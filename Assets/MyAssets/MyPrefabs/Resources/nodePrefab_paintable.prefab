@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e805a11784b1440b9cb516c789aa6e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  travelForce: 500
+  travelForce: 5
   transcriptText: {fileID: 114000012509485192}
   speechPrompt: {fileID: 114000013481194540}
   TextureRenderer: {fileID: 23000012211784328}

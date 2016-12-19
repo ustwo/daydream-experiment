@@ -22,7 +22,7 @@ public class Node : Photon.MonoBehaviour
 	[HideInInspector]
 	public Vector3 resetPosition;
 
-	private ComputeBitmap computeBitmap = new ComputeBitmap();
+	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 
 	void OnEnable ()
 	{
@@ -49,7 +49,7 @@ public class Node : Photon.MonoBehaviour
 		resetPosition = transform.position;
 		speechPrompt.enabled = false;
 		//transcriptText.enabled = false;
-	//	myMaterial.mainTexture = computeBitmap.ComputeBitMap(myTexture,brush) as Texture;
+		//	myMaterial.mainTexture = computeBitmap.ComputeBitMap(myTexture,brush) as Texture;
 	}
 
 	void PaintStroke (Vector2 uvCords)
@@ -84,8 +84,8 @@ public class Node : Photon.MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		return;
-		if (!photonView.isMine)
+		//return;
+		if (!photonView.isMine || _targetTransform == null &&_desiredPosition == Vector3.zero )
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
@@ -94,6 +94,7 @@ public class Node : Photon.MonoBehaviour
 			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
 
 		//myRigid.AddForce (force);
+		transform.Translate (force, Space.World);
 		
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
 

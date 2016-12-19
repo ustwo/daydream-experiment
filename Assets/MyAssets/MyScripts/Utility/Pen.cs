@@ -44,7 +44,7 @@ public class Pen : Tool {
 		if (!gameObject.activeSelf)
 			return;
 
-		// set a transition time 
+		 //set a transition time 
 		//popInPlaceTime = 1f;
 
 		// enable commands in update
