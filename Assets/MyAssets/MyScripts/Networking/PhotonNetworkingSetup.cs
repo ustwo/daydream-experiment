@@ -7,9 +7,12 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 
 	public bool offline = true;
 	private Text debugLabel;
+	public string roomName; 
 
 	[Tooltip ("This game object must be in the \"Resources\" folder")]
 	public GameObject playerControlledPrefab;
+
+	public bool isObserver = false;
 
 	public void Awake ()
 	{
@@ -36,12 +39,14 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 		DebugMessage ("\nJoined Lobby", false);
 		Debug.Log ("Joined Lobby, joining room");
 		RoomOptions roomOp = new RoomOptions () { isVisible = false, maxPlayers = 20 };
-		PhotonNetwork.JoinOrCreateRoom ("draw", roomOp, TypedLobby.Default);
+		PhotonNetwork.JoinOrCreateRoom (roomName, roomOp, TypedLobby.Default);
 
 	}
 
 	public void OnJoinedRoom ()
 	{
+		if (isObserver)
+			return;
 		PhotonNetwork.Instantiate (playerControlledPrefab.name, Vector3.zero, Quaternion.identity, 0);
 		DebugMessage ("\nJoined Room, Playercount = " + PhotonNetwork.playerList.Length.ToString (), false);
 		Debug.Log ("Joined Room");
@@ -58,6 +63,7 @@ public class PhotonNetworkingSetup : Photon.MonoBehaviour
 		else
 			debugLabel.text += msg;
 	}
+
 	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		if (stream.isWriting) {
