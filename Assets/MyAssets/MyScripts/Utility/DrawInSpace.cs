@@ -72,6 +72,11 @@ public class DrawInSpace : GVRInput
 
 	public float rotationSpeed = 10f;
 
+	//	Anchor for the mic
+	private GameObject micAnchor;
+
+	private LineRenderer lineRenderer;
+
 	// Use this for initialization
 	public override void Awake ()
 	{
@@ -81,6 +86,10 @@ public class DrawInSpace : GVRInput
 
 	public void Start ()
 	{
+		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
+
+		lineRenderer = GetComponent<LineRenderer> ();
+
 		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
 		selectableModeDict.Add (0, InputMode.DRAW);
@@ -339,6 +348,11 @@ public class DrawInSpace : GVRInput
 		currentInputMode = (InputMode)modeNum;
 		TurnOnTool (modeNum);
 
+		if(currentInputMode == InputMode.MICROPHONE) {
+			lineRenderer.enabled = false;
+		} else {
+			lineRenderer.enabled = true;
+		}
 	}
 
 	// Turn on current tool and turn all others off.
@@ -430,9 +444,14 @@ public class DrawInSpace : GVRInput
 	void StartMicrophone ()
 	{
 		TriggerToolAbility (true);
+
 		Debug.Log ("Starting microphone");
+
 		if (activeNode == null)
 			CreateNode ();
+
+//		toolCollection [modeNum].SetMoveTarget (activeNode.micAnchor);
+		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
 		activeNode.beginSpeech ();
 	}
 
@@ -442,7 +461,9 @@ public class DrawInSpace : GVRInput
 	void StopMicrophone ()
 	{
 		Debug.Log ("Stopping microphone");
+
 		TriggerToolAbility (false);
+		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
 		activeNode.endSpeech ();
 	}
 
@@ -459,7 +480,6 @@ public class DrawInSpace : GVRInput
 			if (curTool != modeNum) {
 				SetMode ((InputMode)curTool);
 			}
-
 		}
 	}
 

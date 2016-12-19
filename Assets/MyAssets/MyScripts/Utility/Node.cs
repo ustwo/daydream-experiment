@@ -16,6 +16,7 @@ public class Node : Photon.MonoBehaviour {
 	public Vector3 resetPosition;
 
 	public MicrophoneWidget micWidget;
+	public Transform micAnchor;
 
 	void OnEnable(){
 		if (photonView.isMine) {
