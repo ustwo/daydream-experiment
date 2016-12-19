@@ -788,7 +788,6 @@ MonoBehaviour:
   group: 0
   OwnerShipWasTransfered: 0
   prefixBackup: -1
-  observed: {fileID: 0}
   synchronization: 3
   onSerializeTransformOption: 1
   onSerializeRigidBodyOption: 2
@@ -798,6 +797,7 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
+  currentMasterID: -1
   isRuntimeInstantiated: 0
 --- !u!114 &114000011188282858
 MonoBehaviour:
@@ -866,7 +866,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  activeMaterial: {fileID: 2100000, guid: 14ed06ac0127c154589d77e354a9dbd1, type: 2}
+  activeMaterial: {fileID: 0}
   idleMat: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   micRend: {fileID: 23000012544889424}
   speed: 10

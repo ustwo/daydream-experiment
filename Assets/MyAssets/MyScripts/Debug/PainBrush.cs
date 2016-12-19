@@ -20,6 +20,7 @@ public class PainBrush : MonoBehaviour
 	private bool brushActivated = false;
 	public Transform pointer;
 	private bool resetBrushCords;
+	private LineRenderer lineRend;
 
 	void Start ()
 	{
@@ -32,6 +33,8 @@ public class PainBrush : MonoBehaviour
 		spacing = maxSpacing;
 		scaledBrush = Instantiate (activeBrush) as Texture2D;
 		TextureScale.Bilinear (scaledBrush, brushSize, brushSize);
+		lineRend = gameObject.AddComponent<LineRenderer> ();
+		lineRend.SetVertexCount (2);
 
 	}
 	void Update(){
@@ -55,9 +58,11 @@ public class PainBrush : MonoBehaviour
 			return;
 		RaycastHit hit;
 
-		//Debug.Log ("It got here");
+		Debug.Log ("It got here");
+		lineRend.SetPosition (0, pointer.position);
+		lineRend.SetPosition (1, pointer.position + pointer.forward * 10);
 		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach,paintLayers)) {
-		//	Debug.Log ("Hit the paintable Objects");
+			Debug.Log ("Hit the paintable Objects");
 			float distance = (hit.point - lastDrawPoint).sqrMagnitude;
 			int brushCount = Mathf.FloorToInt (distance / maxSpacing);
 			activeSurface = hit.transform.GetComponent<PaintableObject> ();

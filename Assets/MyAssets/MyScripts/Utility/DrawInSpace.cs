@@ -177,7 +177,7 @@ public class DrawInSpace : GVRInput
 	{
 		if (!pview.isMine)
 			return;
-		//Debug.Log ("OnButtonDown");
+		Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
 		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode 
