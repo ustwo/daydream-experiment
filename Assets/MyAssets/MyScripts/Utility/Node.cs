@@ -10,9 +10,6 @@ public class Node : Photon.MonoBehaviour
 	private Transform _myTransform;
 	private Transform _targetTransform;
 
-	public Text transcriptText;
-	public Text speechPrompt;
-
 	public Renderer TextureRenderer;
 	public Shader nodeShader;
 	private Material myMaterial;
@@ -22,7 +19,6 @@ public class Node : Photon.MonoBehaviour
 	public Vector3 resetPosition;
 
 	public MicrophoneWidget micWidget;
-	public Transform micAnchor;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 
@@ -49,9 +45,6 @@ public class Node : Photon.MonoBehaviour
 		TextureRenderer.material = myMaterial;
 		_myTransform = transform;
 		resetPosition = transform.position;
-		speechPrompt.enabled = false;
-		//transcriptText.enabled = false;
-		//	myMaterial.mainTexture = computeBitmap.ComputeBitMap(myTexture,brush) as Texture;
 	}
 
 	void PaintStroke (Vector2 uvCords)
@@ -116,14 +109,6 @@ public class Node : Photon.MonoBehaviour
 	}
 
 	[PunRPC]
-	public void updateTranscript (string text)
-	{
-		if (speechPrompt.enabled)
-			speechPrompt.enabled = false;
-
-		transcriptText.text += text;
-	}
-
 	string randomID {
 		get {
 			int idInt = Random.Range (0, 1000000);

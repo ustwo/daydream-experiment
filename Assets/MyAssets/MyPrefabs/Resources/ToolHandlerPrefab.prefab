@@ -270,9 +270,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013038664222}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.8970002, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25000024, z: 0.25000024}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0.927}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 4000013245175048}
@@ -395,10 +395,10 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010611848060}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000010252582522}
   m_Father: {fileID: 4000010117921490}
@@ -869,7 +869,7 @@ MonoBehaviour:
   activeMaterial: {fileID: 2100000, guid: 14ed06ac0127c154589d77e354a9dbd1, type: 2}
   idleMat: {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
   micRend: {fileID: 23000012544889424}
-  speed: 10
+  speed: 5
 --- !u!114 &114000012683567010
 MonoBehaviour:
   m_ObjectHideFlags: 1
