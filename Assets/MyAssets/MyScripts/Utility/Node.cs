@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using IBM.Watson.DeveloperCloud.Widgets;
 
 public class Node : Photon.MonoBehaviour
 {
@@ -18,7 +17,8 @@ public class Node : Photon.MonoBehaviour
 	[HideInInspector]
 	public Vector3 resetPosition;
 
-	public MicrophoneWidget micWidget;
+	public MicWidget micWidget;
+	public STTController sttWidget;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 
@@ -118,6 +118,15 @@ public class Node : Photon.MonoBehaviour
 
 	public void endSpeech ()
 	{
+		StopCoroutine (DelayMic ());
+		StartCoroutine (DelayMic ());
+//		Debug.Log ("Delayed mic");
+//		micWidget.DeactivateMicrophone ();
+	}
+
+	IEnumerator DelayMic()
+	{
+		yield return new WaitForSeconds (0.5F);
 		micWidget.DeactivateMicrophone ();
 	}
 

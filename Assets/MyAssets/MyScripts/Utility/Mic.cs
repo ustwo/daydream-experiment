@@ -7,16 +7,21 @@ public class Mic : Tool
 	public Material activeMaterial;
 	public Material idleMat;
 	public Renderer micRend;
+	public GameObject micModel;
 
 	public float speed = 10f;
 	private float anchorTime = 0;
 	private bool anchorToNode = false;
 
+	public bool IsListening = false;
+	public bool IsRecording = false;
+
 	public override void OnEnable()
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
-//		transform.localRotation = Vector3.zero;
+
+		micModel.GetComponent<Renderer> ().material = idleMat;
 	}
 
 	void Update()
@@ -33,6 +38,14 @@ public class Mic : Tool
 		} else {
 			transform.position = target.position;
 			anchorToNode = false;
+		}
+
+//		Debug.Log ("is listening: " + IsListening + ", is recording: " + IsRecording);
+
+		if(IsListening || IsRecording) {
+			micModel.GetComponent<Renderer> ().material = activeMaterial;
+		} else {
+			micModel.GetComponent<Renderer> ().material = idleMat;
 		}
 	}
 
