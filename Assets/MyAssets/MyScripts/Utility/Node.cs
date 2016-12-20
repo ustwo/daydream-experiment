@@ -128,8 +128,11 @@ public class Node : Photon.MonoBehaviour
 		preloader.SetActive (true);
 
 		micWidget.ActivateMicrophone ();
-		sttWidget.sttIsListening += IsListening;
-		micWidget.micIsRecording += IsRecording;
+//		sttWidget.sttIsListening += IsListening;
+//		micWidget.micIsRecording += IsRecording;
+
+		IsListening (true);
+		IsRecording (true);
 	}
 
 	void IsListening(bool isListening)

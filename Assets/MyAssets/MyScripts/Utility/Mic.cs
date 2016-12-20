@@ -33,7 +33,7 @@ public class Mic : Tool
 
 		micModel.GetComponent<Renderer> ().material = idleMat;
 
-		source = GetComponent<AudioSource> ();
+//		source = GetComponent<AudioSource> ();
 	}
 
 	void Update()
@@ -54,21 +54,21 @@ public class Mic : Tool
 
 //		Debug.Log ("is listening: " + IsListening + ", is recording: " + IsRecording);
 
-		if(IsListening || IsRecording) {
-			micModel.GetComponent<Renderer> ().material = activeMaterial;
-			offClipDidPlay = false;
-			if (!onClipDidPlay) {
-				source.PlayOneShot (micOn);
-				onClipDidPlay = true;
-			}
-		} else {
-			micModel.GetComponent<Renderer> ().material = idleMat;
-			onClipDidPlay = false;
-			if(!offClipDidPlay) {
-				source.PlayOneShot (micOff);
-				offClipDidPlay = true;
-			}
-		}
+//		if(IsListening || IsRecording) {
+//			micModel.GetComponent<Renderer> ().material = activeMaterial;
+//			offClipDidPlay = false;
+//			if (!onClipDidPlay) {
+//				source.PlayOneShot (micOn);
+//				onClipDidPlay = true;
+//			}
+//		} else {
+//			micModel.GetComponent<Renderer> ().material = idleMat;
+//			onClipDidPlay = false;
+//			if(!offClipDidPlay) {
+//				source.PlayOneShot (micOff);
+//				offClipDidPlay = true;
+//			}
+//		}
 	}
 
 	public override void SetToolAbility (bool incBool)
