@@ -21,8 +21,10 @@ public class Mic : Tool
 
 	private AudioSource source;
 	public AudioClip micOn;
+	public AudioClip micOff;
 
-	bool clipDidPlay = false;
+	bool onClipDidPlay = false;
+	bool offClipDidPlay = true;
 
 	public override void OnEnable()
 	{
@@ -54,11 +56,18 @@ public class Mic : Tool
 
 		if(IsListening || IsRecording) {
 			micModel.GetComponent<Renderer> ().material = activeMaterial;
-			if(!clipDidPlay) source.PlayOneShot (micOn);
-			clipDidPlay = true;
+			offClipDidPlay = false;
+			if (!onClipDidPlay) {
+				source.PlayOneShot (micOn);
+				onClipDidPlay = true;
+			}
 		} else {
 			micModel.GetComponent<Renderer> ().material = idleMat;
-			clipDidPlay = false;
+			onClipDidPlay = false;
+			if(!offClipDidPlay) {
+				source.PlayOneShot (micOff);
+				offClipDidPlay = true;
+			}
 		}
 	}
 
