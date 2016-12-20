@@ -89,17 +89,25 @@ public class STTController : Widget
 				m_SpeechToText.EnableInterimResults = m_EnableInterimResults;
 				m_SpeechToText.OnError = OnError;
 				m_SpeechToText.StartListening(OnRecognize);
-				if (m_StatusText != null)
+				if (m_StatusText != null) {
 					m_StatusText.text = "LISTENING";
+					if(sttIsListening != null) sttIsListening (m_SpeechToText.IsListening);
+				}
 			}
 			else if (!value && m_SpeechToText.IsListening)
 			{
-				m_SpeechToText.StopListening();
-				if (m_StatusText != null)
+				if (m_StatusText != null) {
 					m_StatusText.text = "READY";
+					if(sttIsListening != null) sttIsListening (m_SpeechToText.IsListening);
+				}
+				m_SpeechToText.StopListening();
 			}
 		}
 	}
+
+	public delegate void STTIsListening(bool isListening);
+	public STTIsListening sttIsListening;
+
 	#endregion
 
 	#region Widget Interface

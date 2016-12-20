@@ -427,6 +427,24 @@ public class DrawInSpace : GVRInput
 //		toolCollection [modeNum].SetMoveTarget (activeNode.micAnchor);
 		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
 		activeNode.beginSpeech ();
+		activeNode.sttWidget.sttIsListening += IsListening;
+		activeNode.micWidget.micIsRecording += IsRecording;
+	}
+
+	void IsListening(bool isListening) 
+	{
+		Debug.Log ("IS LISTENING: " + isListening);
+
+		Mic micTool = (Mic)toolCollection [modeNum];
+		micTool.IsListening = isListening;
+	}
+
+	void IsRecording(bool isRecording)
+	{
+		Debug.Log ("IS RECORDING");
+
+		Mic micTool = (Mic)toolCollection [modeNum];
+		micTool.IsRecording = isRecording;
 	}
 
 	/// <summary>
@@ -438,6 +456,10 @@ public class DrawInSpace : GVRInput
 
 		TriggerToolAbility (false);
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
+//		activeNode.sttWidget.sttIsListening -= IsListening;
+//		activeNode.micWidget.micIsRecording -= IsRecording;
+		IsListening (false);
+		IsRecording (false);
 		activeNode.endSpeech ();
 	}
 
