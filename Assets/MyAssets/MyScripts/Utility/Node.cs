@@ -86,7 +86,7 @@ public class Node : Photon.MonoBehaviour
 
 	void Update()
 	{
-		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
+//		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
 
 		if(micIsRecording || micIsListening) {
 			recordingIndicator.SetActive (true);
