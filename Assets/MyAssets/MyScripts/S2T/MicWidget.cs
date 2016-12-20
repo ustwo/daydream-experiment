@@ -186,6 +186,7 @@ public class MicWidget : Widget
 		if (m_ActivateOnStart)
 			Active = true;
 	}
+
 	private void Update()
 	{
 		if (Failure && Active && !Disable
@@ -195,6 +196,7 @@ public class MicWidget : Widget
 			StartRecording();
 		}
 	}
+
 	private void OnDisableInput(Data data)
 	{
 		Disable = ((DisableMicData)data).Boolean;

@@ -431,9 +431,9 @@ public class DrawInSpace : GVRInput
 		activeNode.micWidget.micIsRecording += IsRecording;
 	}
 
-	void IsListening(bool isListening) 
+	void IsListening(bool isListening)
 	{
-		Debug.Log ("IS LISTENING: " + isListening);
+//		Debug.Log ("IS LISTENING: " + isListening);
 
 		Mic micTool = (Mic)toolCollection [modeNum];
 		micTool.IsListening = isListening;
@@ -441,7 +441,7 @@ public class DrawInSpace : GVRInput
 
 	void IsRecording(bool isRecording)
 	{
-		Debug.Log ("IS RECORDING");
+//		Debug.Log ("IS RECORDING");
 
 		Mic micTool = (Mic)toolCollection [modeNum];
 		micTool.IsRecording = isRecording;
