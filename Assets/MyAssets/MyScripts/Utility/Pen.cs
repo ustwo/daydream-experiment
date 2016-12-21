@@ -24,6 +24,7 @@ public class Pen : Tool
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
+		ButtonOptionRB ();
 	}
 
 
