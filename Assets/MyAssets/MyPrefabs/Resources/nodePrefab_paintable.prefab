@@ -45,7 +45,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000010743055238
 GameObject:
   m_ObjectHideFlags: 1
@@ -899,8 +899,8 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114000011854137602}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 0
-  instantiationId: -1
+  viewIdField: 3
+  instantiationId: 3
   isRuntimeInstantiated: 0
 --- !u!212 &212000011678069192
 SpriteRenderer:
