@@ -94,7 +94,7 @@ public class Node : Photon.MonoBehaviour
 			recordingIndicator.SetActive (true);
 			if(preloader.GetActive ()) preloader.SetActive (false);
 		} else {
-			recordingIndicator.SetActive (false);
+			if(recordingIndicator != null) recordingIndicator.SetActive (false);
 		}
 	}
 
