@@ -108,6 +108,7 @@ public class Pen : Tool
 		currentBrushColorIndex--;
 		if (currentBrushColorIndex == -1)
 			currentBrushColorIndex = brushColors.Length - 1;
+		penMat.color = brushColors [currentBrushColorIndex];
 		paintBrush.color = brushColors [currentBrushColorIndex];
 		base.ButtonOptionRT ();
 	}

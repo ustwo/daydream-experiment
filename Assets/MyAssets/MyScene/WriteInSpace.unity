@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offline: 0
-  roomName: kevinRoom
+  roomName: kevinRoom2
   playerControlledPrefab: {fileID: 1000010859038304, guid: 7724a022313514c64bbc527148a90bc7,
     type: 2}
   isObserver: 0
@@ -860,7 +860,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1000012679736372, guid: c70413aba8d764e58976ed66b5ddda4a, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c70413aba8d764e58976ed66b5ddda4a, type: 2}
