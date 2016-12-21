@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class Node : Photon.MonoBehaviour
 {
-	public float travelForce = 5f;
+	public float travelSpeed = 5f;
 	private Vector3 _desiredPosition = Vector3.zero;
 	private Transform _myTransform;
 	private Transform _targetTransform;
@@ -36,6 +36,8 @@ public class Node : Photon.MonoBehaviour
 
 	bool micIsListening = false;
 	bool micIsRecording = false;
+
+	public LayerMask nodeMask;
 
 	void OnEnable ()
 	{
@@ -105,11 +107,22 @@ public class Node : Photon.MonoBehaviour
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
-			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelForce);
+			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelSpeed);
 		else
-			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
+			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelSpeed);
 		transform.Translate (force, Space.World);
-		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
+		Collider[] objectsInTheWay = Physics.OverlapSphere (transform.position, 5,nodeMask);
+		if (objectsInTheWay.Length>1) {
+			for (int i = 0; i < objectsInTheWay.Length; i++) {
+				if (objectsInTheWay [i].gameObject != gameObject) {
+					_desiredPosition = transform.position - (objectsInTheWay [i].transform.position - transform.position);
+				}
+			}
+		}
+		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, _myTransform.position, 0.5f);
+		if (Vector3.Distance (_myTransform.position, Vector3.zero) > 54) {
+			_desiredPosition = _myTransform.position + _myTransform.forward*-1;
+		}
 	}
 
 	[PunRPC]

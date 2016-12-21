@@ -225,7 +225,7 @@ GameObject:
   - 114: {fileID: 114000014207265520}
   - 65: {fileID: 65000011406560552}
   - 114: {fileID: 114000011854137602}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: nodePrefab_paintable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -657,6 +657,9 @@ MonoBehaviour:
   textureHasChanged: 0
   recordingIndicator: {fileID: 1000010499954748}
   preloader: {fileID: 1000013122726706}
+  nodeMask:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!114 &114000012323300286
 MonoBehaviour:
   m_ObjectHideFlags: 1
