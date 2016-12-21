@@ -101,9 +101,6 @@ PlayerSettings:
   xboxOneDisableKinectGpuReservation: 0
   singlePassStereoRendering: 0
   vrSettings:
-    cardboard:
-      depthFormat: 0
-      enableTransitionView: 0
     google:
       depthFormat: 0
       useSustainedPerformanceMode: 0
