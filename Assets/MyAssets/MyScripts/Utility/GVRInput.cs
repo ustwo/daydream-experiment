@@ -91,9 +91,36 @@ public class GVRInput : MonoBehaviour
 			DebugMessage ("Button Up");
 			OnButtonUp ();
 		}
+		if (GvrController.IsTouching) {
+
+		}
 		if (GvrController.ClickButtonDown) {
-			DebugMessage ("Button Down");
-			OnButtonDown ();
+			Vector2 tempTouchPos = touchPosition;
+			float touchDistace = Vector2.Distance (Vector2.one * 0.5f, tempTouchPos);
+
+			DebugMessage ("Button Down:"+ tempTouchPos.ToString()+ "  Distance:" + touchDistace);
+			if (touchDistace < 0.4f) {
+				OnButtonDown ();
+			} else {
+				if (tempTouchPos.x > 0.5f) {
+					// right side
+					if (tempTouchPos.y < 0.5f) {
+						// top right
+						ButtonOptionRT ();
+					} else {
+						ButtonOptionRB ();
+					}
+				} else {
+					// left side 
+					if (tempTouchPos.y < 0.5f) {
+						// top left
+						ButtonOpetionLT ();
+					} else {
+						ButtonOptionLB ();
+					}
+				}
+			}
+
 		}
 		if (GvrController.TouchDown) {
 			DebugMessage ("TouchDown");
@@ -180,7 +207,7 @@ public class GVRInput : MonoBehaviour
 			if (GvrController.IsTouching)
 				return GvrController.TouchPos;
 			else
-				return Vector2.zero;
+				return Vector2.one * 0.5f;
 		}
 	}
 
@@ -233,6 +260,26 @@ public class GVRInput : MonoBehaviour
 	}
 
 	public virtual void AppButtonUp ()
+	{
+
+	}
+
+	public virtual void ButtonOpetionLT ()
+	{
+
+	}
+
+	public virtual void ButtonOptionLB ()
+	{
+
+	}
+
+	public virtual void ButtonOptionRT ()
+	{
+
+	}
+
+	public virtual void ButtonOptionRB ()
 	{
 
 	}

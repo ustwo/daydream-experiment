@@ -38,4 +38,16 @@ public class Tool : MonoBehaviour
 	{
 		isActive = incBool;
 	}
+	public virtual void ButtonOpetionLT(){
+
+	}
+	public virtual void ButtonOptionLB(){
+
+	}
+	public virtual void ButtonOptionRT(){
+
+	}
+	public virtual void ButtonOptionRB(){
+
+	}
 }

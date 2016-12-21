@@ -9,6 +9,10 @@ public class Node : Photon.MonoBehaviour
 	private Transform _myTransform;
 	private Transform _targetTransform;
 
+	public Text transcriptText;
+	public Text speechPrompt;
+
+
 	public Renderer TextureRenderer;
 	public Shader nodeShader;
 	private Material myMaterial;
@@ -21,6 +25,11 @@ public class Node : Photon.MonoBehaviour
 	public STTController sttWidget;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
+	public PaintableObject paintableObject;
+
+	[HideInInspector]
+	public bool textureHasChanged = false;
+	private byte[] texturePixelArray;
 
 	public GameObject recordingIndicator;
 	public GameObject preloader;
@@ -38,22 +47,15 @@ public class Node : Photon.MonoBehaviour
 
 	void Start ()
 	{
-		myMaterial = new Material (nodeShader);
-		myTexture = new Texture2D (500, 500);
-		Color[] textureColors = new Color[500 * 500];
-		Color blankColor = Color.black;
-		for (int i = 0; i < textureColors.Length; i++) {
-			textureColors [i] = blankColor;
-		}
-		myTexture.SetPixels (textureColors);
-		myTexture.Apply ();
-		myMaterial.mainTexture = myTexture;
-		TextureRenderer.material = myMaterial;
 		_myTransform = transform;
 		resetPosition = transform.position;
 
+
+		speechPrompt.enabled = false;
+
 		recordingIndicator.SetActive (false);
 		preloader.SetActive (false);
+
 	}
 
 	void PaintStroke (Vector2 uvCords)
@@ -92,24 +94,21 @@ public class Node : Photon.MonoBehaviour
 			recordingIndicator.SetActive (true);
 			if(preloader.GetActive ()) preloader.SetActive (false);
 		} else {
-			recordingIndicator.SetActive (false);
+			if(recordingIndicator != null) recordingIndicator.SetActive (false);
 		}
 	}
 
 	void FixedUpdate ()
 	{
 		//return;
-		if (!photonView.isMine || _targetTransform == null &&_desiredPosition == Vector3.zero )
+		if (!photonView.isMine || _targetTransform == null && _desiredPosition == Vector3.zero)
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
 			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelForce);
 		else
 			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
-
-		//myRigid.AddForce (force);
 		transform.Translate (force, Space.World);
-
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
 	}
 
@@ -173,12 +172,22 @@ public class Node : Photon.MonoBehaviour
 	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
 	{
 		if (stream.isWriting) {
-
 			stream.SendNext (transform.position);
 			stream.SendNext (transform.rotation);
+			stream.SendNext (textureHasChanged);
+			if (textureHasChanged)
+				texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
+			stream.SendNext (texturePixelArray);
+
+
 		} else {
 			transform.position = (Vector3)stream.ReceiveNext ();
 			transform.rotation = (Quaternion)stream.ReceiveNext ();
+			textureHasChanged = (bool)stream.ReceiveNext ();
+			texturePixelArray = (byte[])stream.ReceiveNext ();
+			if (textureHasChanged)
+				(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage(texturePixelArray);
+
 
 		}
 	}
