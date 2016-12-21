@@ -7,7 +7,7 @@ public class Recording : MonoBehaviour
 {
 
 	public Renderer icon;
-	public Canvas canvas;
+//	public Canvas canvas;
 
 	private bool isEnabled = false;
 
@@ -17,7 +17,7 @@ public class Recording : MonoBehaviour
 	// Use this for initialization
 	void Start () {
 		icon.enabled = isEnabled;
-		canvas.enabled = isEnabled;
+//		canvas.enabled = isEnabled;
 	}
 	
 	// Update is called once per frame
@@ -30,7 +30,8 @@ public class Recording : MonoBehaviour
 
 			previousTime = currentTime;
 			isEnabled = !isEnabled;
-			icon.enabled = canvas.enabled = isEnabled;
+			icon.enabled = isEnabled;
+//			icon.enabled = canvas.enabled = isEnabled;
 		}
 	}
 }
