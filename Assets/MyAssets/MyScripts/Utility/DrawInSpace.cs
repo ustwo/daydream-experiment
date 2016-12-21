@@ -91,13 +91,9 @@ public class DrawInSpace : GVRInput
 	{
 		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
 
-
 		lineRenderer = gameObject.GetComponent<LineRenderer> ();
 
-
 		source = GetComponent<AudioSource> ();
-
-
 
 		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
@@ -461,46 +457,12 @@ public class DrawInSpace : GVRInput
 		if (activeNode == null)
 			CreateNode ();
 
-//		toolCollection [modeNum].SetMoveTarget (activeNode.micAnchor);
 		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
 		activeNode.beginSpeech ();
 
-	}
-	void IsListening (bool isListening)
-	{
-	//	Debug.Log ("IS LISTENING: " + isListening);
-
 		source.PlayOneShot (micOn);
 
-
-//		activeNode.sttWidget.sttIsListening += IsListening;
-//		activeNode.micWidget.micIsRecording += IsRecording;
 	}
-
-
-	void IsRecording (bool isRecording)
-	{
-		//Debug.Log ("IS RECORDING");
-
-		Mic micTool = (Mic)toolCollection [modeNum];
-		micTool.IsRecording = isRecording;
-	}
-
-//	void IsListening(bool isListening)
-//	{
-////		Debug.Log ("IS LISTENING: " + isListening);
-//
-//		Mic micTool = (Mic)toolCollection [modeNum];
-//		micTool.IsListening = isListening;
-//	}
-//
-//	void IsRecording(bool isRecording)
-//	{
-////		Debug.Log ("IS RECORDING");
-//
-//		Mic micTool = (Mic)toolCollection [modeNum];
-//		micTool.IsRecording = isRecording;
-//	}
 
 
 	/// <summary>
@@ -512,10 +474,6 @@ public class DrawInSpace : GVRInput
 
 		TriggerToolAbility (false);
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
-//		activeNode.sttWidget.sttIsListening -= IsListening;
-//		activeNode.micWidget.micIsRecording -= IsRecording;
-//		IsListening (false);
-//		IsRecording (false);
 
 		source.PlayOneShot (micOff);
 
