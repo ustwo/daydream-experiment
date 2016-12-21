@@ -776,7 +776,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 212000013738626018}
-  canvas: {fileID: 223000013434792628}
 --- !u!114 &114000013479189474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -899,8 +898,8 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 114000011854137602}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 3
-  instantiationId: 3
+  viewIdField: 0
+  instantiationId: -1
   isRuntimeInstantiated: 0
 --- !u!212 &212000011678069192
 SpriteRenderer:
