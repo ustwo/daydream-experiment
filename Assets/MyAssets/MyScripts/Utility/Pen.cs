@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Pen : Tool {
+public class Pen : Tool
+{
 
 	// the speed at which the pen travels to its desired destination
 	public float moveSpeed = 10f;
@@ -14,13 +15,20 @@ public class Pen : Tool {
 
 	public PainBrush paintBrush;
 
-	public override void OnEnable(){
-		base.OnEnable();
+	public Color[] brushColors;
+	private int currentBrushColorIndex = 0;
+
+	public Material penMat;
+
+	public override void OnEnable ()
+	{
+		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
 	}
 
 
-	void Update(){
+	void Update ()
+	{
 
 		// If popped in place, dont continue
 		if (poppedInPlace)
@@ -31,13 +39,14 @@ public class Pen : Tool {
 		adjustedPosition.x = 0;
 		adjustedPosition.y = 0;
 		if (popInPlaceTime > 0) {
-			transform.localPosition = Vector3.MoveTowards (transform.localPosition, adjustedPosition ,moveSpeed * Time.deltaTime);
+			transform.localPosition = Vector3.MoveTowards (transform.localPosition, adjustedPosition, moveSpeed * Time.deltaTime);
 			popInPlaceTime -= Time.deltaTime;
 		} else {
 			transform.localPosition = adjustedPosition;
 			poppedInPlace = true;
 		}
 	}
+
 	public override void SetToolAbility (bool incBool)
 	{
 		// check to make sure this object is turned on
@@ -45,7 +54,7 @@ public class Pen : Tool {
 			return;
 
 		Debug.Log ("pen On");
-		 //set a transition time 
+		//set a transition time 
 		//popInPlaceTime = 1f;
 
 		// enable commands in update
@@ -65,6 +74,41 @@ public class Pen : Tool {
 		adjustedPosition.y = 0;
 		transform.localPosition = adjustedPosition;
 		base.SetMovePosition (incPos);
+	}
+
+	public override void ButtonOpetionLT ()
+	{
+		paintBrush.brushSize += 5;
+		paintBrush.Init ();
+		base.ButtonOpetionLT ();
+	}
+
+	public override void ButtonOptionLB ()
+	{
+		if (paintBrush.brushSize > 5) {
+			paintBrush.brushSize -= 5;
+			paintBrush.Init ();
+		}
+		base.ButtonOptionLB ();
+	}
+
+	public override void ButtonOptionRB ()
+	{
+		currentBrushColorIndex++;
+		if (currentBrushColorIndex == brushColors.Length)
+			currentBrushColorIndex = 0;
+		penMat.color = brushColors [currentBrushColorIndex];
+		paintBrush.color = brushColors [currentBrushColorIndex];
+		base.ButtonOptionRB ();
+	}
+
+	public override void ButtonOptionRT ()
+	{
+		currentBrushColorIndex--;
+		if (currentBrushColorIndex == -1)
+			currentBrushColorIndex = brushColors.Length - 1;
+		paintBrush.color = brushColors [currentBrushColorIndex];
+		base.ButtonOptionRT ();
 	}
 
 }

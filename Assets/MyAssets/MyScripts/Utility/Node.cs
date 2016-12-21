@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using IBM.Watson.DeveloperCloud.Widgets;
 
 public class Node : Photon.MonoBehaviour
 {
@@ -14,12 +13,16 @@ public class Node : Photon.MonoBehaviour
 	public Text speechPrompt;
 
 
+	public Renderer TextureRenderer;
+	public Shader nodeShader;
+	private Material myMaterial;
+	private Texture2D myTexture;
 
 	[HideInInspector]
 	public Vector3 resetPosition;
 
-	public MicrophoneWidget micWidget;
-	public Transform micAnchor;
+	public MicWidget micWidget;
+	public STTController sttWidget;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 	public PaintableObject paintableObject;
@@ -40,7 +43,9 @@ public class Node : Photon.MonoBehaviour
 	{
 		_myTransform = transform;
 		resetPosition = transform.position;
+
 		speechPrompt.enabled = false;
+
 	}
 
 	void PaintStroke (Vector2 uvCords)
@@ -102,14 +107,6 @@ public class Node : Photon.MonoBehaviour
 	}
 
 	[PunRPC]
-	public void updateTranscript (string text)
-	{
-		if (speechPrompt.enabled)
-			speechPrompt.enabled = false;
-
-		transcriptText.text += text;
-	}
-
 	string randomID {
 		get {
 			int idInt = Random.Range (0, 1000000);
@@ -119,6 +116,15 @@ public class Node : Photon.MonoBehaviour
 
 	public void endSpeech ()
 	{
+		StopCoroutine (DelayMic ());
+		StartCoroutine (DelayMic ());
+//		Debug.Log ("Delayed mic");
+//		micWidget.DeactivateMicrophone ();
+	}
+
+	IEnumerator DelayMic()
+	{
+		yield return new WaitForSeconds (0.5F);
 		micWidget.DeactivateMicrophone ();
 	}
 
