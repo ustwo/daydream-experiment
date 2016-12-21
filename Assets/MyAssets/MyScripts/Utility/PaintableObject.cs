@@ -7,6 +7,7 @@ public class PaintableObject : MonoBehaviour {
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 	public Shader shader;
 	private bool isInit = false;
+	public Node node;
 	// Use this for initialization
 	void Start () {
 		
@@ -36,6 +37,7 @@ public class PaintableObject : MonoBehaviour {
 		}
 	}
 	public void RegisterRay(Vector2 uvCords,Texture2D brush ,float intencity,Color addColor){
+		node.textureHasChanged = true;
 		myRenderer.material.mainTexture = computeBitmap.ComputeBitMap (myRenderer.material.mainTexture as Texture2D, brush , uvCords, intencity,addColor);
 	}
 
@@ -44,4 +46,6 @@ public class PaintableObject : MonoBehaviour {
 			Init ();
 		}
 	}
+
+
 }

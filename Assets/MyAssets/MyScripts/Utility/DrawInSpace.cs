@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using Photon;
 using System.Collections.Generic;
+
 //using IBM.Watson.DeveloperCloud.Widgets;
 
 public class DrawInSpace : GVRInput
@@ -72,9 +73,12 @@ public class DrawInSpace : GVRInput
 
 	private LineRenderer lineRenderer;
 
+	public TouchGuide touchGuide;
+
 	private AudioSource source;
 	public AudioClip micOn;
 	public AudioClip micOff;
+
 
 	// Use this for initialization
 	public override void Awake ()
@@ -87,9 +91,13 @@ public class DrawInSpace : GVRInput
 	{
 		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
 
+
+		lineRenderer = gameObject.GetComponent<LineRenderer> ();
+
+
 		source = GetComponent<AudioSource> ();
 
-		lineRenderer = GetComponent<LineRenderer> ();
+
 
 		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
@@ -112,6 +120,7 @@ public class DrawInSpace : GVRInput
 			return;
 		}
 
+		touchGuide.UpdateIndicatorPosition (touchPosition);
 		
 		base.Update ();
 
@@ -127,6 +136,18 @@ public class DrawInSpace : GVRInput
 		}
 		if (Input.GetKeyDown (KeyCode.Alpha4)) {
 			AppButtonDown ();
+		}
+		if (Input.GetKeyDown (KeyCode.Alpha5)) {
+			ButtonOpetionLT ();
+		}
+		if (Input.GetKeyDown (KeyCode.Alpha6)) {
+			ButtonOptionLB ();
+		}
+		if (Input.GetKeyDown (KeyCode.Alpha7)) {
+			ButtonOptionRT ();
+		}
+		if (Input.GetKeyDown (KeyCode.Alpha8)) {
+			ButtonOptionRB ();
 		}
 		if (Input.GetMouseButtonDown (0))
 			OnButtonDown ();
@@ -144,9 +165,10 @@ public class DrawInSpace : GVRInput
 		}
 
 
-		RaycastHit hit;
 
+		RaycastHit hit;
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
+			lineRenderer.SetPosition (1, hit.point);
 			rayHitRef.position = hit.point + (hit.normal).normalized * 0.5f;
 			rayHitRef.forward = hit.normal;
 			selectedObject = hit.collider.gameObject;
@@ -159,17 +181,26 @@ public class DrawInSpace : GVRInput
 			}
 			rayHitRef.gameObject.SetActive (true);
 		} else {
-			rayHitRef.gameObject.SetActive (false);
-			if (currentInputMode == InputMode.MOVE)
-				SetMode (lastInputMode);
-
-			if (isDrawing && activeNode != null)
-				EndDrawStroke ();
-			selectedObject = null;
 			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
+			if (activeMove == null) {
+				rayHitRef.gameObject.SetActive (false);
+				if (currentInputMode == InputMode.MOVE)
+					SetMode (lastInputMode);
+
+				if (isDrawing && activeNode != null)
+					EndDrawStroke ();
+				selectedObject = null;
+
+			}
+
+		
+
 		}
 		if (activeStroke != null)
 			activeStroke.UpdateBrushPos (rayHitRef);
+
+
+		
 
 	}
 
@@ -186,8 +217,8 @@ public class DrawInSpace : GVRInput
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
-		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode 
-			|| selectedObject == null && activeNode == null) {
+		if (activeNode != null && selectedObject != null && selectedObject.GetComponent<Node> () == activeNode
+		    || selectedObject == null && activeNode == null) {
 			toolCollection [modeNum].SetMoveTarget (rayHitRef);
 		
 
@@ -210,13 +241,13 @@ public class DrawInSpace : GVRInput
 	void StartDrawStroke ()
 	{
 		
-		DebugMessage ("Button Down from DrawInSpace");
+	//	DebugMessage ("Button Down from DrawInSpace");
 
 	}
 
 	void EndDrawStroke ()
 	{
-		DebugMessage ("Button Up from DrawinSpace");
+	//	DebugMessage ("Button Up from DrawinSpace");
 
 	}
 
@@ -295,7 +326,7 @@ public class DrawInSpace : GVRInput
 			UpdateMode ();
 
 			shouldDraw = !shouldDraw;
-			DebugMessage ("should draw = " + shouldDraw);
+	//		DebugMessage ("should draw = " + shouldDraw);
 		} else if (dir == GVRSwipeDirection.left) {
 			modeNum--;
 			UpdateMode ();
@@ -317,7 +348,7 @@ public class DrawInSpace : GVRInput
 
 		SetMode (selectableModeDict [modeNum]);
 
-		Debug.Log (currentInputMode);
+	//	Debug.Log (currentInputMode);
 	}
 
 
@@ -328,7 +359,7 @@ public class DrawInSpace : GVRInput
 		currentInputMode = (InputMode)modeNum;
 		TurnOnTool (modeNum);
 
-		if(currentInputMode == InputMode.MICROPHONE) {
+		if (currentInputMode == InputMode.MICROPHONE) {
 			lineRenderer.enabled = false;
 		} else {
 			lineRenderer.enabled = true;
@@ -401,7 +432,7 @@ public class DrawInSpace : GVRInput
 			EndDrawStroke ();
 		if (!activeNode.photonView.isMine)
 			activeNode.photonView.RequestOwnership ();
-		DebugMessage ("commiting Node");
+	//	DebugMessage ("commiting Node");
 		activeNode.SetDesiredPosition (activeNode.resetPosition);
 		activeNode = null;
 
@@ -425,7 +456,7 @@ public class DrawInSpace : GVRInput
 	{
 		TriggerToolAbility (true);
 
-		Debug.Log ("Starting microphone");
+	//	Debug.Log ("Starting microphone");
 
 		if (activeNode == null)
 			CreateNode ();
@@ -434,10 +465,25 @@ public class DrawInSpace : GVRInput
 		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
 		activeNode.beginSpeech ();
 
+	}
+	void IsListening (bool isListening)
+	{
+	//	Debug.Log ("IS LISTENING: " + isListening);
+
 		source.PlayOneShot (micOn);
+
 
 //		activeNode.sttWidget.sttIsListening += IsListening;
 //		activeNode.micWidget.micIsRecording += IsRecording;
+	}
+
+
+	void IsRecording (bool isRecording)
+	{
+		//Debug.Log ("IS RECORDING");
+
+		Mic micTool = (Mic)toolCollection [modeNum];
+		micTool.IsRecording = isRecording;
 	}
 
 //	void IsListening(bool isListening)
@@ -456,12 +502,13 @@ public class DrawInSpace : GVRInput
 //		micTool.IsRecording = isRecording;
 //	}
 
+
 	/// <summary>
 	/// Stops the microphone.
 	/// </summary>
 	void StopMicrophone ()
 	{
-		Debug.Log ("Stopping microphone");
+	//	Debug.Log ("Stopping microphone");
 
 		TriggerToolAbility (false);
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
@@ -489,6 +536,30 @@ public class DrawInSpace : GVRInput
 				SetMode ((InputMode)curTool);
 			}
 		}
+	}
+
+	public override void ButtonOpetionLT ()
+	{
+		toolCollection [(int)currentInputMode].ButtonOpetionLT ();
+		base.ButtonOpetionLT ();
+	}
+
+	public override void ButtonOptionLB ()
+	{
+		toolCollection [(int)currentInputMode].ButtonOptionLB ();
+		base.ButtonOptionLB ();
+	}
+
+	public override void ButtonOptionRB ()
+	{
+		toolCollection [(int)currentInputMode].ButtonOptionRB ();
+		base.ButtonOptionRB ();
+	}
+
+	public override void ButtonOptionRT ()
+	{
+		toolCollection [(int)currentInputMode].ButtonOptionRT ();
+		base.ButtonOptionRT ();
 	}
 
 }
