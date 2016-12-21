@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offline: 0
-  roomName: kevin
+  roomName: kevinRoom
   playerControlledPrefab: {fileID: 1000010859038304, guid: 7724a022313514c64bbc527148a90bc7,
     type: 2}
   isObserver: 0

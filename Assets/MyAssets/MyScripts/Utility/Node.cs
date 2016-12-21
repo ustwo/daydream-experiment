@@ -31,6 +31,12 @@ public class Node : Photon.MonoBehaviour
 	public bool textureHasChanged = false;
 	private byte[] texturePixelArray;
 
+	public GameObject recordingIndicator;
+	public GameObject preloader;
+
+	bool micIsListening = false;
+	bool micIsRecording = false;
+
 	void OnEnable ()
 	{
 		if (photonView.isMine) {
@@ -44,7 +50,11 @@ public class Node : Photon.MonoBehaviour
 		_myTransform = transform;
 		resetPosition = transform.position;
 
+
 		speechPrompt.enabled = false;
+
+		recordingIndicator.SetActive (false);
+		preloader.SetActive (false);
 
 	}
 
@@ -76,6 +86,18 @@ public class Node : Photon.MonoBehaviour
 		gameObject.name = name;
 	}
 
+	void Update()
+	{
+//		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
+
+		if(micIsRecording || micIsListening) {
+			recordingIndicator.SetActive (true);
+			if(preloader.GetActive ()) preloader.SetActive (false);
+		} else {
+			recordingIndicator.SetActive (false);
+		}
+	}
+
 	void FixedUpdate ()
 	{
 		//return;
@@ -88,7 +110,6 @@ public class Node : Photon.MonoBehaviour
 			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
 		transform.Translate (force, Space.World);
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
-
 	}
 
 	[PunRPC]
@@ -103,7 +124,24 @@ public class Node : Photon.MonoBehaviour
 
 	public void beginSpeech ()
 	{
+		preloader.SetActive (true);
+
 		micWidget.ActivateMicrophone ();
+//		sttWidget.sttIsListening += IsListening;
+//		micWidget.micIsRecording += IsRecording;
+
+		IsListening (true);
+		IsRecording (true);
+	}
+
+	void IsListening(bool isListening)
+	{
+		micIsListening = isListening;
+	}
+
+	void IsRecording(bool isRecording)
+	{
+		micIsRecording = isRecording;
 	}
 
 	[PunRPC]
@@ -116,6 +154,9 @@ public class Node : Photon.MonoBehaviour
 
 	public void endSpeech ()
 	{
+		IsListening (false);
+		IsRecording (false);
+
 		StopCoroutine (DelayMic ());
 		StartCoroutine (DelayMic ());
 //		Debug.Log ("Delayed mic");
