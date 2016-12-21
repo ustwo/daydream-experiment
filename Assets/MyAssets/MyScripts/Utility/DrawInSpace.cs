@@ -72,6 +72,10 @@ public class DrawInSpace : GVRInput
 
 	private LineRenderer lineRenderer;
 
+	private AudioSource source;
+	public AudioClip micOn;
+	public AudioClip micOff;
+
 	// Use this for initialization
 	public override void Awake ()
 	{
@@ -82,6 +86,8 @@ public class DrawInSpace : GVRInput
 	public void Start ()
 	{
 		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
+
+		source = GetComponent<AudioSource> ();
 
 		lineRenderer = GetComponent<LineRenderer> ();
 
@@ -427,25 +433,28 @@ public class DrawInSpace : GVRInput
 //		toolCollection [modeNum].SetMoveTarget (activeNode.micAnchor);
 		toolCollection [modeNum].SetMoveTarget (micAnchor.transform);
 		activeNode.beginSpeech ();
-		activeNode.sttWidget.sttIsListening += IsListening;
-		activeNode.micWidget.micIsRecording += IsRecording;
+
+		source.PlayOneShot (micOn);
+
+//		activeNode.sttWidget.sttIsListening += IsListening;
+//		activeNode.micWidget.micIsRecording += IsRecording;
 	}
 
-	void IsListening(bool isListening) 
-	{
-		Debug.Log ("IS LISTENING: " + isListening);
-
-		Mic micTool = (Mic)toolCollection [modeNum];
-		micTool.IsListening = isListening;
-	}
-
-	void IsRecording(bool isRecording)
-	{
-		Debug.Log ("IS RECORDING");
-
-		Mic micTool = (Mic)toolCollection [modeNum];
-		micTool.IsRecording = isRecording;
-	}
+//	void IsListening(bool isListening)
+//	{
+////		Debug.Log ("IS LISTENING: " + isListening);
+//
+//		Mic micTool = (Mic)toolCollection [modeNum];
+//		micTool.IsListening = isListening;
+//	}
+//
+//	void IsRecording(bool isRecording)
+//	{
+////		Debug.Log ("IS RECORDING");
+//
+//		Mic micTool = (Mic)toolCollection [modeNum];
+//		micTool.IsRecording = isRecording;
+//	}
 
 	/// <summary>
 	/// Stops the microphone.
@@ -458,8 +467,11 @@ public class DrawInSpace : GVRInput
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
 //		activeNode.sttWidget.sttIsListening -= IsListening;
 //		activeNode.micWidget.micIsRecording -= IsRecording;
-		IsListening (false);
-		IsRecording (false);
+//		IsListening (false);
+//		IsRecording (false);
+
+		source.PlayOneShot (micOff);
+
 		activeNode.endSpeech ();
 	}
 

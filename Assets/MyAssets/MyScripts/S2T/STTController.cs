@@ -97,7 +97,7 @@ public class STTController : Widget
 			else if (!value && m_SpeechToText.IsListening)
 			{
 				if (m_StatusText != null) {
-					m_StatusText.text = "READY";
+					m_StatusText.text = "LOADING...";
 					if(sttIsListening != null) sttIsListening (m_SpeechToText.IsListening);
 				}
 				m_SpeechToText.StopListening();
@@ -133,7 +133,7 @@ public class STTController : Widget
 		base.Start();
 
 		if (m_StatusText != null)
-			m_StatusText.text = "READY";
+			m_StatusText.text = "LOADING...";
 		if (!m_SpeechToText.GetModels(OnGetModels))
 			Log.Error("SpeechToTextWidget", "Failed to request models.");
 	}
