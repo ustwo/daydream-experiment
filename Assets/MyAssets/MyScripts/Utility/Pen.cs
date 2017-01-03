@@ -117,4 +117,9 @@ public class Pen : Tool
 		base.ButtonOptionRT ();
 	}
 
+	public Color GetBrushColor()
+	{
+		return brushColors [currentBrushColorIndex];
+	}
+
 }

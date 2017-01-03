@@ -160,8 +160,6 @@ public class DrawInSpace : GVRInput
 			UpdateMode ();
 		}
 
-
-
 		RaycastHit hit;
 		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
 			lineRenderer.SetPosition (1, hit.point);
@@ -188,15 +186,13 @@ public class DrawInSpace : GVRInput
 				selectedObject = null;
 
 			}
-
-		
-
 		}
+
 		if (activeStroke != null)
 			activeStroke.UpdateBrushPos (rayHitRef);
 
-
-		
+		Color brushColor = toolCollection [(int)InputMode.DRAW].GetComponent<Pen> ().GetBrushColor ();
+		lineRenderer.material.color = brushColor;
 
 	}
 
