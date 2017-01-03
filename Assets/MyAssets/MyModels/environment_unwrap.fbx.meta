@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 7074b4f3925614fcbb2951b2fd747692
-timeCreated: 1482354297
+guid: 92325660535664a4da2ebe82a56b4685
+timeCreated: 1483462205
 licenseType: Pro
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: dome_mesh
+    4300000: Capsule
     6400000: //RootNode
     9500000: //RootNode
   materials:
