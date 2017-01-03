@@ -20,15 +20,29 @@ public class Pen : Tool
 
 	public Material penMat;
 
+	private Material playerPenMat;
+
+	public GameObject[] penComponents;
+
 	void Awake(){
-		ButtonOptionRB ();
+//		ButtonOptionRB ();
 	}
 
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
+	}
 
+	void Start()
+	{
+		playerPenMat = new Material (penMat);
+
+		foreach(GameObject item in penComponents) {
+			item.GetComponent<Renderer> ().material = playerPenMat;
+		}
+
+		ButtonOptionRB ();
 	}
 
 
@@ -102,8 +116,10 @@ public class Pen : Tool
 		currentBrushColorIndex++;
 		if (currentBrushColorIndex == brushColors.Length)
 			currentBrushColorIndex = 0;
-		penMat.color = brushColors [currentBrushColorIndex];
-		paintBrush.color = brushColors [currentBrushColorIndex];
+//		penMat.color = brushColors [currentBrushColorIndex];
+//		paintBrush.color = brushColors [currentBrushColorIndex];
+
+		UpdateBrushColor ();
 		base.ButtonOptionRB ();
 	}
 
@@ -112,14 +128,22 @@ public class Pen : Tool
 		currentBrushColorIndex--;
 		if (currentBrushColorIndex == -1)
 			currentBrushColorIndex = brushColors.Length - 1;
-		penMat.color = brushColors [currentBrushColorIndex];
-		paintBrush.color = brushColors [currentBrushColorIndex];
+//		penMat.color = brushColors [currentBrushColorIndex];
+//		paintBrush.color = brushColors [currentBrushColorIndex];
+
+		UpdateBrushColor ();
 		base.ButtonOptionRT ();
 	}
 
 	public Color GetBrushColor()
 	{
 		return brushColors [currentBrushColorIndex];
+	}
+
+	void UpdateBrushColor()
+	{
+		playerPenMat.color = brushColors [currentBrushColorIndex];
+		paintBrush.color = brushColors [currentBrushColorIndex];
 	}
 
 }

@@ -1486,6 +1486,10 @@ MonoBehaviour:
   - {r: 0.45588237, g: 0.45588237, b: 0.45588237, a: 1}
   - {r: 0.7440161, g: 0, b: 0.8235294, a: 1}
   penMat: {fileID: 2100000, guid: 3f57a7c8415b04ef694c12d5d2155d5a, type: 2}
+  penComponents:
+  - {fileID: 1000012612237712}
+  - {fileID: 1000012631507570}
+  - {fileID: 1000010403220666}
 --- !u!114 &114000013548229354
 MonoBehaviour:
   m_ObjectHideFlags: 1
