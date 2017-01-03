@@ -20,11 +20,15 @@ public class Pen : Tool
 
 	public Material penMat;
 
+	void Awake(){
+		ButtonOptionRB ();
+	}
+
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
-		ButtonOptionRB ();
+
 	}
 
 
