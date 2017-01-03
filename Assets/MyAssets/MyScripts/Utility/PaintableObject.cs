@@ -11,6 +11,7 @@ public class PaintableObject : MonoBehaviour
 	public Node node;
 	public TextureSharer textureSharerereer;
 	public int textureSize = 200;
+	public Color startColor;
 	// Use this for initialization
 	void Start ()
 	{
@@ -24,8 +25,7 @@ public class PaintableObject : MonoBehaviour
 		Texture2D myTexture = new Texture2D (textureSize, textureSize);
 		myTexture.wrapMode = TextureWrapMode.Clamp;
 		Color[] textureColors = new Color[textureSize * textureSize];
-		Color blankColor = Color.black;
-		blankColor.a = 0;
+		Color blankColor = startColor;
 		for (int i = 0; i < textureColors.Length; i++) {
 			textureColors [i] = blankColor;
 		}

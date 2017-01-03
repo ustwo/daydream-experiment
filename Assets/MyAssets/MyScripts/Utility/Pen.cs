@@ -19,6 +19,7 @@ public class Pen : Tool
 	private int currentBrushColorIndex = 0;
 
 	public Material penMat;
+	public Transform rayHit;
 
 	void Awake(){
 		ButtonOptionRB ();
@@ -28,6 +29,7 @@ public class Pen : Tool
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
+		rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
 
 	}
 
@@ -84,6 +86,7 @@ public class Pen : Tool
 	public override void ButtonOpetionLT ()
 	{
 		paintBrush.brushSize += 5;
+		rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
 		paintBrush.Init ();
 		base.ButtonOpetionLT ();
 	}
@@ -92,6 +95,7 @@ public class Pen : Tool
 	{
 		if (paintBrush.brushSize > 5) {
 			paintBrush.brushSize -= 5;
+			rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
 			paintBrush.Init ();
 		}
 		base.ButtonOptionLB ();
