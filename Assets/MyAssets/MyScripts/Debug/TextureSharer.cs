@@ -15,8 +15,6 @@ public class TextureSharer : Photon.MonoBehaviour {
 				texturePixelArray = (myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
 			stream.SendNext (texturePixelArray);
 			textureHasChanged = false;
-
-
 		} else {
 			textureHasChanged = (bool)stream.ReceiveNext ();
 			texturePixelArray = (byte[])stream.ReceiveNext ();
