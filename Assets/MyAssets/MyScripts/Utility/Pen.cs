@@ -147,7 +147,7 @@ public class Pen : Tool
 
 	void UpdateBrushColor()
 	{
-		Debug.Log ("color index: " + currentBrushColorIndex);
+//		Debug.Log ("color index: " + currentBrushColorIndex);
 		playerPenMat.color = brushColors [currentBrushColorIndex];
 		paintBrush.color = brushColors [currentBrushColorIndex];
 	}
