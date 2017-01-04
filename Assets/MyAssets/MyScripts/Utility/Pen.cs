@@ -20,7 +20,8 @@ public class Pen : Tool
 
 	public Material penMat;
 
-	private Material playerPenMat;
+	[HideInInspector]
+	public Material playerPenMat;
 
 	public GameObject[] penComponents;
 
@@ -138,6 +139,11 @@ public class Pen : Tool
 	public Color GetBrushColor()
 	{
 		return brushColors [currentBrushColorIndex];
+	}
+
+	public int GetColorIndex()
+	{
+		return currentBrushColorIndex;
 	}
 
 	void UpdateBrushColor()
