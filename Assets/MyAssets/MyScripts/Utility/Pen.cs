@@ -43,7 +43,10 @@ public class Pen : Tool
 			item.GetComponent<Renderer> ().material = playerPenMat;
 		}
 
-		ButtonOptionRB ();
+//		ButtonOptionRB ();
+
+		currentBrushColorIndex = (int)Random.Range (0, brushColors.Length - 1);
+		UpdateBrushColor ();
 	}
 
 
