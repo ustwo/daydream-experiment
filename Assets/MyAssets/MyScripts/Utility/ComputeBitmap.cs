@@ -3,10 +3,10 @@ using System.Collections;
 
 public class ComputeBitmap
 {
-	public Texture2D ComputeBitMap (Texture2D mainTexture, Texture2D brush, Vector2 uvCords,float intencity , Color addColor)
+	public void ComputeBitMap (Texture2D mainTexture, Texture2D brush, Vector2 uvCords,float intencity , Color addColor)
 	{
 
-		Texture2D returnTexture = new Texture2D (mainTexture.width, mainTexture.height);
+		//Texture2D returnTexture = new Texture2D (mainTexture.width, mainTexture.height);
 		Vector2 CenterOfMain = new Vector2 (mainTexture.width * uvCords.x, mainTexture.height * uvCords.y);
 		int mainWith = mainTexture.width;
 		int mainHeight = mainTexture.height;
@@ -41,9 +41,9 @@ public class ComputeBitmap
 				colorMix [mainColIndex].a = (mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r ) * addColor.a;
 			}
 		}
-		returnTexture.SetPixels (colorMix);
-		returnTexture.Apply ();
-		return returnTexture;
+		mainTexture.SetPixels (colorMix);
+		mainTexture.Apply ();
+		//return returnTexture;
 	}
 
 

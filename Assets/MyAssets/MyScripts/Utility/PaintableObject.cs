@@ -45,8 +45,8 @@ public class PaintableObject : MonoBehaviour
 
 	public void RegisterRay (Vector2 uvCords, Texture2D brush, float intencity, Color addColor)
 	{
-		
-		myRenderer.material.mainTexture = computeBitmap.ComputeBitMap (myRenderer.material.mainTexture as Texture2D, brush, uvCords, intencity, addColor);
+		//myRenderer.material.mainTexture = 
+		computeBitmap.ComputeBitMap (myRenderer.material.mainTexture as Texture2D, brush, uvCords, intencity, addColor);
 		if (node != null)
 			node.textureHasChanged = true;
 		if (textureSharerereer != null)
