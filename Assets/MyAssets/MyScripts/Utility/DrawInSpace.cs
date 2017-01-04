@@ -65,6 +65,8 @@ public class DrawInSpace : GVRInput
 	private Dictionary<int, InputMode> selectableModeDict;
 
 	private Quaternion wantedRotation;
+	private Vector3 wantedPosition;
+	private int wantedBrushColor;
 
 	public float rotationSpeed = 10f;
 
@@ -113,6 +115,10 @@ public class DrawInSpace : GVRInput
 		//DebugMessage (transform.position.ToString());
 		if (!pview.isMine && !offline) {
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, wantedRotation, rotationSpeed * Time.deltaTime);
+			rayHitRef.position = Vector3.MoveTowards (rayHitRef.transform.position, wantedPosition + transform.forward, rotationSpeed * Time.deltaTime);
+			Color penColor = toolCollection [(int)InputMode.DRAW].GetComponent<Pen> ().brushColors [wantedBrushColor];
+			lineRenderer.material.color = penColor;
+			toolCollection [(int)InputMode.DRAW].GetComponent<Pen> ().playerPenMat.color = penColor;
 			return;
 		}
 
@@ -482,6 +488,8 @@ public class DrawInSpace : GVRInput
 			stream.SendNext (transform.rotation);
 			stream.SendNext ((int)currentInputMode);
 			stream.SendNext (toolCollection [modeNum].transform.InverseTransformPoint (toolCollection [modeNum].GetDesiredPosition));
+			stream.SendNext ((Vector3)pointerRef.transform.position);
+			stream.SendNext ((int)toolCollection [(int)InputMode.DRAW].GetComponent<Pen> ().GetColorIndex ());
 		} else {
 			wantedRotation = (Quaternion)stream.ReceiveNext ();
 			int curTool = (int)stream.ReceiveNext ();
@@ -489,6 +497,8 @@ public class DrawInSpace : GVRInput
 			if (curTool != modeNum) {
 				SetMode ((InputMode)curTool);
 			}
+			wantedPosition = (Vector3)stream.ReceiveNext ();
+			wantedBrushColor = (int)stream.ReceiveNext ();
 		}
 	}
 

@@ -21,9 +21,10 @@ public class Pen : Tool
 	public Material penMat;
 	public Transform rayHit;
 
-	void Awake(){
-		ButtonOptionRB ();
-	}
+	[HideInInspector]
+	public Material playerPenMat;
+
+	public GameObject[] penComponents;
 
 	public override void OnEnable ()
 	{
@@ -33,6 +34,17 @@ public class Pen : Tool
 
 	}
 
+	void Start()
+	{
+		playerPenMat = new Material (penMat);
+
+		foreach(GameObject item in penComponents) {
+			item.GetComponent<Renderer> ().material = playerPenMat;
+		}
+
+		currentBrushColorIndex = (int)Random.Range (0, brushColors.Length - 1);
+		UpdateBrushColor ();
+	}
 
 	void Update ()
 	{
@@ -106,8 +118,9 @@ public class Pen : Tool
 		currentBrushColorIndex++;
 		if (currentBrushColorIndex == brushColors.Length)
 			currentBrushColorIndex = 0;
-		penMat.color = brushColors [currentBrushColorIndex];
-		paintBrush.color = brushColors [currentBrushColorIndex];
+
+		UpdateBrushColor ();
+
 		base.ButtonOptionRB ();
 	}
 
@@ -116,14 +129,27 @@ public class Pen : Tool
 		currentBrushColorIndex--;
 		if (currentBrushColorIndex == -1)
 			currentBrushColorIndex = brushColors.Length - 1;
-		penMat.color = brushColors [currentBrushColorIndex];
-		paintBrush.color = brushColors [currentBrushColorIndex];
+
+		UpdateBrushColor ();
+
 		base.ButtonOptionRT ();
 	}
 
 	public Color GetBrushColor()
 	{
 		return brushColors [currentBrushColorIndex];
+	}
+
+	public int GetColorIndex()
+	{
+		return currentBrushColorIndex;
+	}
+
+	void UpdateBrushColor()
+	{
+		Debug.Log ("color index: " + currentBrushColorIndex);
+		playerPenMat.color = brushColors [currentBrushColorIndex];
+		paintBrush.color = brushColors [currentBrushColorIndex];
 	}
 
 }
