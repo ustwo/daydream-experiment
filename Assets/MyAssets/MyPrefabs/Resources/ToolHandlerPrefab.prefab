@@ -267,7 +267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1000012612237712
 GameObject:
   m_ObjectHideFlags: 1
@@ -1325,7 +1325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rayReach: 1000
-  maxSpacing: 0.001
+  maxSpacing: 0.01
   activeBrush: {fileID: 2800000, guid: 79d3cdef31948416fa96fdc446472ebf, type: 3}
   intencity: 1
   color: {r: 1, g: 0, b: 0, a: 1}
@@ -1485,9 +1485,13 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0.08965516, a: 1}
   - {r: 0.45588237, g: 0.45588237, b: 0.45588237, a: 1}
   - {r: 0.7440161, g: 0, b: 0.8235294, a: 1}
-  - {r: 1, g: 1, b: 1, a: 0}
   penMat: {fileID: 2100000, guid: 3f57a7c8415b04ef694c12d5d2155d5a, type: 2}
-  rayHit: {fileID: 4000010475796208}
+  rayHit: {fileID: 4000010614459940}
+  playerPenMat: {fileID: 0}
+  penComponents:
+  - {fileID: 1000012612237712}
+  - {fileID: 1000012631507570}
+  - {fileID: 1000010403220666}
 --- !u!114 &114000013548229354
 MonoBehaviour:
   m_ObjectHideFlags: 1
