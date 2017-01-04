@@ -544,7 +544,7 @@ PlayerSettings:
   XboxOne::VR::enabledDevices: []
   iOS::VR::enabledDevices: []
   tvOS::VR::enabledDevices: []
-  cloudProjectId: 
-  projectName: 
-  organizationId: 
+  cloudProjectId: ef1da44c-05dc-44a0-970f-7087e0582751
+  projectName: DreamDraw
+  organizationId: ustwo_nyc
   cloudEnabled: 0

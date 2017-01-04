@@ -28,11 +28,17 @@ public class ComputeBitmap
 
 				if (mainColIndex < 0 || mainColIndex>=mainColorArray.Length)
 					break;
+				// Color Add
+//				colorMix [mainColIndex].r = mainColorArray [mainColIndex].r + brushColorArray [BrushColIndex].r *intencity * addColor.r;
+//				colorMix [mainColIndex].g = mainColorArray [mainColIndex].g + brushColorArray [BrushColIndex].g * intencity * addColor.g;
+//				colorMix [mainColIndex].b = mainColorArray [mainColIndex].b + brushColorArray [BrushColIndex].b* intencity * addColor.b;
+//				colorMix [mainColIndex].a = mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r*intencity;
 
-				colorMix [mainColIndex].r = mainColorArray [mainColIndex].r + brushColorArray [BrushColIndex].r *intencity * addColor.r;
-				colorMix [mainColIndex].g = mainColorArray [mainColIndex].g + brushColorArray [BrushColIndex].g * intencity * addColor.g;
-				colorMix [mainColIndex].b = mainColorArray [mainColIndex].b + brushColorArray [BrushColIndex].b* intencity * addColor.b;
-				colorMix [mainColIndex].a = mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r*intencity;
+				// Color Replace
+				colorMix [mainColIndex].r = Mathf.Lerp(mainColorArray[mainColIndex].r,  addColor.r ,brushColorArray[BrushColIndex].r);
+				colorMix [mainColIndex].g = Mathf.Lerp(mainColorArray[mainColIndex].g,  addColor.g ,brushColorArray[BrushColIndex].r);
+				colorMix [mainColIndex].b = Mathf.Lerp(mainColorArray[mainColIndex].b, addColor.b ,brushColorArray[BrushColIndex].r);
+				colorMix [mainColIndex].a = (mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r ) * addColor.a;
 			}
 		}
 		returnTexture.SetPixels (colorMix);

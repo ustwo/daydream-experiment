@@ -596,6 +596,9 @@ MonoBehaviour:
   myRenderer: {fileID: 23000012211784328}
   shader: {fileID: 34, guid: 0000000000000000f000000000000000, type: 0}
   node: {fileID: 114000011854137602}
+  textureSharerereer: {fileID: 0}
+  textureSize: 200
+  startColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!114 &114000011164461662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -645,7 +648,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e805a11784b1440b9cb516c789aa6e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  travelForce: 5
+  travelSpeed: 5
   transcriptText: {fileID: 114000012509485192}
   speechPrompt: {fileID: 114000013481194540}
   TextureRenderer: {fileID: 23000012211784328}
