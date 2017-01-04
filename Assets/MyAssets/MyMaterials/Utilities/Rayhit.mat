@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Rayhit
-  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -86,9 +86,6 @@ Material:
         name: _Glossiness
       second: 0.5
     - first:
-        name: _InvFade
-      second: 1
-    - first:
         name: _Metallic
       second: 0
     - first:
@@ -112,10 +109,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.40570933, g: 0.50563776, b: 0.9852941, a: 0}
+      second: {r: 0.40570933, g: 0.50563776, b: 0.9852941, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _TintColor
-      second: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
