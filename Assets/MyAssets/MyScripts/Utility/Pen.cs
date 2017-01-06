@@ -60,7 +60,7 @@ public class Pen : Tool
 		if (!gameObject.activeSelf)
 			return;
 
-		Debug.Log ("pen On");
+		//Debug.Log ("pen On");
 		//set a transition time 
 		//popInPlaceTime = 1f;
 

@@ -1,10 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 public class ComputeBitmap
 {
-	public void ComputeBitMap (Texture2D mainTexture, Texture2D brush, Vector2 uvCords,float intencity , Color addColor)
+	private Texture lastTexture;
+	private Color32[] storedMainTexture;
+	private int computeItiration = 0;
+	private Color32[] storedBrush;
+	private Texture2D lastBrush;
+
+
+	public void StoreMainTexture(Texture mainTex){
+	//	Debug.Log ("assigning storedMainTexture");
+		Texture2D mainTexConv = mainTex as Texture2D;
+		storedMainTexture = mainTexConv.GetPixels32 ();
+		lastTexture = mainTex;
+	}
+
+	public void ApplyToMainTexture(Texture mainTexture){
+		computeItiration = 0;
+		Texture2D mainTexConv = mainTexture as Texture2D;
+		//Debug.Log (mainTexConv.format);
+		mainTexConv.SetPixels32 (storedMainTexture);
+		mainTexConv.Apply ();
+	}
+
+	public void ComputeBitMap (Texture mainTexture, Texture2D brush, Vector2 uvCords,float intencity , Color32 addColor)
 	{
+		if (lastBrush != brush) {
+			lastBrush = brush;
+			storedBrush = brush.GetPixels32 ();
+			//Debug.Log ("new brush");
+		}
+
+		if (lastTexture != mainTexture) {
+			if (lastTexture != null)
+				ApplyToMainTexture (mainTexture);
+			StoreMainTexture (mainTexture);
+		}
 
 		//Texture2D returnTexture = new Texture2D (mainTexture.width, mainTexture.height);
 		Vector2 CenterOfMain = new Vector2 (mainTexture.width * uvCords.x, mainTexture.height * uvCords.y);
@@ -12,9 +47,10 @@ public class ComputeBitmap
 		int mainHeight = mainTexture.height;
 		int brushHeight = brush.height;
 		int brushWidth = brush.width;
-		Color[] mainColorArray = mainTexture.GetPixels ();
-		Color[] colorMix = mainColorArray;
-		Color[] brushColorArray = brush.GetPixels ();
+		/// Replace with stored MainTex
+		//Color[] mainColorArray = mainTexture.GetPixels ();
+		Color32[] colorMix = storedMainTexture;
+		Color32[] brushColorArray = storedBrush;
 		Vector2 brushStart = new Vector2 (CenterOfMain.x - brushWidth / 2, CenterOfMain.y - brushHeight / 2);
 
 		int pointX = 0;
@@ -26,7 +62,7 @@ public class ComputeBitmap
 				int mainColIndex = pointY * mainWith + pointX;
 				int BrushColIndex = y * brushWidth + x;
 
-				if (mainColIndex < 0 || mainColIndex>=mainColorArray.Length)
+				if (mainColIndex < 0 || mainColIndex>=storedMainTexture.Length)
 					break;
 				// Color Add
 //				colorMix [mainColIndex].r = mainColorArray [mainColIndex].r + brushColorArray [BrushColIndex].r *intencity * addColor.r;
@@ -35,16 +71,22 @@ public class ComputeBitmap
 //				colorMix [mainColIndex].a = mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r*intencity;
 
 				// Color Replace
-				colorMix [mainColIndex].r = Mathf.Lerp(mainColorArray[mainColIndex].r,  addColor.r ,brushColorArray[BrushColIndex].r);
-				colorMix [mainColIndex].g = Mathf.Lerp(mainColorArray[mainColIndex].g,  addColor.g ,brushColorArray[BrushColIndex].r);
-				colorMix [mainColIndex].b = Mathf.Lerp(mainColorArray[mainColIndex].b, addColor.b ,brushColorArray[BrushColIndex].r);
-				colorMix [mainColIndex].a = (mainColorArray [mainColIndex].a + brushColorArray [BrushColIndex].r ) * addColor.a;
+				colorMix[mainColIndex] = Color32.Lerp(storedMainTexture[mainColIndex],addColor,Convert.ToSingle(brushColorArray[BrushColIndex].a)/255);
+			//	Debug.Log((float)brushColorArray[BrushColIndex].a/255);
+			//	colorMix [mainColIndex].r = (byte)Mathf.Lerp((float)storedMainTexture[mainColIndex].r, (float)addColor.r ,(byte)((float)brushColorArray[BrushColIndex].a/255));
+			//	colorMix [mainColIndex].g = (byte) Mathf.Lerp((float)storedMainTexture[mainColIndex].g,   (float)addColor.g ,(byte)((float)brushColorArray[BrushColIndex].a/255));
+			//	colorMix [mainColIndex].b = (byte) Mathf.Lerp( (float)storedMainTexture[mainColIndex].b,  (float)addColor.b ,(byte)((float)brushColorArray[BrushColIndex].a/255));
+				//colorMix[mainColIndex].a = (byte)255;
+				//colorMix [mainColIndex].a = (byte)Mathf.Clamp((Convert.ToInt32( storedMainTexture [mainColIndex].a )+ Convert.ToInt32(brushColorArray [BrushColIndex].a)),0,255);// * addColor.a);
+				//Debug.Log(colorMix[mainColIndex].a);
 			}
 		}
-		mainTexture.SetPixels (colorMix);
-		mainTexture.Apply ();
+		storedMainTexture = colorMix;
+		computeItiration++;
+		if (computeItiration > 0) {
+			ApplyToMainTexture (mainTexture);
+		}
+		//Debug.Log (computeItiration);
 		//return returnTexture;
 	}
-
-
 }

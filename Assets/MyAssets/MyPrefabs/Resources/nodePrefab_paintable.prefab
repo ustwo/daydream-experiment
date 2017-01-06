@@ -594,10 +594,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myRenderer: {fileID: 23000012211784328}
-  shader: {fileID: 34, guid: 0000000000000000f000000000000000, type: 0}
+  shader: {fileID: 10750, guid: 0000000000000000f000000000000000, type: 0}
   node: {fileID: 114000011854137602}
   textureSharerereer: {fileID: 0}
-  textureSize: 200
+  textureSize: 256
   startColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!114 &114000011164461662
 MonoBehaviour:

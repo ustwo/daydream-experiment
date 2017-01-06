@@ -91,6 +91,62 @@ NavMeshSettings:
     cellSize: 0.16666666
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &7474227
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 14.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010941965030, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_RootOrder
+      value: 31
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010777534156, guid: 7724a022313514c64bbc527148a90bc7,
+        type: 2}
+      propertyPath: viewIdField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010777534156, guid: 7724a022313514c64bbc527148a90bc7,
+        type: 2}
+      propertyPath: instantiationId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010859038304, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 7724a022313514c64bbc527148a90bc7, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &31152469
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,6 +1152,14 @@ Prefab:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 42b32e31b57194a109a51127e4f3cc71, type: 3}
+      propertyPath: m_MotionVectors
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 42b32e31b57194a109a51127e4f3cc71, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 42b32e31b57194a109a51127e4f3cc71, type: 3}
   m_IsPrefabParent: 0
@@ -1736,10 +1800,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myRenderer: {fileID: 1258252269}
-  shader: {fileID: 34, guid: 0000000000000000f000000000000000, type: 0}
+  shader: {fileID: 10750, guid: 0000000000000000f000000000000000, type: 0}
   node: {fileID: 0}
   textureSharerereer: {fileID: 1258252266}
-  textureSize: 400
+  textureSize: 256
   startColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!23 &1258252269 stripped
 MeshRenderer:

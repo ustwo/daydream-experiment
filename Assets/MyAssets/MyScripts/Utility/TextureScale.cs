@@ -14,8 +14,8 @@ public class TextureScale
 		}
 	}
 
-	private static Color[] texColors;
-	private static Color[] newColors;
+	private static Color32[] texColors;
+	private static Color32[] newColors;
 	private static int w;
 	private static float ratioX;
 	private static float ratioY;
@@ -35,8 +35,8 @@ public class TextureScale
 
 	private static void ThreadedScale (Texture2D tex, int newWidth, int newHeight, bool useBilinear)
 	{
-		texColors = tex.GetPixels();
-		newColors = new Color[newWidth * newHeight];
+		texColors = tex.GetPixels32();
+		newColors = new Color32[newWidth * newHeight];
 		if (useBilinear)
 		{
 			ratioX = 1.0f / ((float)newWidth / (tex.width-1));
@@ -93,7 +93,7 @@ public class TextureScale
 		}
 
 		tex.Resize(newWidth, newHeight);
-		tex.SetPixels(newColors);
+		tex.SetPixels32(newColors);
 		tex.Apply();
 
 		texColors = null;
@@ -141,11 +141,11 @@ public class TextureScale
 		mutex.ReleaseMutex();
 	}
 
-	private static Color ColorLerpUnclamped (Color c1, Color c2, float value)
+	private static Color32 ColorLerpUnclamped (Color32 c1, Color32 c2, float value)
 	{
-		return new Color (c1.r + (c2.r - c1.r)*value, 
-			c1.g + (c2.g - c1.g)*value, 
-			c1.b + (c2.b - c1.b)*value, 
-			c1.a + (c2.a - c1.a)*value);
+		return new Color32 ((byte)(c1.r + (c2.r - c1.r)*value), 
+			(byte)(c1.g + (c2.g - c1.g)*value), 
+			(byte)(c1.b + (c2.b - c1.b)*value), 
+			(byte)(c1.a + (c2.a - c1.a)*value));
 	}
 }

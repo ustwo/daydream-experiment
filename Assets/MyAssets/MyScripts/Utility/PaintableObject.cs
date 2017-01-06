@@ -11,7 +11,7 @@ public class PaintableObject : MonoBehaviour
 	public Node node;
 	public TextureSharer textureSharerereer;
 	public int textureSize = 200;
-	public Color startColor;
+	public Color32 startColor;
 	// Use this for initialization
 	void Start ()
 	{
@@ -22,14 +22,14 @@ public class PaintableObject : MonoBehaviour
 	void Init ()
 	{
 		isInit = true;
-		Texture2D myTexture = new Texture2D (textureSize, textureSize);
+		Texture2D myTexture = new Texture2D (textureSize, textureSize,TextureFormat.RGBA32,false);
 		myTexture.wrapMode = TextureWrapMode.Clamp;
-		Color[] textureColors = new Color[textureSize * textureSize];
-		Color blankColor = startColor;
+		Color32[] textureColors = new Color32[textureSize * textureSize];
+		Color32 blankColor = startColor;
 		for (int i = 0; i < textureColors.Length; i++) {
 			textureColors [i] = blankColor;
 		}
-		myTexture.SetPixels (textureColors);
+		myTexture.SetPixels32 (textureColors);
 		myTexture.Apply ();
 		myRenderer.material = new Material (shader);
 		myRenderer.material.mainTexture = myTexture;
@@ -43,10 +43,10 @@ public class PaintableObject : MonoBehaviour
 		}
 	}
 
-	public void RegisterRay (Vector2 uvCords, Texture2D brush, float intencity, Color addColor)
+	public void RegisterRay (Vector2 uvCords, Texture2D brush, float intencity, Color32 addColor)
 	{
 		//myRenderer.material.mainTexture = 
-		computeBitmap.ComputeBitMap (myRenderer.material.mainTexture as Texture2D, brush, uvCords, intencity, addColor);
+		computeBitmap.ComputeBitMap (myRenderer.material.mainTexture , brush, uvCords, intencity, addColor);
 		if (node != null)
 			node.textureHasChanged = true;
 		if (textureSharerereer != null)

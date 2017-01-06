@@ -33,7 +33,10 @@ public class PainBrush : MonoBehaviour
 
 	public void Init(){
 		spacing = maxSpacing;
-		scaledBrush = Instantiate (activeBrush) as Texture2D;
+		scaledBrush = Instantiate (activeBrush);
+		//scaledBrush = new Texture2D(1,1,TextureFormat.RGBA32,false);
+		//scaledBrush.SetPixels32 (new Color32[]{ new Color32 ((byte)255, (byte)255, (byte)255, (byte)125) });
+		//Debug.Log (scaledBrush.format);
 		TextureScale.Bilinear (scaledBrush, brushSize, brushSize);
 	}
 	void Update(){
@@ -60,6 +63,9 @@ public class PainBrush : MonoBehaviour
 			if (activeSurface != null) {
 				currentCords = hit.textureCoord;
 				if (resetBrushCords || lastSurface != activeSurface) {
+					scaledBrush = Instantiate (activeBrush);
+					TextureScale.Bilinear (scaledBrush, (int)(brushSize * ((float)activeSurface.textureSize / 256)), (int)(brushSize * ((float)activeSurface.textureSize / 256)));
+					//Debug.Log (scaledBrush.format);
 					lastUVCords = currentCords;
 					resetBrushCords = false;
 					activeSurface.RegisterRay (currentCords, scaledBrush, intencity,color);
