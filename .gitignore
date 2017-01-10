@@ -29,6 +29,11 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+# Ignore rider
+.idea/
+Assets/Plugins/Editor.meta
+Assets/Plugins/Editor/
+
 .DS_Store
 Assets/MyAssets/MyMaterials/MicButton/ButtonActive.mat.meta
 
