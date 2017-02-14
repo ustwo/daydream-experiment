@@ -200,7 +200,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000011856243108
 GameObject:
   m_ObjectHideFlags: 1
@@ -1427,7 +1427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rayReach: 10000
-  maxSpacing: 0.001
+  maxSpacing: 0.00001
   activeBrush: {fileID: 2800000, guid: 79d3cdef31948416fa96fdc446472ebf, type: 3}
   intencity: 1
   color: {r: 1, g: 0, b: 0, a: 1}

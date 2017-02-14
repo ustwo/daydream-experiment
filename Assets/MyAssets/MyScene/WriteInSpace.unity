@@ -416,7 +416,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 221514153}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &221514153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,7 +604,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 332092443}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &332092443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -716,7 +720,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 383472844}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!1 &389255504
 GameObject:
   m_ObjectHideFlags: 0
@@ -878,7 +884,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 492267946}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &492267946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1354,7 +1362,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 939176205}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &939176205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1804,7 +1814,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1258252266}
   textureSize: 256
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!23 &1258252269 stripped
 MeshRenderer:
   m_PrefabParentObject: {fileID: 2300000, guid: 42b32e31b57194a109a51127e4f3cc71,
@@ -1936,7 +1948,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1338311057}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &1338311057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2157,7 +2171,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1398374734}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &1398374734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2261,7 +2277,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1446207619}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &1446207619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2890,7 +2908,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1948021924}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!23 &1948021927 stripped
 MeshRenderer:
   m_PrefabParentObject: {fileID: 2300000, guid: d2b5dbc08020644dcad118a7b989bec4,
@@ -2991,7 +3011,9 @@ MonoBehaviour:
   node: {fileID: 0}
   textureSharerereer: {fileID: 1955187885}
   textureSize: 400
-  startColor: {r: 0, g: 0, b: 0, a: 0}
+  startColor:
+    serializedVersion: 2
+    rgba: 0
 --- !u!114 &1955187885
 MonoBehaviour:
   m_ObjectHideFlags: 0

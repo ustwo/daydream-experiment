@@ -7,7 +7,7 @@ public class PainBrush : MonoBehaviour
 	PaintableObject activeSurface;
 	public float rayReach = 20f;
 	private float spacing = 0.1f;
-	[Range (0.001f, 0.1f)]
+	[Range (0.00001f, 0.1f)]
 	public  float maxSpacing = 0.1f;
 	public Texture2D activeBrush;
 
@@ -23,6 +23,9 @@ public class PainBrush : MonoBehaviour
 	private PaintableObject lastSurface;
 	Vector2 currentCords;
 	Vector2 lerpCords;
+	private bool draw = false;
+	public float brushSpeed = 10;
+	public float brushSmoothTime = 1;
 
 
 	void Start ()
@@ -39,11 +42,7 @@ public class PainBrush : MonoBehaviour
 		//Debug.Log (scaledBrush.format);
 		TextureScale.Bilinear (scaledBrush, brushSize, brushSize);
 	}
-	void Update(){
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			Init ();
-		}
-	}
+
 
 	public void SetBrush (bool toggle){
 		//Debug.Log ("Brush set to " + toggle);
@@ -57,10 +56,12 @@ public class PainBrush : MonoBehaviour
 		if (!brushActivated)
 			return;
 		RaycastHit hit;
-		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach,paintLayers.value)) {
+		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach, paintLayers.value)) {
+			
 			//Debug.Log ("Raycast hit");
 			activeSurface = hit.transform.GetComponent<PaintableObject> ();
 			if (activeSurface != null) {
+				draw = true;
 				currentCords = hit.textureCoord;
 				if (resetBrushCords || lastSurface != activeSurface) {
 					scaledBrush = Instantiate (activeBrush);
@@ -68,20 +69,31 @@ public class PainBrush : MonoBehaviour
 					//Debug.Log (scaledBrush.format);
 					lastUVCords = currentCords;
 					resetBrushCords = false;
-					activeSurface.RegisterRay (currentCords, scaledBrush, intencity,color);
+					activeSurface.RegisterRay (currentCords, scaledBrush, intencity, color);
 					lastUVCords = currentCords;
 					lastSurface = activeSurface;
 					return;
 				}
 
-				lerpCords = Vector2.MoveTowards (lastUVCords, currentCords, (0.001f*brushSize));
-				//Debug.Log (" Draw distance = " + (lerpCords-currentCords).sqrMagnitude + " maxSpacing = " + maxSpacing);
-				if ((lerpCords-currentCords).sqrMagnitude < maxSpacing )
-					return;
-				activeSurface.RegisterRay (lerpCords, scaledBrush, intencity,color);
-				lastUVCords = lerpCords;
+				/// Draw from here
+			} else {
+				draw = false;
 			}
 
+		} else {
+			draw = false;
+		}
+	}
+
+	void Update(){
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			Init ();
+		}
+		// to here 
+		if (draw) {
+			lerpCords = Vector2.MoveTowards (lastUVCords, currentCords,brushSize * 0.001f);
+			activeSurface.RegisterRay (lerpCords, scaledBrush, intencity, color);
+			lastUVCords = lerpCords;
 		}
 	}
 }
