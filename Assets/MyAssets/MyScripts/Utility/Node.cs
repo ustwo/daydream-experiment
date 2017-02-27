@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class Node : Photon.MonoBehaviour
+public class Node : MonoBehaviour
 {
 	public float travelSpeed = 5f;
 	private Vector3 _desiredPosition = Vector3.zero;
@@ -21,8 +21,8 @@ public class Node : Photon.MonoBehaviour
 	[HideInInspector]
 	public Vector3 resetPosition;
 
-	public MicWidget micWidget;
-	public STTController sttWidget;
+	//public MicWidget micWidget;
+	//public STTController sttWidget;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 	public PaintableObject paintableObject;
@@ -41,10 +41,10 @@ public class Node : Photon.MonoBehaviour
 
 	void OnEnable ()
 	{
-		if (photonView.isMine) {
+		//if (photonView.isMine) {
 			string generatedName = "Node_" + randomID;
-			photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
-		}
+			//photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
+		//}
 	}
 
 	void Start ()
@@ -82,7 +82,7 @@ public class Node : Photon.MonoBehaviour
 		_desiredPosition = incPos;
 	}
 
-	[PunRPC]
+
 	public void SetNetworkName (string name)
 	{
 		gameObject.name = name;
@@ -92,18 +92,18 @@ public class Node : Photon.MonoBehaviour
 	{
 //		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
 
-		if(micIsRecording || micIsListening) {
-			recordingIndicator.SetActive (true);
-			if(preloader.GetActive ()) preloader.SetActive (false);
-		} else {
-			if(recordingIndicator != null) recordingIndicator.SetActive (false);
-		}
+//		if(micIsRecording || micIsListening) {
+//			recordingIndicator.SetActive (true);
+//			if(preloader.GetActive ()) preloader.SetActive (false);
+//		} else {
+//			if(recordingIndicator != null) recordingIndicator.SetActive (false);
+//		}
 	}
 
 	void FixedUpdate ()
 	{
 		//return;
-		if (!photonView.isMine || _targetTransform == null && _desiredPosition == Vector3.zero)
+		if (_targetTransform == null && _desiredPosition == Vector3.zero)
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
@@ -125,7 +125,7 @@ public class Node : Photon.MonoBehaviour
 		}
 	}
 
-	[PunRPC]
+
 	public void ClearContent ()
 	{
 		if (transform.childCount < 3)
@@ -139,9 +139,7 @@ public class Node : Photon.MonoBehaviour
 	{
 		preloader.SetActive (true);
 
-		micWidget.ActivateMicrophone ();
-//		sttWidget.sttIsListening += IsListening;
-//		micWidget.micIsRecording += IsRecording;
+		//micWidget.ActivateMicrophone ();
 
 		IsListening (true);
 		IsRecording (true);
@@ -157,7 +155,7 @@ public class Node : Photon.MonoBehaviour
 		micIsRecording = isRecording;
 	}
 
-	[PunRPC]
+
 	string randomID {
 		get {
 			int idInt = Random.Range (0, 1000000);
@@ -172,37 +170,29 @@ public class Node : Photon.MonoBehaviour
 
 		StopCoroutine (DelayMic ());
 		StartCoroutine (DelayMic ());
-//		Debug.Log ("Delayed mic");
-//		micWidget.DeactivateMicrophone ();
+
 	}
 
 	IEnumerator DelayMic()
 	{
 		yield return new WaitForSeconds (0.5F);
-		micWidget.DeactivateMicrophone ();
+		//micWidget.DeactivateMicrophone ();
 	}
 
-	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	public void OnPhotonSerializeView ()
 	{
-		if (stream.isWriting) {
-			stream.SendNext (transform.position);
-			stream.SendNext (transform.rotation);
-			stream.SendNext (textureHasChanged);
+		// send
 			if (textureHasChanged)
 				texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
-			stream.SendNext (texturePixelArray);
+		
 
-
-		} else {
-			transform.position = (Vector3)stream.ReceiveNext ();
-			transform.rotation = (Quaternion)stream.ReceiveNext ();
-			textureHasChanged = (bool)stream.ReceiveNext ();
-			texturePixelArray = (byte[])stream.ReceiveNext ();
+	
+			// recive
 			if (textureHasChanged)
 				(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage(texturePixelArray);
 
 
-		}
+
 	}
 
 }

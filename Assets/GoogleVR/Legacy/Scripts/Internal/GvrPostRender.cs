@@ -96,17 +96,22 @@ public class GvrPostRender : MonoBehaviour {
     if (Camera.current != cam)
       return;
     GvrViewer.Instance.UpdateState();
-    bool correctionEnabled = GvrViewer.Instance.DistortionCorrectionEnabled;
+    var correction = GvrViewer.Instance.DistortionCorrection;
     RenderTexture stereoScreen = GvrViewer.Instance.StereoScreen;
-    if (stereoScreen == null || !correctionEnabled) {
+    if (stereoScreen == null || correction == GvrViewer.DistortionCorrectionMethod.None) {
       return;
     }
-    if (distortionMesh == null || GvrViewer.Instance.ProfileChanged) {
-      RebuildDistortionMesh();
+    if (correction == GvrViewer.DistortionCorrectionMethod.Native
+        && GvrViewer.Instance.NativeDistortionCorrectionSupported) {
+      GvrViewer.Instance.PostRender(stereoScreen);
+    } else {
+      if (distortionMesh == null || GvrViewer.Instance.ProfileChanged) {
+        RebuildDistortionMesh();
+      }
+      meshMaterial.mainTexture = stereoScreen;
+      meshMaterial.SetPass(0);
+      Graphics.DrawMeshNow(distortionMesh, transform.position, transform.rotation);
     }
-    meshMaterial.mainTexture = stereoScreen;
-    meshMaterial.SetPass(0);
-    Graphics.DrawMeshNow(distortionMesh, transform.position, transform.rotation);
 
     stereoScreen.DiscardContents();
     if (!GvrViewer.Instance.NativeUILayerSupported) {
@@ -125,7 +130,12 @@ public class GvrPostRender : MonoBehaviour {
     distortionMesh.uv = tex;
     distortionMesh.colors = colors;
     distortionMesh.triangles = indices;
+
+#if !UNITY_5_5_OR_NEWER
+    // Optimize() is deprecated as of Unity 5.5.0p1.
     distortionMesh.Optimize();
+#endif  // !UNITY_5_5_OR_NEWER
+
     distortionMesh.UploadMeshData(true);
   }
 

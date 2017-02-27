@@ -30,16 +30,10 @@ public class Mic : Tool
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
-
-		micModel.GetComponent<Renderer> ().material = idleMat;
-
-//		source = GetComponent<AudioSource> ();
 	}
 
 	void Update()
 	{
-//		Debug.Log ("current: " + transform.position + ", destination: " + target.position);
-
 		if (target == null)
 			return;
 
@@ -52,23 +46,7 @@ public class Mic : Tool
 			anchorToNode = false;
 		}
 
-//		Debug.Log ("is listening: " + IsListening + ", is recording: " + IsRecording);
 
-//		if(IsListening || IsRecording) {
-//			micModel.GetComponent<Renderer> ().material = activeMaterial;
-//			offClipDidPlay = false;
-//			if (!onClipDidPlay) {
-//				source.PlayOneShot (micOn);
-//				onClipDidPlay = true;
-//			}
-//		} else {
-//			micModel.GetComponent<Renderer> ().material = idleMat;
-//			onClipDidPlay = false;
-//			if(!offClipDidPlay) {
-//				source.PlayOneShot (micOff);
-//				offClipDidPlay = true;
-//			}
-//		}
 	}
 
 	public override void SetToolAbility (bool incBool)

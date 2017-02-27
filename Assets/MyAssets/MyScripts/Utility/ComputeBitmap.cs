@@ -32,7 +32,6 @@ public class ComputeBitmap
 		if (lastBrush != brush) {
 			lastBrush = brush;
 			storedBrush = brush.GetPixels32 ();
-			//Debug.Log ("new brush");
 		}
 
 		if (lastTexture != mainTexture) {
@@ -40,15 +39,12 @@ public class ComputeBitmap
 				ApplyToMainTexture (mainTexture);
 			StoreMainTexture (mainTexture);
 		}
-
-		//Texture2D returnTexture = new Texture2D (mainTexture.width, mainTexture.height);
 		Vector2 CenterOfMain = new Vector2 (mainTexture.width * uvCords.x, mainTexture.height * uvCords.y);
 		int mainWith = mainTexture.width;
 		int mainHeight = mainTexture.height;
 		int brushHeight = brush.height;
 		int brushWidth = brush.width;
 		/// Replace with stored MainTex
-		//Color[] mainColorArray = mainTexture.GetPixels ();
 		Color32[] colorMix = storedMainTexture;
 		Color32[] brushColorArray = storedBrush;
 		Vector2 brushStart = new Vector2 (CenterOfMain.x - brushWidth / 2, CenterOfMain.y - brushHeight / 2);
@@ -86,7 +82,5 @@ public class ComputeBitmap
 		if (computeItiration > 0) {
 			ApplyToMainTexture (mainTexture);
 		}
-		//Debug.Log (computeItiration);
-		//return returnTexture;
 	}
 }

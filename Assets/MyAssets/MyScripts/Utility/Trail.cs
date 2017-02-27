@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Trail : Photon.MonoBehaviour 
+public class Trail : MonoBehaviour 
 {
 	// Material - Must be a particle material that has the "Tint Color" property
 	public Material material;
@@ -54,7 +54,6 @@ public class Trail : Photon.MonoBehaviour
 		mesh = meshFilter.mesh;
 		trailObj.AddComponent(typeof(MeshRenderer));
 		instanceMaterial = new Material(material);
-		//fadeOutRatio = 1f / instanceMaterial.GetColor("_TintColor").a;
 		trailObj.GetComponent<Renderer>().material = instanceMaterial;
 	}
 	public GameObject GetCurrentStroke{
@@ -71,9 +70,7 @@ public class Trail : Photon.MonoBehaviour
 
 	void Update ()
 	{
-		if (!photonView.isMine && PhotonNetwork.connected) {
-			return;
-		}
+		
 		transform.forward = Vector3.MoveTowards(transform.forward, lastPos - transform.position,0.01f*Time.deltaTime);
 		lastPos = transform.position;
 		
@@ -273,23 +270,11 @@ public class Trail : Photon.MonoBehaviour
 		points[0] = new Point(transform);
 		pointCnt++;
 	}
-	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	public void OnPhotonSerializeView()
 	{
 		mesh.Clear();
-		if (stream.isWriting)
-		{
-			stream.SendNext (mesh.vertices);
-			stream.SendNext (mesh.uv);
-			stream.SendNext (mesh.triangles);
-
-		}
-		else
-		{
-			mesh.vertices = stream.ReceiveNext () as Vector3[];
-			mesh.uv = stream.ReceiveNext () as Vector2[];
-			mesh.triangles = stream.ReceiveNext () as int[];
-			
-		}
+	// send recive mesh verts, tries, and uvs
+	
 
 
 	}

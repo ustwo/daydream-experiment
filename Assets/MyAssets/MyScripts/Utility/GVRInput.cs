@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public enum GVRSwipeDirection
 {
@@ -15,7 +16,7 @@ public enum GVRSwipeDirection
 
 }
 
-public class GVRInput : MonoBehaviour
+public class GVRInput : NetworkBehaviour
 {
 
 	/// <summary>

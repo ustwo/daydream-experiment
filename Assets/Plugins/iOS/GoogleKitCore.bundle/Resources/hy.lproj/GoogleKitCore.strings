@@ -65,7 +65,7 @@
 "GoogleKitCoreMoreVertButton" = "Ավելին";
 
 /* Label for a button for information related to a person. */
-"GoogleKitCorePersonButton" = "Օգտվող";
+"GoogleKitCorePersonButton" = "Օտատեր";
 
 /* Label for a button for refreshing the current content. */
 "GoogleKitCoreRefreshButton" = "Թարմացնել";

@@ -34,8 +34,9 @@ public class Pen : Tool
 	}
 
 
-	void Update ()
+	public override void Update ()
 	{
+		base.Update ();
 
 		// If popped in place, dont continue
 		if (poppedInPlace)
@@ -52,6 +53,7 @@ public class Pen : Tool
 			transform.localPosition = adjustedPosition;
 			poppedInPlace = true;
 		}
+	
 	}
 
 	public override void SetToolAbility (bool incBool)

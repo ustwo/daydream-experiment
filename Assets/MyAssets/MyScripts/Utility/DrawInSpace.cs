@@ -4,8 +4,8 @@
 
 using UnityEngine;
 using System.Collections;
-using Photon;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 
 //using IBM.Watson.DeveloperCloud.Widgets;
 
@@ -25,12 +25,8 @@ public class DrawInSpace : GVRInput
 	/// <summary>
 	/// Ref to the sphear at the end of the pointer
 	/// </summary>
-	public Transform pointerRef;
+	public Transform endOfLineRef;
 
-	/// <summary>
-	/// The PhotonView of this object. 
-	/// </summary>
-	public PhotonView pview;
 
 	private bool shouldDraw = true;
 	private bool isDrawing = false;
@@ -90,19 +86,13 @@ public class DrawInSpace : GVRInput
 	public void Start ()
 	{
 		micAnchor = GameObject.FindGameObjectWithTag ("MicCameraAnchor");
-
 		lineRenderer = gameObject.GetComponent<LineRenderer> ();
-
 		source = GetComponent<AudioSource> ();
-
 		wantedRotation = transform.rotation;
 		selectableModeDict = new Dictionary<int, InputMode> ();
 		selectableModeDict.Add (0, InputMode.DRAW);
 		selectableModeDict.Add (1, InputMode.MICROPHONE);
-
 		SetMode (InputMode.DRAW);
-
-		offline = !PhotonNetwork.connected;
 		rayHitRef.parent = null;
 		rayHitRef.gameObject.SetActive (false);
 	}
@@ -110,13 +100,9 @@ public class DrawInSpace : GVRInput
 	// Update is called once per frame
 	public override void Update ()
 	{
-		//DebugMessage (transform.position.ToString());
-		if (!pview.isMine && !offline) {
-			transform.rotation = Quaternion.RotateTowards (transform.rotation, wantedRotation, rotationSpeed * Time.deltaTime);
-			return;
-		}
+		
 
-		touchGuide.UpdateIndicatorPosition (touchPosition);
+		//touchGuide.UpdateIndicatorPosition (touchPosition);
 		
 		base.Update ();
 
@@ -161,7 +147,7 @@ public class DrawInSpace : GVRInput
 		}
 
 		RaycastHit hit;
-		if (Physics.Linecast (controllerPivot.transform.position, pointerRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
+		if (Physics.Linecast (controllerPivot.transform.position, endOfLineRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
 			lineRenderer.SetPosition (1, hit.point);
 			rayHitRef.position = hit.point + (hit.normal).normalized * 0.5f;
 			rayHitRef.forward = hit.normal;
@@ -175,7 +161,8 @@ public class DrawInSpace : GVRInput
 			}
 			rayHitRef.gameObject.SetActive (true);
 		} else {
-			rayHitRef.position = pointerRef.position + controllerPivot.transform.forward * 5;
+			lineRenderer.SetPosition (1, endOfLineRef.position);
+			rayHitRef.position = endOfLineRef.position + controllerPivot.transform.forward * 5;
 			if (activeMove == null) {
 				rayHitRef.gameObject.SetActive (false);
 				if (currentInputMode == InputMode.MOVE)
@@ -204,8 +191,7 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
-		if (!pview.isMine)
-			return;
+		
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
@@ -251,16 +237,14 @@ public class DrawInSpace : GVRInput
 		activeMove = selectedObject.GetComponent<Node> ();
 		if (!activeMove)
 			return;
-		if (!activeMove.photonView.isMine)
-			activeMove.photonView.RequestOwnership ();
-		activeMove.SetTarget (pointerRef);
+		activeMove.SetTarget (endOfLineRef);
 
 	}
 
 	void StopMove ()
 	{
-		activeMove.SetDesiredPosition (pointerRef.position);
-		activeMove.resetPosition = pointerRef.position;
+		activeMove.SetDesiredPosition (endOfLineRef.position);
+		activeMove.resetPosition = endOfLineRef.position;
 		activeMove.SetTarget (null);
 		activeMove = null;
 	}
@@ -270,11 +254,6 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonUp ()
 	{
-		if (!pview.isMine)
-			return;
-		
-		 
-
 		if (activeMove != null) {
 			StopMove ();
 		} else {
@@ -296,8 +275,6 @@ public class DrawInSpace : GVRInput
 
 	public override void OnSwipe (GVRSwipeDirection dir)
 	{
-		if (!pview.isMine)
-			return;
 		if (dir == GVRSwipeDirection.down) {
 			if (selectedObject != null) {
 				if (activeNode != null)
@@ -382,8 +359,6 @@ public class DrawInSpace : GVRInput
 	{
 		
 		activeNode = incNode.GetComponent<Node> ();
-		if (!activeNode.photonView.isMine)
-			activeNode.photonView.RequestOwnership ();
 		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 11);
 		activeNode.SetDesiredPosition (halfPoint);
 		if (currentInputMode == InputMode.MOVE)
@@ -397,7 +372,6 @@ public class DrawInSpace : GVRInput
 			if (selectedObject != null) {
 				Node selectedNode = selectedObject.GetComponent<Node> ();
 				if (selectedNode != null && selectedNode == activeNode) {
-					activeNode.photonView.RPC ("ClearContent", PhotonTargets.AllBuffered);
 					activeNode = null;
 					return;
 				} else if (selectedNode != null && selectedNode != activeNode) {
@@ -410,10 +384,8 @@ public class DrawInSpace : GVRInput
 			}
 			CommitNode ();
 		}
-		if (!offline)
-			ActivateNode (PhotonNetwork.Instantiate (nodePrefab.name, pointerRef.position, Quaternion.identity, 0));
-		else
-			ActivateNode (Instantiate (nodePrefab, pointerRef.position, Quaternion.identity) as GameObject);
+		ActivateNode (Instantiate (nodePrefab, endOfLineRef.position, Quaternion.identity) as GameObject);
+		NetworkServer.Spawn (activeNode.gameObject);
 	}
 
 	void CommitNode ()
@@ -422,9 +394,6 @@ public class DrawInSpace : GVRInput
 			return;
 		if (isDrawing)
 			EndDrawStroke ();
-		if (!activeNode.photonView.isMine)
-			activeNode.photonView.RequestOwnership ();
-	//	DebugMessage ("commiting Node");
 		activeNode.SetDesiredPosition (activeNode.resetPosition);
 		activeNode = null;
 
@@ -432,12 +401,7 @@ public class DrawInSpace : GVRInput
 
 	public override void AppButtonDown ()
 	{
-		if (!pview.isMine)
-			return;
-		//UnityEngine.SceneManagement.SceneManager.LoadScene (0);
-		if (activeNode != null)
-			activeNode.photonView.RPC ("ClearContent", PhotonTargets.AllBuffered);
-		else if (selectedObject != null)
+	 if (selectedObject != null)
 			Destroy (selectedObject);
 	}
 
@@ -466,8 +430,6 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	void StopMicrophone ()
 	{
-	//	Debug.Log ("Stopping microphone");
-
 		TriggerToolAbility (false);
 		toolCollection [modeNum].SetMoveTarget (ToolGuideAnchor);
 
@@ -475,23 +437,7 @@ public class DrawInSpace : GVRInput
 
 		activeNode.endSpeech ();
 	}
-
-	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
-	{
-		if (stream.isWriting) {
-			stream.SendNext (transform.rotation);
-			stream.SendNext ((int)currentInputMode);
-			stream.SendNext (toolCollection [modeNum].transform.InverseTransformPoint (toolCollection [modeNum].GetDesiredPosition));
-		} else {
-			wantedRotation = (Quaternion)stream.ReceiveNext ();
-			int curTool = (int)stream.ReceiveNext ();
-			toolCollection [curTool].SetMovePosition ((Vector3)stream.ReceiveNext ());
-			if (curTool != modeNum) {
-				SetMode ((InputMode)curTool);
-			}
-		}
-	}
-
+		
 	public override void ButtonOpetionLT ()
 	{
 		toolCollection [(int)currentInputMode].ButtonOpetionLT ();

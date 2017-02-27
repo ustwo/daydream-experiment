@@ -10,7 +10,11 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Capsule
+<<<<<<< HEAD:Assets/MyAssets/MyModels/environment_unwrap.fbx.meta
     6400000: //RootNode
+=======
+    4300002: dome_mesh
+>>>>>>> master:Assets/MyAssets/MyModels/environment_dome.fbx.meta
     9500000: //RootNode
   materials:
     importMaterials: 1

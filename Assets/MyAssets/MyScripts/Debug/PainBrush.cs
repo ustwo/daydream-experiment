@@ -15,6 +15,7 @@ public class PainBrush : MonoBehaviour
 	Vector2 lastUVCords;
 	public Color color;
 	private Texture2D scaledBrush;
+	[Range (1,10)]
 	public int brushSize;
 	public LayerMask paintLayers;
 	private bool brushActivated = false;
@@ -31,6 +32,7 @@ public class PainBrush : MonoBehaviour
 	void Start ()
 	{
 		Init ();
+		//SetBrush (true);
 
 	}
 
@@ -56,6 +58,7 @@ public class PainBrush : MonoBehaviour
 		if (!brushActivated)
 			return;
 		RaycastHit hit;
+		Debug.DrawRay (pointer.position, pointer.forward * rayReach);
 		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach, paintLayers.value)) {
 			
 			//Debug.Log ("Raycast hit");
