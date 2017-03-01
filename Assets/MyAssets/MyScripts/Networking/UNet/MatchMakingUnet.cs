@@ -10,6 +10,16 @@ public class MatchMakingUnet : MonoBehaviour
 	{
 		NetworkManager.singleton.StartMatchMaker();
 		FindInternetMatch (roomname);
+		//CreateInternetMatch(roomname);
+		NetworkClient networkClient = new NetworkClient();
+		networkClient.RegisterHandler(MsgType.Error ,Error);
+	}
+
+
+
+	void Error(NetworkMessage error){
+		Debug.Log ("Error: "+error.ToString());
+		CreateInternetMatch (roomname);
 	}
 
 	//call this method to request a match to be created on the server

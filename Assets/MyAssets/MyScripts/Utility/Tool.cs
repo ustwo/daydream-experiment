@@ -60,4 +60,11 @@ public class Tool : MonoBehaviour
 	public virtual void ButtonOptionRB(){
 
 	}
+
+	public virtual void SetColor(int colorIndex){
+
+	}
+	public virtual void SetScale (float newSize){
+
+	}
 }

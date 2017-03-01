@@ -128,4 +128,14 @@ public class Pen : Tool
 		return brushColors [currentBrushColorIndex];
 	}
 
+	public override void SetColor(int col){
+		penMat.color = brushColors [col];
+		paintBrush.color = brushColors [col];
+
+	}
+	public override void SetScale(float scale){
+		paintBrush.brushSize = (int)scale;
+		rayHit.localScale = Vector3.one * (scale *0.01f) * paintBrush.brushSize;
+	}
+
 }

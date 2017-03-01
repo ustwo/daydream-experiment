@@ -62,7 +62,7 @@ public class PainBrush : MonoBehaviour
 		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach, paintLayers.value)) {
 			
 			//Debug.Log ("Raycast hit");
-			activeSurface = hit.transform.GetComponent<PaintableObject> ();
+			activeSurface = hit.transform.root.GetComponent<PaintableObject> ();
 			if (activeSurface != null) {
 				draw = true;
 				currentCords = hit.textureCoord;
@@ -94,9 +94,11 @@ public class PainBrush : MonoBehaviour
 		}
 		// to here 
 		if (draw) {
-			lerpCords = Vector2.MoveTowards (lastUVCords, currentCords,brushSize * 0.001f);
-			activeSurface.RegisterRay (lerpCords, scaledBrush, intencity, color);
-			lastUVCords = lerpCords;
+			for (int i = 0; i < 2; i++) {
+				lerpCords = Vector2.MoveTowards (lastUVCords, currentCords, brushSize * 0.001f);
+				activeSurface.RegisterRay (lerpCords, scaledBrush, intencity, color);
+				lastUVCords = lerpCords;
+			}
 		}
 	}
 }

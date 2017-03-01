@@ -8,6 +8,12 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 
 //using IBM.Watson.DeveloperCloud.Widgets;
+public enum InputMode
+{
+	DRAW = 0,
+	MICROPHONE = 1,
+	MOVE = 2
+}
 
 public class DrawInSpace : GVRInput
 {
@@ -47,12 +53,7 @@ public class DrawInSpace : GVRInput
 	/// <summary>
 	/// Input mode.
 	/// </summary>
-	public enum InputMode
-	{
-		DRAW = 0,
-		MICROPHONE = 1,
-		MOVE = 2
-	}
+
 
 	private InputMode currentInputMode;
 	private InputMode lastInputMode;
@@ -74,6 +75,8 @@ public class DrawInSpace : GVRInput
 	private AudioSource source;
 	public AudioClip micOn;
 	public AudioClip micOff;
+
+	public ToolMenuItem activeMenuItem;
 
 
 	// Use this for initialization
@@ -148,19 +151,32 @@ public class DrawInSpace : GVRInput
 
 		RaycastHit hit;
 		if (Physics.Linecast (controllerPivot.transform.position, endOfLineRef.position + controllerPivot.transform.forward, out hit, detectionMask) && !drawingOnBackground) {
+
 			lineRenderer.SetPosition (1, hit.point);
 			rayHitRef.position = hit.point + (hit.normal).normalized * 0.5f;
 			rayHitRef.forward = hit.normal;
 			selectedObject = hit.collider.gameObject;
+
+
+
 			if (activeNode == null && selectedObject.GetComponent<Node> () != null) {
 				if (currentInputMode != InputMode.MOVE)
 					lastInputMode = currentInputMode;
 				toolCollection [(int)InputMode.MOVE].SetMoveTarget (rayHitRef);
 				SetMode (InputMode.MOVE);
 
+			} else if (selectedObject.GetComponent<ToolMenuItem> () != null) {
+				ToolMenuItem toolItem = selectedObject.GetComponent<ToolMenuItem> ();
+				toolItem.HighLight ();
+				activeMenuItem = toolItem;
+
 			}
+
 			rayHitRef.gameObject.SetActive (true);
+
+
 		} else {
+			activeMenuItem = null;
 			lineRenderer.SetPosition (1, endOfLineRef.position);
 			rayHitRef.position = endOfLineRef.position + controllerPivot.transform.forward * 5;
 			if (activeMove == null) {
@@ -184,6 +200,17 @@ public class DrawInSpace : GVRInput
 	}
 
 
+	void SelecteToolMenuItem(ToolMenuItem menuItem){
+		switch (menuItem.mode) {
+		case(InputMode.DRAW):
+			SetMode (InputMode.DRAW);
+			toolCollection [modeNum].SetColor (menuItem.colorIndex);
+			toolCollection [modeNum].SetScale (menuItem.brushSize);
+			break;
+		case(InputMode.MICROPHONE):
+			break;
+		}
+	}
 
 
 	/// <summary>
@@ -191,7 +218,11 @@ public class DrawInSpace : GVRInput
 	/// </summary>
 	public override void OnButtonDown ()
 	{
-		
+		if(activeMenuItem!=null){
+			SelecteToolMenuItem (activeMenuItem);
+			return;
+
+		}
 		//Debug.Log ("OnButtonDown");
 		toolCollection [modeNum].SetToolAbility (true);
 
@@ -225,6 +256,9 @@ public class DrawInSpace : GVRInput
 
 	void EndDrawStroke ()
 	{
+		if (activeNode == null)
+			return;
+		activeNode.paintableObject.SendTexture ();
 	//	DebugMessage ("Button Up from DrawinSpace");
 
 	}
@@ -234,6 +268,7 @@ public class DrawInSpace : GVRInput
 	{
 		if (selectedObject == null)
 			return;
+		Cmd_TransferOwnership (NetworkManager.singleton.client.connection);
 		activeMove = selectedObject.GetComponent<Node> ();
 		if (!activeMove)
 			return;
@@ -291,14 +326,14 @@ public class DrawInSpace : GVRInput
 				return;
 			}
 
-			modeNum++;
-			UpdateMode ();
+		//	modeNum++;
+		//	UpdateMode ();
 
 			shouldDraw = !shouldDraw;
-	//		DebugMessage ("should draw = " + shouldDraw);
+	
 		} else if (dir == GVRSwipeDirection.left) {
-			modeNum--;
-			UpdateMode ();
+		//	modeNum--;
+	//		UpdateMode ();
 		}
 		
 		base.OnSwipe (dir);
@@ -357,7 +392,7 @@ public class DrawInSpace : GVRInput
 
 	void ActivateNode (GameObject incNode)
 	{
-		
+		Cmd_TransferOwnership (NetworkManager.singleton.client.connection);
 		activeNode = incNode.GetComponent<Node> ();
 		Vector3 halfPoint = controllerPivot.transform.position + (controllerPivot.transform.forward * 11);
 		activeNode.SetDesiredPosition (halfPoint);
@@ -384,9 +419,32 @@ public class DrawInSpace : GVRInput
 			}
 			CommitNode ();
 		}
-		ActivateNode (Instantiate (nodePrefab, endOfLineRef.position, Quaternion.identity) as GameObject);
-		NetworkServer.Spawn (activeNode.gameObject);
+		//ActivateNode (Instantiate (nodePrefab, endOfLineRef.position, Quaternion.identity) as GameObject);
+
+		CmdSpawnNode (endOfLineRef.position,Quaternion.identity);
+
+		
 	}
+
+	[Command]
+	void CmdSpawnNode(Vector3 position,Quaternion rotation){
+		GameObject newNode = Instantiate (nodePrefab,position,rotation)as GameObject;
+		NetworkServer.SpawnWithClientAuthority (newNode,connectionToClient);
+		Target_assignNode (connectionToClient, 1);
+	}
+
+	[TargetRpc] 
+	public void Target_assignNode(NetworkConnection target, int objectID){
+		OnSwipe (GVRSwipeDirection.down);
+	}
+	[Command] 
+	void Cmd_TransferOwnership(NetworkConnection newOwner){
+		gameObject.GetComponent<NetworkIdentity> ().AssignClientAuthority (newOwner);
+	}
+
+
+
+
 
 	void CommitNode ()
 	{

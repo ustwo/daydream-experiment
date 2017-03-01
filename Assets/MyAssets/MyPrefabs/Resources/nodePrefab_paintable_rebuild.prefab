@@ -106,7 +106,6 @@ GameObject:
   - component: {fileID: 33206897609582674}
   - component: {fileID: 64621917131158830}
   - component: {fileID: 23839061563243642}
-  - component: {fileID: 114648410736153952}
   m_Layer: 10
   m_Name: PaintableObject
   m_TagString: Untagged
@@ -175,6 +174,7 @@ GameObject:
   - component: {fileID: 114606373496110900}
   - component: {fileID: 114785593757351878}
   - component: {fileID: 114351557441716522}
+  - component: {fileID: 114838871099066556}
   m_Layer: 11
   m_Name: nodePrefab_paintable_rebuild
   m_TagString: Untagged
@@ -689,37 +689,14 @@ MonoBehaviour:
   transcriptText: {fileID: 114089947165242646}
   speechPrompt: {fileID: 114430941841432636}
   TextureRenderer: {fileID: 23839061563243642}
-  nodeShader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
   resetPosition: {x: 0, y: 0, z: 0}
-  paintableObject: {fileID: 114648410736153952}
+  paintableObject: {fileID: 114838871099066556}
   textureHasChanged: 0
   recordingIndicator: {fileID: 1941390700274636}
   preloader: {fileID: 1223495865981126}
   nodeMask:
     serializedVersion: 2
     m_Bits: 2048
---- !u!114 &114648410736153952
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1353837862439426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff421c729f2e042b78d45055047df0f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myRenderer: {fileID: 23839061563243642}
-  shader: {fileID: 10750, guid: 0000000000000000f000000000000000, type: 0}
-  node: {fileID: 114606373496110900}
-  MirrorRenderer: {fileID: 0}
-  textureSize: 256
-  startColor:
-    serializedVersion: 2
-    rgba: 4282172886
-  paintLayers:
-    serializedVersion: 2
-    m_Bits: 1024
 --- !u!114 &114785593757351878
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -734,24 +711,24 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 0
-    i1: 0
-    i2: 0
-    i3: 0
-    i4: 0
-    i5: 0
-    i6: 0
-    i7: 0
-    i8: 0
-    i9: 0
-    i10: 0
-    i11: 0
-    i12: 0
-    i13: 0
-    i14: 0
-    i15: 0
+    i0: 149
+    i1: 108
+    i2: 189
+    i3: 229
+    i4: 218
+    i5: 209
+    i6: 52
+    i7: 131
+    i8: 232
+    i9: 163
+    i10: 150
+    i11: 253
+    i12: 77
+    i13: 18
+    i14: 128
+    i15: 192
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114789310667992182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -801,6 +778,28 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
+--- !u!114 &114838871099066556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1833832363744860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff421c729f2e042b78d45055047df0f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myRenderer: {fileID: 23839061563243642}
+  shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  node: {fileID: 114606373496110900}
+  MirrorRenderer: {fileID: 0}
+  textureSize: 128
+  startColor:
+    serializedVersion: 2
+    rgba: 4283431167
+  paintLayers:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &114864903387689540
 MonoBehaviour:
   m_ObjectHideFlags: 1

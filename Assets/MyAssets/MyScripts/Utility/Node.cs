@@ -14,7 +14,7 @@ public class Node : MonoBehaviour
 
 
 	public Renderer TextureRenderer;
-	public Shader nodeShader;
+	//public Shader nodeShader;
 	private Material myMaterial;
 	private Texture2D myTexture;
 
@@ -43,6 +43,7 @@ public class Node : MonoBehaviour
 	{
 		//if (photonView.isMine) {
 			string generatedName = "Node_" + randomID;
+			transform.forward = Vector3.zero - transform.position;
 			//photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
 		//}
 	}
@@ -185,8 +186,6 @@ public class Node : MonoBehaviour
 			if (textureHasChanged)
 				texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
 		
-
-	
 			// recive
 			if (textureHasChanged)
 				(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage(texturePixelArray);
