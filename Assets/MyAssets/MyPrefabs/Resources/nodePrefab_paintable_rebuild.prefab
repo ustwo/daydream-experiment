@@ -76,7 +76,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1352493905460506
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +208,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4718323057263598}
   - component: {fileID: 82219343193336314}
-  - component: {fileID: 114425754076184940}
   - component: {fileID: 114057640775952202}
   m_Layer: 0
   m_Name: MicWidget
@@ -551,9 +550,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1918532717776758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 152b9ebe60c5a4081bcaf42e54142bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AutoConnect: 1
+  m_AudioOutput:
+    m_Connections: []
+  m_LevelOutput:
+    m_Connections: []
+  m_ActivateOutput:
+    m_Connections: []
+  m_ActivateOnStart: 0
+  m_RecordingBufferSize: 2
+  m_RecordingHZ: 22050
+  m_MicrophoneID: 
+  m_LevelOutputInterval: 0.05
+  m_LevelOutputModifier: 1
+  m_PlaybackRecording: 0
+  m_StatusText: {fileID: 114430941841432636}
 --- !u!114 &114089947165242646
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -608,17 +622,6 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
---- !u!114 &114425754076184940
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1918532717776758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114430237603222280
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -627,9 +630,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1223495865981126}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 510e2371725024057bad72b4315f5079, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 10
 --- !u!114 &114430941841432636
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -671,9 +675,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1711288589942160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: ee08d1c75a1614cf9be8c21943964efb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AutoConnect: 1
+  m_ResultOutput:
+    m_Connections: []
+  m_StatusText: {fileID: 114834402704071602}
+  m_DetectSilence: 1
+  m_SilenceThreshold: 0.03
+  m_WordConfidence: 0
+  m_TimeStamps: 0
+  m_MaxAlternatives: 1
+  m_EnableContinous: 0
+  m_EnableInterimResults: 1
+  m_Transcript: {fileID: 114089947165242646}
+  m_Language: en-US
 --- !u!114 &114606373496110900
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -690,6 +707,8 @@ MonoBehaviour:
   speechPrompt: {fileID: 114430941841432636}
   TextureRenderer: {fileID: 23839061563243642}
   resetPosition: {x: 0, y: 0, z: 0}
+  micWidget: {fileID: 114057640775952202}
+  sttWidget: {fileID: 114600549492533406}
   paintableObject: {fileID: 114838871099066556}
   textureHasChanged: 0
   recordingIndicator: {fileID: 1941390700274636}
@@ -808,9 +827,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1941390700274636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 75e188179214c4506823de56e85313b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icon: {fileID: 212462996460014376}
 --- !u!114 &114892728403026296
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -869,7 +889,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
 --- !u!212 &212643027564909322
@@ -909,7 +929,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 10.24, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
 --- !u!222 &222208447008978776

@@ -8,16 +8,7 @@ using System;
 
 public class PaintableObject : NetworkBehaviour
 {
-	//	public class SyncListByte : SyncList<byte[]> {
-	//		protected override void SerializeItem (NetworkWriter writer, byte[] item)
-	//		{
-	//			writer.Write (item);
-	//		}
-	//		protected override byte DeserializeItem (NetworkReader reader)
-	//		{
-	//			return reader.ReadBytesAndSize ();
-	//		}
-	//	}
+
 
 	public Renderer myRenderer;
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
@@ -28,24 +19,25 @@ public class PaintableObject : NetworkBehaviour
 	public int textureSize;
 	public Color32 startColor;
 	public LayerMask paintLayers;
-	private float sendcooldown = 0;
 
 
-	//	public struct textureByteHolder{
-	//		public byte[] bytes;
-	//	}
-	//	public class byteHoldClass : SyncListStruct<textureByteHolder>{}
-	//	byteHoldClass byteHolder = new byteHoldClass();
 
 	Texture2D networkTexture;
 
-	//private SyncListInt networkTexture = new SyncListInt();
+
 	// Use this for initialization
 	void Start ()
 	{
 		networkTexture = new Texture2D (1, 1);
-		//networkTexture.Callback = ChangeNetWorkTexture;
+
 		Init ();
+	}
+
+	// connected To network. after delay, lets request to see if there is a texture already darwn on this object
+	public override void OnStartClient ()
+	{
+		Invoke ("DelayedRequest", 0.2f);
+		base.OnStartClient ();
 	}
 
 	void Init ()
@@ -66,91 +58,84 @@ public class PaintableObject : NetworkBehaviour
 
 	}
 
+	// Request a texture from the server.
+	void DelayedRequest ()
+	{
+		Cmd_RequestTexture ();
+	}
+
 	// For Debugging
 	void Update ()
 	{
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			Init ();
 		}
-		if (sendcooldown > 0)
-			sendcooldown -= Time.deltaTime;
+
 	}
 
+	// pen trys to draw on sruface. Ray detected
 	public void RegisterRay (Vector2 uvCords, Texture2D brush, float intencity, Color32 addColor)
 	{
 		if (!isInit)
 			return;
-		//myRenderer.material.mainTexture = 
+
+		// Compute Brush application
 		computeBitmap.ComputeBitMap (myRenderer.material.mainTexture, brush, uvCords, intencity, addColor);
+
 		if (node != null)
 			node.textureHasChanged = true;
 		if (MirrorRenderer != null)
 			MirrorRenderer.textureHasChanged = true; 
-		//	Debug.Log(myRenderer.material.mainTexture.width);
-		//byte[] currentTex = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
-		//string stringByteArray = Convert.ToBase64String (currentTex);
-		//.Log ("TextureSize " + stringByteArray.Length);
-
-
-//		if (sendcooldown <= 0) {
-//			sendcooldown = 0.3f;
-//			if (isServer)
-//				RpcUpdateTexture (currentTex);
-//			else
-//				Cmd_UpdateTexture (currentTex);
-//		}
-
-
-		//byte[] textureBytes = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
-		//networkTexture = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
+	
 	}
 
+	// Called on client  after texture was changed.
 	public void SendTexture ()
 	{
-		byte[] currentTex = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
-		if (sendcooldown <= 0) {
-			sendcooldown = 0.3f;
-			if (isServer)
-				RpcUpdateTexture (currentTex);
-			else
-				Cmd_UpdateTexture (currentTex);
+		Debug.Log ("Sending Texture from Server");
+		networkTexture = (Texture2D)myRenderer.material.mainTexture;
+		byte[] currentTexByteArray = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
+		Cmd_UpdateTexture (currentTexByteArray);
+	}
+
+	// Update texture on the server
+	[Command (channel = 2)]
+	void Cmd_UpdateTexture (byte[] bytes)
+	{
+		Debug.Log ("Server Update Texture");
+		if (networkTexture.LoadImage (bytes)) {
+			Debug.Log ("loading worked");
+			myRenderer.material.mainTexture = networkTexture;
+			RpcUpdateTexture (bytes);
 		}
 	}
 
-	[ClientRpc(channel = 2)]
+
+
+	[Command (channel = 2)]
+	void Cmd_RequestTexture ()
+	{
+		Debug.Log ("requesting texture.");
+		byte[] currentTex = ((Texture2D)myRenderer.material.mainTexture).EncodeToPNG ();
+		RpcUpdateTexture (currentTex);
+	}
+
+	[ClientRpc (channel = 2)]
 	void RpcUpdateTexture (byte[] bytes)
 	{
+		Debug.Log ("Client UpdateTexture Texture");
 		if (bytes == null || networkTexture == null) {
 			Debug.Log ("Something is null here");
 			return;
 		}
-		//byte[] intArrayToByte = Convert.FromBase64String (bytes);
-		networkTexture.LoadImage (bytes);
-		myRenderer.material.mainTexture = networkTexture;
+
+		if(networkTexture.LoadImage (bytes))
+			myRenderer.material.mainTexture = networkTexture;
 	}
 
-	[Command(channel = 2)]
-	void Cmd_UpdateTexture (byte[] bytes)
-	{
-		networkTexture.LoadImage (bytes);
-		myRenderer.material.mainTexture = networkTexture;
-	}
 
-	//	void TextureChanged(SyncListStruct<byteHoldClass>.Operation op, int itemIndex)
-	//	{
-	//		Texture2D recivedTexture = new Texture2D (1, 1);
-	//		recivedTexture.LoadImage (((textureByteHolder)op).bytes);
-	//		//recivedTexture.LoadImage(op
-	//		//myRenderer.material.mainTexture =
-	//		Debug.Log("texture changed:" + op);
-	//	}
-	//	void ChangeNetWorkTexture( SyncListInt.Operation recivedBytesAsInt,int index){
-	//		int[] intArray = recivedBytesAsInt.ToArray ();
-	//		Texture2D recivedTexture = new Texture2D (textureSize, textureSize);
-	//		byte[] byteArray = intArray.Select(x => (byte)x).ToArray();
-	//		recivedTexture.LoadImage (byteArray);
-	//		myRenderer.material.mainTexture = recivedTexture;
-	//	}
+
+
 
 
 	void LateUpdate ()

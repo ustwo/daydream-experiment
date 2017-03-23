@@ -4,9 +4,8 @@ using System.Collections;
 public class Mic : Tool
 {
 
-	public Material activeMaterial;
-	public Material idleMat;
-	public Renderer micRend;
+
+
 	public GameObject micModel;
 
 	public float speed = 10f;

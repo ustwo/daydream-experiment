@@ -10,8 +10,11 @@ public class ToolMenuItem : MonoBehaviour {
 	float cooldown = 0;
 
 	void Update(){
-		if (cooldown > 0)
+		if (cooldown > 0) {
 			cooldown -= Time.deltaTime;
+			transform.localScale = Vector3.MoveTowards (transform.localScale, Vector3.one *1.5f , Time.deltaTime);
+
+		}
 		else
 			transform.localScale = Vector3.MoveTowards (transform.localScale, Vector3.one , Time.deltaTime);
 			
@@ -19,7 +22,7 @@ public class ToolMenuItem : MonoBehaviour {
 
 	public void HighLight(){
 		cooldown = 0.1f;
-		transform.localScale = Vector3.one * 1.5f;
+		//transform.localScale = Vector3.one * 1.5f;
 	}
 	
 }

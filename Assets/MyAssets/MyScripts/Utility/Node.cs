@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class Node : MonoBehaviour
+public class Node : NetworkBehaviour
 {
 	public float travelSpeed = 5f;
 	private Vector3 _desiredPosition = Vector3.zero;
@@ -21,8 +22,8 @@ public class Node : MonoBehaviour
 	[HideInInspector]
 	public Vector3 resetPosition;
 
-	//public MicWidget micWidget;
-	//public STTController sttWidget;
+	public MicWidget micWidget;
+	public STTController sttWidget;
 
 	private ComputeBitmap computeBitmap = new ComputeBitmap ();
 	public PaintableObject paintableObject;
@@ -42,9 +43,9 @@ public class Node : MonoBehaviour
 	void OnEnable ()
 	{
 		//if (photonView.isMine) {
-			string generatedName = "Node_" + randomID;
-			transform.forward = Vector3.zero - transform.position;
-			//photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
+		string generatedName = "Node_" + randomID;
+		transform.forward = Vector3.zero - transform.position;
+		//photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
 		//}
 	}
 
@@ -89,22 +90,24 @@ public class Node : MonoBehaviour
 		gameObject.name = name;
 	}
 
-	void Update()
+	void Update ()
 	{
-//		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
+		//Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
 
-//		if(micIsRecording || micIsListening) {
-//			recordingIndicator.SetActive (true);
-//			if(preloader.GetActive ()) preloader.SetActive (false);
-//		} else {
-//			if(recordingIndicator != null) recordingIndicator.SetActive (false);
-//		}
+		if (micIsRecording || micIsListening) {
+			recordingIndicator.SetActive (true);
+			if (preloader.activeSelf)
+				preloader.SetActive (false);
+		} else {
+			if (recordingIndicator != null)
+				recordingIndicator.SetActive (false);
+		}
 	}
 
 	void FixedUpdate ()
 	{
 		//return;
-		if (_targetTransform == null && _desiredPosition == Vector3.zero)
+		if (_targetTransform == null && _desiredPosition == Vector3.zero || !hasAuthority)
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
@@ -112,8 +115,8 @@ public class Node : MonoBehaviour
 		else
 			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelSpeed);
 		transform.Translate (force, Space.World);
-		Collider[] objectsInTheWay = Physics.OverlapSphere (transform.position, 5,nodeMask);
-		if (objectsInTheWay.Length>1) {
+		Collider[] objectsInTheWay = Physics.OverlapSphere (transform.position, 5, nodeMask);
+		if (objectsInTheWay.Length > 1) {
 			for (int i = 0; i < objectsInTheWay.Length; i++) {
 				if (objectsInTheWay [i].gameObject != gameObject) {
 					_desiredPosition = transform.position - (objectsInTheWay [i].transform.position - transform.position);
@@ -122,7 +125,7 @@ public class Node : MonoBehaviour
 		}
 		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, _myTransform.position, 0.5f);
 		if (Vector3.Distance (_myTransform.position, Vector3.zero) > 54) {
-			_desiredPosition = _myTransform.position + _myTransform.forward*-1;
+			_desiredPosition = _myTransform.position + _myTransform.forward * -1;
 		}
 	}
 
@@ -138,22 +141,31 @@ public class Node : MonoBehaviour
 
 	public void beginSpeech ()
 	{
+		GVRInput.DebugMessage ("beginSpeech:");
+		GVRInput.DebugMessage ("micWidget name = ");
+		GVRInput.DebugMessage (micWidget.name);
+		GVRInput.DebugMessage ("preloader name = ");
+		GVRInput.DebugMessage (preloader.name);
+		micWidget.enabled = true;
 		preloader.SetActive (true);
-
-		//micWidget.ActivateMicrophone ();
-
+		micWidget.ActivateMicrophone ();
+		GVRInput.DebugMessage ("beginSpeech: Activated Mic.");
 		IsListening (true);
 		IsRecording (true);
+
 	}
 
-	void IsListening(bool isListening)
+	void IsListening (bool isListening)
 	{
+		
 		micIsListening = isListening;
+		GVRInput.DebugMessage ("IsListening: " + isListening);
 	}
 
-	void IsRecording(bool isRecording)
+	void IsRecording (bool isRecording)
 	{
 		micIsRecording = isRecording;
+		GVRInput.DebugMessage ("IsRecording: " + isRecording);
 	}
 
 
@@ -166,6 +178,7 @@ public class Node : MonoBehaviour
 
 	public void endSpeech ()
 	{
+		
 		IsListening (false);
 		IsRecording (false);
 
@@ -174,21 +187,42 @@ public class Node : MonoBehaviour
 
 	}
 
-	IEnumerator DelayMic()
+	IEnumerator DelayMic ()
 	{
+		GVRInput.DebugMessage ("DelayMic: before pause");
 		yield return new WaitForSeconds (0.5F);
-		//micWidget.DeactivateMicrophone ();
+		micWidget.DeactivateMicrophone ();
+		//micWidget.enabled = false;
+		GVRInput.DebugMessage ("DelayMic: After the pause");
+		Invoke ("SendTranscriptLate", 2f);
+	}
+
+	void SendTranscriptLate(){
+		Cmd_ServerGetsTranscript (transcriptText.text);
+	}
+
+	[Command] 
+	void Cmd_ServerGetsTranscript (string transcript)
+	{
+		transcriptText.text = transcript;
+		Rpc_ClientGetsTranscript (transcript);
+	}
+
+	[ClientRpc]
+	void Rpc_ClientGetsTranscript (string transcript)
+	{
+		transcriptText.text = transcript;
 	}
 
 	public void OnPhotonSerializeView ()
 	{
 		// send
-			if (textureHasChanged)
-				texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
+		if (textureHasChanged)
+			texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG ();
 		
-			// recive
-			if (textureHasChanged)
-				(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage(texturePixelArray);
+		// recive
+		if (textureHasChanged)
+			(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage (texturePixelArray);
 
 
 
