@@ -24,6 +24,8 @@ To switch between tools, simply tilt your head down as if you wanted to look at 
 ### Install 
 Add step by step...
 
+# Release 
+
 ### Known Issues 
 
 * There is currently no room selection option which means that you will connect with anyone around the world who happens to be using the app at the same time.
