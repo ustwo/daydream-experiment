@@ -20,3 +20,9 @@ Once you are done editing a note, you can "commit" it to the wall by swiping awa
 To switch between tools, simply tilt your head down as if you wanted to look at your belt line. This action turns the menu on, to select an item of the menu point at it and push down on the "use" button. 
 
 Note: It is possible for up to 6 people to be in the same virtual space (untested). The 7th would end up in a new room. (untested)
+
+
+Requirements for use of app:
+Google Pixel Phone, 
+Daydream headset and controller
+Internet Connection
