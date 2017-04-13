@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿// Copyright 2016 Google Inc. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using UnityEngine;
 using UnityEditor;
 
 using System.Collections.Generic;
@@ -31,7 +45,7 @@ public class GvrCompatibilityChecker {
 
   // GVR backwards-compatible package.
   private static string BACK_COMPAT_PACKAGE_PATH =
-    "/GoogleVR/compatibility-without-gvr-integration.unitypackage";
+    "/GoogleVR/GVRBackwardsCompatibility.unitypackage";
 
   // Path elements.
   private static string ASSET_PATH_PREFIX = "Assets";
@@ -66,6 +80,8 @@ public class GvrCompatibilityChecker {
   private static string OK_BUTTON = "OK";
   private static string REMOVE_FILES_BUTTON = "Remove Files";
 
+// Only perform compatibility check if current build platform is Android or iOS.
+#if UNITY_ANDROID || UNITY_IOS
   static GvrCompatibilityChecker() {
 // No need to run the backwards compatibility checker GVR is natively integrated into Unity.
 #if !UNITY_HAS_GOOGLEVR
@@ -78,6 +94,7 @@ public class GvrCompatibilityChecker {
     AndroidManifestCompatibilityUpdate();
 #endif  // !UNITY_HAS_GOOGLEVR
   }
+#endif  // UNITY_ANDROID || UNITY_IOS
 
   private static bool AllBackwardsCompatibilityFilesExist() {
     return !GetBackCompatFilePaths().Where(filePath => !File.Exists(filePath)).Any();

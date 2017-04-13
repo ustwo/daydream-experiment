@@ -5,6 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public enum GVRSwipeDirection
 {
@@ -15,8 +16,10 @@ public enum GVRSwipeDirection
 
 }
 
-public class GVRInput : MonoBehaviour
+public class GVRInput : NetworkBehaviour
 {
+
+	public static GVRInput singilton;
 
 	/// <summary>
 	/// Where the pointer line is starts from.
@@ -57,6 +60,7 @@ public class GVRInput : MonoBehaviour
 
 	public virtual void Awake ()
 	{
+		singilton = this;
 		checkForSelection = true;
 		if (GameObject.FindWithTag ("debug") != null) {
 			debugLabel = GameObject.FindWithTag ("debug").GetComponent<Text> ();
@@ -158,11 +162,12 @@ public class GVRInput : MonoBehaviour
 	}
 
 	/// Debug Messages
-	protected void DebugMessage (string msg)
+	public static void DebugMessage (string msg)
 	{
-		if (debugLabel == null)
+		Debug.Log (msg);
+		if (GVRInput.singilton.debugLabel == null)
 			return;
-		debugLabel.text = msg;
+		GVRInput.singilton.debugLabel.text += "\n" + msg;
 	}
 
 	/// <summary>

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class Node : Photon.MonoBehaviour
+public class Node : NetworkBehaviour
 {
-	public float travelForce = 5f;
+	public float travelSpeed = 5f;
 	private Vector3 _desiredPosition = Vector3.zero;
 	private Transform _myTransform;
 	private Transform _targetTransform;
@@ -14,7 +15,7 @@ public class Node : Photon.MonoBehaviour
 
 
 	public Renderer TextureRenderer;
-	public Shader nodeShader;
+	//public Shader nodeShader;
 	private Material myMaterial;
 	private Texture2D myTexture;
 
@@ -37,12 +38,15 @@ public class Node : Photon.MonoBehaviour
 	bool micIsListening = false;
 	bool micIsRecording = false;
 
+	public LayerMask nodeMask;
+
 	void OnEnable ()
 	{
-		if (photonView.isMine) {
-			string generatedName = "Node_" + randomID;
-			photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
-		}
+		//if (photonView.isMine) {
+		string generatedName = "Node_" + randomID;
+		transform.forward = Vector3.zero - transform.position;
+		//photonView.RPC ("SetNetworkName", PhotonTargets.AllBuffered, generatedName);
+		//}
 	}
 
 	void Start ()
@@ -80,39 +84,52 @@ public class Node : Photon.MonoBehaviour
 		_desiredPosition = incPos;
 	}
 
-	[PunRPC]
+
 	public void SetNetworkName (string name)
 	{
 		gameObject.name = name;
 	}
 
-	void Update()
+	void Update ()
 	{
-//		Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
+		//Debug.Log ("listening: " + micIsListening + ", recording: " + micIsRecording);
 
-		if(micIsRecording || micIsListening) {
+		if (micIsRecording || micIsListening) {
 			recordingIndicator.SetActive (true);
-			if(preloader.GetActive ()) preloader.SetActive (false);
+			if (preloader.activeSelf)
+				preloader.SetActive (false);
 		} else {
-			if(recordingIndicator != null) recordingIndicator.SetActive (false);
+			if (recordingIndicator != null)
+				recordingIndicator.SetActive (false);
 		}
 	}
 
 	void FixedUpdate ()
 	{
 		//return;
-		if (!photonView.isMine || _targetTransform == null && _desiredPosition == Vector3.zero)
+		if (_targetTransform == null && _desiredPosition == Vector3.zero || !hasAuthority)
 			return;
 		Vector3 force = Vector3.zero;
 		if (_targetTransform == null)
-			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelForce);
+			force = (_desiredPosition - transform.position) * (Time.deltaTime * travelSpeed);
 		else
-			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelForce);
+			force = (_targetTransform.position - transform.position) * (Time.deltaTime * travelSpeed);
 		transform.Translate (force, Space.World);
-		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, transform.position, 0.5f);
+		Collider[] objectsInTheWay = Physics.OverlapSphere (transform.position, 5, nodeMask);
+		if (objectsInTheWay.Length > 1) {
+			for (int i = 0; i < objectsInTheWay.Length; i++) {
+				if (objectsInTheWay [i].gameObject != gameObject) {
+					_desiredPosition = transform.position - (objectsInTheWay [i].transform.position - transform.position);
+				}
+			}
+		}
+		_myTransform.forward = Vector3.MoveTowards (_myTransform.forward, _myTransform.position, 0.5f);
+		if (Vector3.Distance (_myTransform.position, Vector3.zero) > 54) {
+			_desiredPosition = _myTransform.position + _myTransform.forward * -1;
+		}
 	}
 
-	[PunRPC]
+
 	public void ClearContent ()
 	{
 		if (transform.childCount < 3)
@@ -124,27 +141,34 @@ public class Node : Photon.MonoBehaviour
 
 	public void beginSpeech ()
 	{
+		GVRInput.DebugMessage ("beginSpeech:");
+		GVRInput.DebugMessage ("micWidget name = ");
+		GVRInput.DebugMessage (micWidget.name);
+		GVRInput.DebugMessage ("preloader name = ");
+		GVRInput.DebugMessage (preloader.name);
+		micWidget.enabled = true;
 		preloader.SetActive (true);
-
 		micWidget.ActivateMicrophone ();
-//		sttWidget.sttIsListening += IsListening;
-//		micWidget.micIsRecording += IsRecording;
-
+		GVRInput.DebugMessage ("beginSpeech: Activated Mic.");
 		IsListening (true);
 		IsRecording (true);
+
 	}
 
-	void IsListening(bool isListening)
+	void IsListening (bool isListening)
 	{
+		
 		micIsListening = isListening;
+		GVRInput.DebugMessage ("IsListening: " + isListening);
 	}
 
-	void IsRecording(bool isRecording)
+	void IsRecording (bool isRecording)
 	{
 		micIsRecording = isRecording;
+		GVRInput.DebugMessage ("IsRecording: " + isRecording);
 	}
 
-	[PunRPC]
+
 	string randomID {
 		get {
 			int idInt = Random.Range (0, 1000000);
@@ -154,42 +178,54 @@ public class Node : Photon.MonoBehaviour
 
 	public void endSpeech ()
 	{
+		
 		IsListening (false);
 		IsRecording (false);
 
 		StopCoroutine (DelayMic ());
 		StartCoroutine (DelayMic ());
-//		Debug.Log ("Delayed mic");
-//		micWidget.DeactivateMicrophone ();
+
 	}
 
-	IEnumerator DelayMic()
+	IEnumerator DelayMic ()
 	{
+		GVRInput.DebugMessage ("DelayMic: before pause");
 		yield return new WaitForSeconds (0.5F);
 		micWidget.DeactivateMicrophone ();
+		//micWidget.enabled = false;
+		GVRInput.DebugMessage ("DelayMic: After the pause");
+		Invoke ("SendTranscriptLate", 2f);
 	}
 
-	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	void SendTranscriptLate(){
+		Cmd_ServerGetsTranscript (transcriptText.text);
+	}
+
+	[Command] 
+	void Cmd_ServerGetsTranscript (string transcript)
 	{
-		if (stream.isWriting) {
-			stream.SendNext (transform.position);
-			stream.SendNext (transform.rotation);
-			stream.SendNext (textureHasChanged);
-			if (textureHasChanged)
-				texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG();
-			stream.SendNext (texturePixelArray);
+		transcriptText.text = transcript;
+		Rpc_ClientGetsTranscript (transcript);
+	}
+
+	[ClientRpc]
+	void Rpc_ClientGetsTranscript (string transcript)
+	{
+		transcriptText.text = transcript;
+	}
+
+	public void OnPhotonSerializeView ()
+	{
+		// send
+		if (textureHasChanged)
+			texturePixelArray = (paintableObject.myRenderer.material.mainTexture as Texture2D).EncodeToPNG ();
+		
+		// recive
+		if (textureHasChanged)
+			(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage (texturePixelArray);
 
 
-		} else {
-			transform.position = (Vector3)stream.ReceiveNext ();
-			transform.rotation = (Quaternion)stream.ReceiveNext ();
-			textureHasChanged = (bool)stream.ReceiveNext ();
-			texturePixelArray = (byte[])stream.ReceiveNext ();
-			if (textureHasChanged)
-				(paintableObject.myRenderer.material.mainTexture as Texture2D).LoadImage(texturePixelArray);
 
-
-		}
 	}
 
 }

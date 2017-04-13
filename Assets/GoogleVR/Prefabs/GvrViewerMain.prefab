@@ -5,10 +5,10 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 498412}
-  - 114: {fileID: 11414954}
+  - component: {fileID: 498412}
+  - component: {fileID: 11414954}
   m_Layer: 0
   m_Name: GvrViewerMain
   m_TagString: Untagged
@@ -28,6 +28,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11414954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -39,13 +40,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a40b544b8c3553c40852ae7ad35a9343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vrModeEnabled: 1
+  vrModeEnabled: 0
   distortionCorrection: 1
   neckModelScale: 0
   autoUntiltHead: 1
   UseUnityRemoteInput: 0
-  screenSize: 0
-  viewerType: 1
+  screenSize: 2
+  viewerType: 2
   stereoScreenScale: 1
 --- !u!1001 &100100000
 Prefab:

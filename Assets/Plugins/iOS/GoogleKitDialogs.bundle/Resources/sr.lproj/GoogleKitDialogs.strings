@@ -5,7 +5,7 @@
 "CancelAction" = "Откажи";
 
 /* Label for a button indicating an action should be attempted again. (40 chars.) */
-"TryAgainAction" = "Покушај поново";
+"TryAgainAction" = "Пробај поново";
 
 /* Label for the close button on a dialog that needs acknowledgement. (15 chars.) */
 "GoogleKitDialogsAcknowledgeAction" = "Потврди";
@@ -14,7 +14,7 @@
 "GoogleKitDialogsCancelAction" = "Откажи";
 
 /* Label for a button indicating an action should be attempted again. (40 chars.) */
-"GoogleKitDialogsTryAgainAction" = "Покушај поново";
+"GoogleKitDialogsTryAgainAction" = "Пробај поново";
 
 /* Word read aloud when VoiceOver is enabled before showing an alert. (No limit chars.) */
 "GoogleKitDialogsAccessibilityAlertAnnouncement" = "Упозорење";

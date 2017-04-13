@@ -19,16 +19,24 @@ public class Pen : Tool
 	private int currentBrushColorIndex = 0;
 
 	public Material penMat;
+	public Transform rayHit;
+
+	void Awake(){
+		ButtonOptionRB ();
+	}
 
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
 		transform.localPosition = Vector3.zero;
+		rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
+
 	}
 
 
-	void Update ()
+	public override void Update ()
 	{
+		base.Update ();
 
 		// If popped in place, dont continue
 		if (poppedInPlace)
@@ -45,6 +53,7 @@ public class Pen : Tool
 			transform.localPosition = adjustedPosition;
 			poppedInPlace = true;
 		}
+	
 	}
 
 	public override void SetToolAbility (bool incBool)
@@ -53,7 +62,7 @@ public class Pen : Tool
 		if (!gameObject.activeSelf)
 			return;
 
-		Debug.Log ("pen On");
+		//Debug.Log ("pen On");
 		//set a transition time 
 		//popInPlaceTime = 1f;
 
@@ -79,6 +88,7 @@ public class Pen : Tool
 	public override void ButtonOpetionLT ()
 	{
 		paintBrush.brushSize += 5;
+		rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
 		paintBrush.Init ();
 		base.ButtonOpetionLT ();
 	}
@@ -87,6 +97,7 @@ public class Pen : Tool
 	{
 		if (paintBrush.brushSize > 5) {
 			paintBrush.brushSize -= 5;
+			rayHit.localScale = Vector3.one * (0.05f * paintBrush.brushSize);
 			paintBrush.Init ();
 		}
 		base.ButtonOptionLB ();
@@ -107,8 +118,24 @@ public class Pen : Tool
 		currentBrushColorIndex--;
 		if (currentBrushColorIndex == -1)
 			currentBrushColorIndex = brushColors.Length - 1;
+		penMat.color = brushColors [currentBrushColorIndex];
 		paintBrush.color = brushColors [currentBrushColorIndex];
 		base.ButtonOptionRT ();
+	}
+
+	public Color GetBrushColor()
+	{
+		return brushColors [currentBrushColorIndex];
+	}
+
+	public override void SetColor(int col){
+		penMat.color = brushColors [col];
+		paintBrush.color = brushColors [col];
+
+	}
+	public override void SetScale(float scale){
+		paintBrush.brushSize = (int)scale;
+		rayHit.localScale = Vector3.one * (scale *0.01f) * paintBrush.brushSize;
 	}
 
 }

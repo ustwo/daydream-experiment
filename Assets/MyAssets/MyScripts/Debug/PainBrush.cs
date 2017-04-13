@@ -7,38 +7,44 @@ public class PainBrush : MonoBehaviour
 	PaintableObject activeSurface;
 	public float rayReach = 20f;
 	private float spacing = 0.1f;
-	[Range (0.001f, 0.1f)]
+	[Range (0.00001f, 0.1f)]
 	public  float maxSpacing = 0.1f;
 	public Texture2D activeBrush;
-	private Vector3 lastDrawPoint;
+
 	public float intencity = 3;
 	Vector2 lastUVCords;
 	public Color color;
 	private Texture2D scaledBrush;
+	[Range (1,10)]
 	public int brushSize;
 	public LayerMask paintLayers;
 	private bool brushActivated = false;
 	public Transform pointer;
 	private bool resetBrushCords;
+	private PaintableObject lastSurface;
+	Vector2 currentCords;
+	Vector2 lerpCords;
+	private bool draw = false;
+	public float brushSpeed = 10;
+	public float brushSmoothTime = 1;
 
 
 	void Start ()
 	{
 		Init ();
+		//SetBrush (true);
 
 	}
 
 	public void Init(){
-		lastDrawPoint = Vector3.zero;
 		spacing = maxSpacing;
-		scaledBrush = Instantiate (activeBrush) as Texture2D;
+		scaledBrush = Instantiate (activeBrush);
+		//scaledBrush = new Texture2D(1,1,TextureFormat.RGBA32,false);
+		//scaledBrush.SetPixels32 (new Color32[]{ new Color32 ((byte)255, (byte)255, (byte)255, (byte)125) });
+		//Debug.Log (scaledBrush.format);
 		TextureScale.Bilinear (scaledBrush, brushSize, brushSize);
 	}
-	void Update(){
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			Init ();
-		}
-	}
+
 
 	public void SetBrush (bool toggle){
 		//Debug.Log ("Brush set to " + toggle);
@@ -49,31 +55,50 @@ public class PainBrush : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-
-		//transform.Translate (new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical")) * (10 *Time.deltaTime), Space.World);
 		if (!brushActivated)
 			return;
 		RaycastHit hit;
-		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach,paintLayers)) {
-			//Debug.Log ("Hit the paintable Objects");
-			float distance = (hit.point - lastDrawPoint).sqrMagnitude;
-			int brushCount = Mathf.FloorToInt (distance / maxSpacing);
-			activeSurface = hit.transform.GetComponent<PaintableObject> ();
+		Debug.DrawRay (pointer.position, pointer.forward * rayReach);
+		if (Physics.Raycast (pointer.position, pointer.forward, out hit, rayReach, paintLayers.value)) {
+			
+			//Debug.Log ("Raycast hit");
+			activeSurface = hit.transform.root.GetComponent<PaintableObject> ();
 			if (activeSurface != null) {
-				Vector2 currentCords = hit.textureCoord;
-				if (resetBrushCords) {
+				draw = true;
+				currentCords = hit.textureCoord;
+				if (resetBrushCords || lastSurface != activeSurface) {
+					scaledBrush = Instantiate (activeBrush);
+					TextureScale.Bilinear (scaledBrush, (int)(brushSize * ((float)activeSurface.textureSize / 256)), (int)(brushSize * ((float)activeSurface.textureSize / 256)));
+					//Debug.Log (scaledBrush.format);
 					lastUVCords = currentCords;
 					resetBrushCords = false;
-				}
-			//	Debug.Log ("distance = " + distance);
-				Vector2 lerpCords = Vector2.Lerp (lastUVCords, currentCords, 0.1f);
-				if (distance < maxSpacing && (lerpCords-currentCords).sqrMagnitude < maxSpacing )
+					activeSurface.RegisterRay (currentCords, scaledBrush, intencity, color);
+					lastUVCords = currentCords;
+					lastSurface = activeSurface;
 					return;
-				activeSurface.RegisterRay (lerpCords, scaledBrush, intencity,color);
-				lastDrawPoint = hit.point;
-				lastUVCords = lerpCords;
+				}
+
+				/// Draw from here
+			} else {
+				draw = false;
 			}
 
+		} else {
+			draw = false;
+		}
+	}
+
+	void Update(){
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			Init ();
+		}
+		// to here 
+		if (draw) {
+			for (int i = 0; i < 2; i++) {
+				lerpCords = Vector2.MoveTowards (lastUVCords, currentCords, brushSize * 0.001f);
+				activeSurface.RegisterRay (lerpCords, scaledBrush, intencity, color);
+				lastUVCords = lerpCords;
+			}
 		}
 	}
 }

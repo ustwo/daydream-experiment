@@ -200,7 +200,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000011856243108
 GameObject:
   m_ObjectHideFlags: 1
@@ -228,6 +228,7 @@ GameObject:
   - 4: {fileID: 4000010475796208}
   - 33: {fileID: 33000011432606172}
   - 23: {fileID: 23000010886880618}
+  - 96: {fileID: 96000014111374894}
   m_Layer: 0
   m_Name: RayHit
   m_TagString: Untagged
@@ -246,6 +247,7 @@ GameObject:
   - 33: {fileID: 33000011986555874}
   - 23: {fileID: 23000013524910916}
   - 114: {fileID: 114000011476146686}
+  - 96: {fileID: 96000014098393366}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -267,7 +269,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1000012612237712
 GameObject:
   m_ObjectHideFlags: 1
@@ -1313,6 +1315,106 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!96 &96000014098393366
+TrailRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000012296814676}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 8f5a18f3040d14a0f92c22a1eb7cf14c, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Time: 1
+  m_StartWidth: 5
+  m_EndWidth: 5
+  m_Colors:
+    m_Color[0]:
+      serializedVersion: 2
+      rgba: 4294902272
+    m_Color[1]:
+      serializedVersion: 2
+      rgba: 4294902272
+    m_Color[2]:
+      serializedVersion: 2
+      rgba: 3640590848
+    m_Color[3]:
+      serializedVersion: 2
+      rgba: 1929314816
+    m_Color[4]:
+      serializedVersion: 2
+      rgba: 16712192
+  m_MinVertexDistance: 0.1
+  m_Autodestruct: 0
+--- !u!96 &96000014111374894
+TrailRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011966986558}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 8f5a18f3040d14a0f92c22a1eb7cf14c, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Time: 1
+  m_StartWidth: 1
+  m_EndWidth: 1
+  m_Colors:
+    m_Color[0]:
+      serializedVersion: 2
+      rgba: 4294902272
+    m_Color[1]:
+      serializedVersion: 2
+      rgba: 4294902272
+    m_Color[2]:
+      serializedVersion: 2
+      rgba: 3640590848
+    m_Color[3]:
+      serializedVersion: 2
+      rgba: 1929314816
+    m_Color[4]:
+      serializedVersion: 2
+      rgba: 16712192
+  m_MinVertexDistance: 0.1
+  m_Autodestruct: 0
 --- !u!114 &114000010128085880
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1324,8 +1426,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e93db7990ca6543f88ecbc4b4b7f0a1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayReach: 1000
-  maxSpacing: 0.01
+  rayReach: 10000
+  maxSpacing: 0.00001
   activeBrush: {fileID: 2800000, guid: 79d3cdef31948416fa96fdc446472ebf, type: 3}
   intencity: 1
   color: {r: 1, g: 0, b: 0, a: 1}
@@ -1485,7 +1587,9 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0.08965516, a: 1}
   - {r: 0.45588237, g: 0.45588237, b: 0.45588237, a: 1}
   - {r: 0.7440161, g: 0, b: 0.8235294, a: 1}
+  - {r: 1, g: 1, b: 1, a: 0}
   penMat: {fileID: 2100000, guid: 3f57a7c8415b04ef694c12d5d2155d5a, type: 2}
+  rayHit: {fileID: 4000010475796208}
 --- !u!114 &114000013548229354
 MonoBehaviour:
   m_ObjectHideFlags: 1

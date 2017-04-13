@@ -166,6 +166,7 @@ public class MicWidget : Widget
 	public void DeactivateMicrophone()
 	{
 		Active = false;
+		GVRInput.DebugMessage ("DeactivateMicrophone: ");
 	}
 
 	#endregion
@@ -204,6 +205,11 @@ public class MicWidget : Widget
 
 	void OnDestroy()
 	{
+		Active = false;
+		Disable = true;
+	}
+	void OnDisable(){
+
 		Active = false;
 		Disable = true;
 	}

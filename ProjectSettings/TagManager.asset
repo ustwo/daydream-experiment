@@ -19,8 +19,8 @@ TagManager:
   - touchable
   - BG
   - paintable
-  - 
-  - 
+  - node
+  - toolMenuItem
   - 
   - 
   - 

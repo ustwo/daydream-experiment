@@ -15,6 +15,16 @@ public class Tool : MonoBehaviour
 		targetPosition = transform.parent.position;
 	}
 
+	public virtual void Update(){
+		if (GvrController.ClickButtonDown || Input.GetMouseButtonDown(0)) {
+			Debug.Log ("clicked the button");
+			SetToolAbility (true);
+		} else if (GvrController.ClickButtonUp || Input.GetMouseButtonUp(0)){
+			Debug.Log ("unclicked the button");
+			SetToolAbility (false);
+		}
+	}
+
 	public virtual void SetMoveTarget (Transform incTarget)
 	{
 		target = incTarget;
@@ -48,6 +58,13 @@ public class Tool : MonoBehaviour
 
 	}
 	public virtual void ButtonOptionRB(){
+
+	}
+
+	public virtual void SetColor(int colorIndex){
+
+	}
+	public virtual void SetScale (float newSize){
 
 	}
 }

@@ -11,7 +11,7 @@ public enum TravelDirectionE
 	down
 }
 
-public class BrushGen : Photon.MonoBehaviour
+public class BrushGen : MonoBehaviour
 {
 
 	public float speed = 10;
@@ -58,7 +58,7 @@ public class BrushGen : Photon.MonoBehaviour
 
 	}
 
-	[PunRPC]
+
 	public void SetMaterial (int index)
 	{
 		MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer> ();
@@ -80,7 +80,7 @@ public class BrushGen : Photon.MonoBehaviour
 	void Update ()
 	{ 
 		
-		if (strokeEnded || !photonView.isMine)
+		if (strokeEnded )
 			return;
 
 //		if (verts.Count == 0) {
@@ -200,7 +200,7 @@ public class BrushGen : Photon.MonoBehaviour
 
 	}
 
-	[PunRPC]
+
 	public void SetNetworkParent (string parentName)
 	{
 		GameObject newParent = GameObject.Find (parentName);
@@ -253,27 +253,14 @@ public class BrushGen : Photon.MonoBehaviour
 		}
 	}
 
-	public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info)
+	public void OnPhotonSerializeView ()
 	{
-		if (stream.isWriting) {
 			Vector3[] vertArray = verts.ToArray ();
-			stream.SendNext (vertArray);
 			int[] triArray = tris.ToArray ();
-			stream.SendNext (triArray);
-			stream.SendNext (meshChanged);
 			meshChanged = false;
-		} else {
-			Vector3[] vertArray = stream.ReceiveNext () as Vector3[];
-			verts = vertArray.ToList ();
-			int[] triArray = stream.ReceiveNext () as int[];
-			tris = triArray.ToList ();
-			meshChanged = (bool)stream.ReceiveNext ();
 			if (meshChanged) {
 				//Debug.Log ("Verts Count " + verts.Count + " Tris Count " + tris.Count);
 				GenMesh (verts, tris);
 			}
-		
-
-		}
 	}
 }
