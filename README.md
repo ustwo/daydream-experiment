@@ -4,7 +4,7 @@
 
 "DreamDraw" is a android VR app created by ustwo for the purpose of exploring the Pixel Phone, the Google Daydream VR platform and the Daydream controller. It allows multiple people to draw on PostIt notes in a shared virtual environment as well as use speech to text to generate notes for ideation. 
 
-<b>Disclaimer!</b>
+'' Disclaimer! ''
 
 This is a very quick prototype project and the code is therby to be concidred to be quite "hacky", uncommented and overall messy. This code does not by any means follow ustwo coding guidlines or any coding general best practices at all for that matter. 
 
