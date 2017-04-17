@@ -1,5 +1,7 @@
 # Daydream Experiment
 
+<img src="https://usweb-cdn.ustwo.com/ustwo-production/uploads/2017/04/vr_ideation_header-1800x718.png" width="100%" />
+
 ### Background 
 
 "DreamDraw" is a android VR app created by ustwo for the purpose of exploring the Pixel Phone, the Google Daydream VR platform and the Daydream controller. It allows multiple people to draw on PostIt notes in a shared virtual environment as well as use speech to text to generate notes for ideation. 
@@ -22,7 +24,10 @@ To switch between tools, simply tilt your head down as if you wanted to look at 
 **Note: It is possible for up to 6 people to be in the same virtual space (untested). The 7th would end up in a new room. (untested)**
 
 ### Install 
-Add step by step...
+1. Go to your security settings on your Pixel phone and enable "unknown sources"
+2. Download the apk from the demo_build folder directly from your Pixel Phone.
+3. Use Astro or another File Management software to locate the apk in the downloads folder and click to install it. 
+
 
 # Release 
 
@@ -37,6 +42,11 @@ Requirements for use of app:
 * Google Pixel Phone
 * Daydream headset and controller
 * Working internet Connection
+
+
+### Contact
+
+If you have an comments or feedback, please email onchez@ustwo.com
 
 ## License
 
