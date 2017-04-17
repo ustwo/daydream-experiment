@@ -46,7 +46,7 @@ Requirements for use of app:
 
 ### Contact
 
-If you have an comments or feedback, please email onchez@ustwo.com
+If you have an comments or feedback, please email onchez@ustwo.com or harper@ustwo.com
 
 ## License
 
